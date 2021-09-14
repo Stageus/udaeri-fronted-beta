@@ -8,7 +8,7 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 
 import Home from '../screens/Home';
 import Search from '../screens/Search';
-import MyPage from '../screens/MyPage';
+import MyPageNoLogin from '../screens/MyPageNoLogin';
 
 
 const Tab = createBottomTabNavigator ();
@@ -25,31 +25,47 @@ const BottomNavigator = () => {
   // ];
 
   return (
-    <NavigationContainer>
-      <Tab.Navigator initialRouteName="Home">
+      <Tab.Navigator 
+        initialRouteName="Home"
+        tabBarOptions = {{
+          showLabel: false,
+          }}
+        >
         <Tab.Screen name="Home" component={Home}
           options={{
             headerShown: false ,
-            // tabBarIcon: <AntDesign name="home" style={styles.naviIcon} color="black" />
+            tabBarIcon: ({focused}) => (
+              <AntDesign 
+                name="home" 
+                style={{color: focused ? "#ff9933" : "black"}}
+                size={RFPercentage(3.5)}
+            />)
           }}
-          tabBarOptions = {{showLabel: false}}
         />
+
         <Tab.Screen name="Search" component={Search}
           options={{
             headerShown: false ,
-            // tabBarIcon: <Ionicons name="ios-search-outline" style={styles.naviIcon} color="black" />
+            tabBarIcon: ({focused}) => (
+              <Ionicons 
+                name="ios-search-outline" 
+                style={{color: focused ? "#ff9933" : "black"}}
+                size={RFPercentage(3.5)}
+            />)
           }}
-          tabBarOptions = {{showLabel: false}}
         />
-        <Tab.Screen name="MyPage" component={MyPage}
+        <Tab.Screen name="MyPageNoLogin" component={MyPageNoLogin}
           options={{
             headerShown: false ,
-            // tabBarIcon:<Ionicons name="ios-person-outline" style={styles.naviIcon} color="black" />
+            tabBarIcon: ({focused}) => (
+              <Ionicons 
+                name="ios-person-outline" 
+                style={{color: focused ? "#ff9933" : "black"}}
+                size={RFPercentage(3.5)}
+            />)
           }}
-          tabBarOptions = {{showLabel: false}}
         />
       </Tab.Navigator>
-    </NavigationContainer>
   )
 }
 
@@ -80,6 +96,6 @@ const styles = StyleSheet.create({
     // elevation: 3,
   },
   naviIcon : {
-    fontSize:RFPercentage(3.5)
+    fontSize:RFPercentage(3.5),
   },
 })

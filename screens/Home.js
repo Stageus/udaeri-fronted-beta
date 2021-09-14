@@ -3,18 +3,14 @@ import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, StatusBar, ScrollView, Dimensions  } from 'react-native';
 import {AntDesign, Ionicons ,FontAwesome,Entypo,Fontisto   } from '@expo/vector-icons';
 import { RFPercentage } from "react-native-responsive-fontsize";
-import Bottom from '../components/Navigator'
+
 
 
 const Home = ({navigation}) => {
-  const onPressMain = () => navigation.navigate('Main');
-  const onPressSearch = () => navigation.navigate('Search');
-  const onPressMyPage = () => navigation.navigate('MyPage');
-
 
   const screenWidth = Dimensions.get('window').width;
   const screenHeight = Dimensions.get('window').height;
-
+  const windowHeight = Dimensions.get('screen').height;
 
   const categoryList = [
     {category: "먹거리", icon: <Ionicons name="fast-food" style={styles.categoryIcon} color="white" />},
@@ -32,76 +28,66 @@ const Home = ({navigation}) => {
     {category:"놀거리", name:"코인노래방방방방", icon: <Entypo name="game-controller" style={styles.jjimIcon} color="white" />}
   ];
 
-
-  
- 
-
   return <View style={styles.container}>
-    
-    <View style={styles.main}>
+  
 
-      {/* Top */}
-      <View style={styles.top}>
-        <Text style={styles.mainTitle}>우리대학 거리</Text>
-        <Text style={styles.schoolName}>인하대학교</Text>
-        <TouchableOpacity
-          onPress={() => {
-          navigation.navigate('Search'); }}>
-          <Ionicons style={styles.searchIcon} name="ios-search-outline" color="black" />
-        </TouchableOpacity>
-      </View>
+    {/* Top */}
+    <View style={styles.top}>
+      <Text style={styles.mainTitle}>우리대학거리</Text>
+      <Text style={styles.schoolName}>인하대학교</Text>
+      <TouchableOpacity
+        onPress={() => {
+        navigation.navigate('Search'); }}>
+        <Ionicons style={styles.searchIcon} name="ios-search-outline" color="black" />
+      </TouchableOpacity>
+    </View>
 
-      {/* 카테고리 */}
-      <View style={styles.categoryWrap}>
-        {categoryList.map((item)=> (
-          <View style={styles.categoryElementWrap} key={item.category}>
-            <View style={styles.categoryIconWrap}>
-              {item.icon}
+    {/* 카테고리 */}
+    <View style={styles.categoryWrap}>
+      {categoryList.map((item)=> (
+        <View style={styles.categoryElementWrap} key={item.category}>
+          <View style={styles.categoryIconWrap}>
+            {item.icon}
+          </View>
+          <Text style={styles.categoryText}>{item.category}</Text>
+          <AntDesign name="right" size={15} color="black" />
+        </View>
+      ))}
+      {/* 지도로 보기 버튼 */}
+      <TouchableOpacity
+        // onPress={() => alert('Hello, world!')}
+        activeOpacity={0.8}
+        style={styles.mapBtn}>
+        <Text style={styles.mapText}>지도로 보기</Text>
+      </TouchableOpacity>
+    </View>
+
+
+    {/* 내가 찜한 가게 */}
+    <View style={styles.jjimWrap}>
+      <Text style={styles.title}>
+        내가 찜한 가게
+      </Text>
+      <ScrollView horizontal showsHorizontalScrollIndicator = {false} contentContainerStyle={{marginTop:15, flexDirection: 'row'}}>
+        {myJjim.map(item=> (
+          <View style={styles.jjimElementWrap} key={item.name}>
+            <View style={styles.jjimIcons}>
+              <View style={styles.jjimIconWrap}>
+                {item.icon}
+              </View>
             </View>
-            <Text style={styles.categoryText}>{item.category}</Text>
-            <AntDesign name="right" size={15} color="black" />
+            <View style={{ marginLeft: 7}}>
+              <Text style={{fontSize: screenHeight>800 ? RFPercentage(1.5) : RFPercentage(1.7), color: "#797D7F",}}>
+                {item.category}
+              </Text>
+              <Text style={{fontSize: screenHeight>800 ? RFPercentage(2) : RFPercentage(2.2), fontWeight:'bold'}} numberOfLines={1}>
+                {item.name}
+              </Text>
+            </View>
           </View>
         ))}
-        {/* 지도로 보기 버튼 */}
-        <TouchableOpacity
-          // onPress={() => alert('Hello, world!')}
-          activeOpacity={0.8}
-          style={styles.mapBtn}>
-          <Text style={styles.mapText}>지도로 보기</Text>
-        </TouchableOpacity>
-      </View>
-
-
-      {/* 내가 찜한 가게 */}
-      <View style={styles.jjimWrap}>
-        <Text style={styles.title}>
-          내가 찜한 가게
-        </Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator = {false} contentContainerStyle={{marginTop:15, flexDirection: 'row'}}>
-          {myJjim.map(item=> (
-            <View style={styles.jjimElementWrap} key={item.name}>
-              <View style={styles.jjimIcons}>
-                <View style={styles.jjimIconWrap}>
-                  {item.icon}
-                </View>
-                <Ionicons name="heart-circle-sharp" style={{fontSize:RFPercentage(2.5)}} color="pink" />
-              </View>
-              <View style={{ marginLeft: 7}}>
-                <Text style={{fontSize: screenHeight>800 ? RFPercentage(1.5) : RFPercentage(1.7), color: "#797D7F",}}>
-                  {item.category}
-                </Text>
-                <Text style={{fontSize: screenHeight>800 ? RFPercentage(2) : RFPercentage(2.2), fontWeight:'bold'}} numberOfLines={1}>
-                  {item.name}
-                </Text>
-              </View>
-            </View>
-          ))}
-        </ScrollView>
-      </View>
+      </ScrollView>
     </View>
-   
-   {/* bottom */}
-    
   </View>
 }
 
@@ -111,12 +97,9 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-
-  main: {
+    backgroundColor: '#fff',
     paddingHorizontal: 20, 
-    marginTop: 45,
-    flex:9
+    paddingTop: 45,
   },
   top: {
     flex: 0.7,

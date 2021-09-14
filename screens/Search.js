@@ -76,6 +76,7 @@ export default Search;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff'
   },
   top: {
     flex: 0.7,
