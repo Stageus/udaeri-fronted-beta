@@ -1,6 +1,6 @@
 import React from 'react';
 import { SafeAreaView } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, FlatList } from 'react-native-gesture-handler';
 import { Foundation, FontAwesome } from '@expo/vector-icons';
 import { Rating } from 'react-native-ratings';
 import styled from 'styled-components/native';
@@ -68,14 +68,14 @@ const StoreReviewTab = () => {
 
     const SC = {
         Container: styled.View`
-            flex: 1;
             background-color: #fff;
+            height: auto;
         `,
         scoreContainer: styled.View`
             flex-Direction: row;
             justify-Content: space-between;
             align-Items: center;
-            padding: 30px;
+            padding: 30px 40px;
             border-Bottom-Width: 1px;
             border-Bottom-Color: #d3d3d3;
         `,

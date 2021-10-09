@@ -8,7 +8,6 @@ const SC = {
         flex-Direction: row;
         justify-Content: space-between;
         padding: 20px;
-        border-Style: 'solid';
         border-Bottom-Width: 1px;
         border-Bottom-Color: gray;
     `,

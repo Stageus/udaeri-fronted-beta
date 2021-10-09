@@ -4,9 +4,17 @@ import Menu from '../../../Components/Menu'
 import styled from 'styled-components/native'
 
 const Container = styled.View`
-    flex : 1;
     background-color: #fff;
 `;
+
+const SC = {
+    Container: styled.View`
+        background-color: #fff;
+        height: 100%;
+    `,
+
+}
+
 const StoreMenuTab = () => {
     const menuList = [
         {
@@ -37,13 +45,13 @@ const StoreMenuTab = () => {
     ]
 
     return (
-        <Container>
+        <SC.Container>
             <ScrollView>
                 {menuList.map((item) => (
                     <Menu menuName={item.menuName} menuDes={item.menuDes} menuPrice={item.menuPrice} />
                 ))}
             </ScrollView>
-        </Container>
+        </SC.Container>
     );
 
 }

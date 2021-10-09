@@ -4,31 +4,32 @@ import styled from 'styled-components/native';
 import { Ionicons, Entypo } from '@expo/vector-icons';
 
 const SC = {
-    Container: styled.View`
+    Container: styled.TouchableOpacity`
         flex-Direction: row;
-        padding: 15px;
+        padding: 20px;
         border-Bottom-Color: gray;
         border-Bottom-Width: 0.5px;
         align-Items: center;
+        height: 100px;
     `,
     storeThumbnail: styled.View`
         background-Color: #ff9933;
-        width: 10vw;
-        height: 10vw;
+        width: 20px;
+        height: 20px;
         align-Items: center;
         justify-Content: center;
-        border-Radius: 10vw;
+        border-Radius: 10px;
         margin-Right: 20px;
     `,
     contentContainer: styled.View`
     `,
     storeName: styled.Text`
         font-Family: Medium;
-        font-Size: 15px;
+        font-Size: 20px;
     `,
     content: styled.Text`
         font-Family: Regular;
-        font-Size: 12px;
+        font-Size: 18px;
     `,
     wrap: styled.View`
         flex-direction: row;
@@ -38,18 +39,23 @@ const SC = {
     loaction: styled.Text`
         font-family: Light;
         margin-right: 5px;
+        font-Size: 15px;
     `,
     distance: styled.Text`
         font-family: Light;
         margin-right: 5px;
+        font-Size: 15px;
     `,
     likes: styled.Text`
         font-family: Light;
+        font-Size: 15px;
     `,
 }
 const StoreEle = (props) => {
     return (
-        <SC.Container>
+        <SC.Container onPress={() => {
+            props.navigation.navigate('StorePage', { key: props.storeName });
+        }}>
             <SC.storeThumbnail>
             </SC.storeThumbnail>
             <SC.contentContainer>

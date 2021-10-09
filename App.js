@@ -1,8 +1,6 @@
-import React from 'react';
-
-import StorePage from './src/Screens/StorePage';
-import StoreList from './src/Screens/StoreList';
-import MiddleCat from './src/Screens/MiddleCat';
+import React, { useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
 import * as Font from 'expo-font';
 Font.loadAsync({
@@ -13,25 +11,26 @@ Font.loadAsync({
   'Thin': require('./assets/fonts/SpoqaHanSansNeo-Thin.otf'),
 });
 
-export default class extends React.Component {
-  state = {
-    isLoading: true
-  };
-  componentDidMount = async () => {
-    // 1,000가 1초
-    setTimeout(() => { this.setState({ isLoading: false }) }, 3000);
-  }
+import Loading from './src/Screens/Loading';
+import StorePage from './src/Screens/StorePage';
+import StoreList from './src/Screens/StoreList';
+import MiddleCat from './src/Screens/MiddleCat';
 
-  render() {
-    /*
-    if (this.state.isLoading) {
-      return <Loading />
-    } else {
-      return (
-        <LargeCat></LargeCat>
-      )
-    }
-    */
-    return <MiddleCat />
-  }
+const Stack = createStackNavigator();
+
+const App = () => {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{
+        headerShown: false,
+        backgroundColor: '#FFFFFF',
+      }}>
+        <Stack.Screen name="MiddleCat" component={MiddleCat} />
+        <Stack.Screen name="StoreList" component={StoreList} />
+        <Stack.Screen name="StorePage" component={StorePage} />
+      </Stack.Navigator>
+    </NavigationContainer >
+  );
 }
+
+export default App;

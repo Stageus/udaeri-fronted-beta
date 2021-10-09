@@ -17,23 +17,23 @@ const SC = {
     `,
     menuName: styled.Text`
         font-Family: Medium;
-        font-Size: 15px;
+        font-Size: 18px;
     `,
     menuDes: styled.Text`
         font-Family: Medium;
-        font-Size: 12px;
+        font-Size: 16px;
     `,
     menuPrice: styled.Text`
         font-Family: Light;
-        font-Size: 12px;
+        font-Size: 14px;
     `,
     menuThumbnail: styled.View`
         background-Color: #ff9933;
-        width: 15vw;
-        height: 15vw;
+        width: 40px;
+        height: 40px;
         align-Items: center;
         justify-Content: center;
-        border-Radius: 15vw;
+        border-Radius: 20px;
     `,
 }
 

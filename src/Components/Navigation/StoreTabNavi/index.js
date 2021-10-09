@@ -8,11 +8,11 @@ import StoreReviewTab from '../../../Screens/StorePage/StoreReviewTab';
 
 const Tab = createMaterialTopTabNavigator();
 
-const Tabs = () => {
+const StoreTapNavigator = () => {
     return (
         <Tab.Navigator tabBarOptions={{
             labelStyle: {
-                fontSize: 12,
+                fontSize: 16,
                 fontFamily: 'Medium',
             },
             indicatorStyle: {
@@ -25,14 +25,6 @@ const Tabs = () => {
             <Tab.Screen name="메뉴" component={StoreMenuTab} />
             <Tab.Screen name="리뷰" component={StoreReviewTab} />
         </Tab.Navigator>
-    );
-}
-
-const StoreTapNavigator = () => {
-    return (
-        <NavigationContainer>
-            <Tabs />
-        </NavigationContainer>
     );
 }
 

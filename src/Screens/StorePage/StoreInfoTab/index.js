@@ -48,12 +48,12 @@ const SC = {
     `,
     storeInfoTitle: styled.Text`
         font-Family: Regular;
-        font-Size: 12px;
+        font-Size: 16px;
         color: gray;
     `,
     storeInfoText: styled.Text`
-        font-Family: Meduim;
-        font-Size: 12px;
+        font-Family: Medium;
+        font-Size: 16px;
         color: gray;
     `
 }
