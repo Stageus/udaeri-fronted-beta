@@ -10,7 +10,7 @@ const SC = {
     Container: styled.View`
         background-Color: #fff;
     `,
-    menuBar: styled.View`
+    Content: styled.View`
         height: 100%;
     `
 }
@@ -23,9 +23,9 @@ const StorePage = ({ navigation, route }) => {
                 {/* 헤더 */}
                 <HeaderBar left="arrow" title={route.params.key} right="heart" navigation={navigation} />
                 {/* 메뉴 바 */}
-                <SC.menuBar>
+                <SC.Content>
                     <StoreTapNavigator />
-                </SC.menuBar>
+                </SC.Content>
             </SC.Container>
         </SafeAreaView>
     )

@@ -6,9 +6,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { AntDesign, Ionicons, FontAwesome, Entypo, Fontisto } from '@expo/vector-icons';
 import { RFPercentage } from "react-native-responsive-fontsize";
 
-import Home from '../screens/Home';
-import Search from '../screens/Search';
-import MyPage from '../screens/MyPage';
+import Home from '../../../Screens/Home'
+import Search from '../../../Screens/Search';
+import MyPage from '../../../Screens/MyPage';
 
 
 const Tab = createBottomTabNavigator();
@@ -25,31 +25,29 @@ const BottomNavigator = () => {
     // ];
 
     return (
-        <NavigationContainer>
-            <Tab.Navigator initialRouteName="Home">
-                <Tab.Screen name="Home" component={Home}
-                    options={{
-                        headerShown: false,
-                        // tabBarIcon: <AntDesign name="home" style={styles.naviIcon} color="black" />
-                    }}
-                    tabBarOptions={{ showLabel: false }}
-                />
-                <Tab.Screen name="Search" component={Search}
-                    options={{
-                        headerShown: false,
-                        // tabBarIcon: <Ionicons name="ios-search-outline" style={styles.naviIcon} color="black" />
-                    }}
-                    tabBarOptions={{ showLabel: false }}
-                />
-                <Tab.Screen name="MyPage" component={MyPage}
-                    options={{
-                        headerShown: false,
-                        // tabBarIcon:<Ionicons name="ios-person-outline" style={styles.naviIcon} color="black" />
-                    }}
-                    tabBarOptions={{ showLabel: false }}
-                />
-            </Tab.Navigator>
-        </NavigationContainer>
+        <Tab.Navigator initialRouteName="Home">
+            <Tab.Screen name="Home" component={Home}
+                options={{
+                    headerShown: false,
+                    // tabBarIcon: <AntDesign name="home" style={styles.naviIcon} color="black" />
+                }}
+                tabBarOptions={{ showLabel: false }}
+            />
+            <Tab.Screen name="Search" component={Search}
+                options={{
+                    headerShown: false,
+                    // tabBarIcon: <Ionicons name="ios-search-outline" style={styles.naviIcon} color="black" />
+                }}
+                tabBarOptions={{ showLabel: false }}
+            />
+            <Tab.Screen name="MyPage" component={MyPage}
+                options={{
+                    headerShown: false,
+                    // tabBarIcon:<Ionicons name="ios-person-outline" style={styles.naviIcon} color="black" />
+                }}
+                tabBarOptions={{ showLabel: false }}
+            />
+        </Tab.Navigator>
     )
 }
 

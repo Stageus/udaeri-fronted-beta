@@ -24,7 +24,6 @@ const StoreListNavi = (props) => {
                 fontFamily: 'Medium',
             },
             indicatorStyle: {
-                borderWidth: false
             },
             scrollEnabled: true,
             tabStyle: {
