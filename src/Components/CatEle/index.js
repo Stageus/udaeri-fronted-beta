@@ -15,6 +15,15 @@ const SC = {
         flex-Direction: row;
         align-Items: center;
     `,
+    iconWrap: styled.View`
+        background-color: #ff9933;
+        width : 20px;
+        height : 20px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 17px;
+        margin-right: 15px;
+    `,
     thumbnail: styled.View`
         background-Color: #ff9933;
         width: 32px;
@@ -29,29 +38,19 @@ const SC = {
         font-size: 18px;
         color : black;
     `,
-
 }
-const MiddleCatList = (props) => {
+const CatEle = (props) => {
     return (
         <SC.Container onPress={() => {
-            props.navigation.navigate('StoreList', { key: props.name });
+            props.navi.navigate('StoreList', { key: props.name });
         }}>
             <SC.left>
-                <SC.thumbnail></SC.thumbnail>
+                <SC.thumbnail>{props.icon}</SC.thumbnail>
                 <SC.catTitle>{props.name}</SC.catTitle>
             </SC.left>
             <MaterialIcons name="arrow-forward-ios" size={12} color="gray" />
         </SC.Container>
     )
 }
-/*
-const styles = StyleSheet.create({
-    thumnail: {
-        width: Dimensions.get('window').width * 0.05,
-        height: Dimensions.get('window').width * 0.05,
-        borderRadius: Dimensions.get('window').width * 0.05,
-    }
-})
-*/
 
-export default MiddleCatList
+export default CatEle

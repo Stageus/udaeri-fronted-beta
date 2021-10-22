@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, ScrollView, Dimensions } from 'react-native';
-import Menu from '../../../Components/Menu'
+import MenuEle from '../../../Components/MenuEle'
 import styled from 'styled-components/native'
 
 const Container = styled.View`
@@ -48,7 +48,7 @@ const StoreMenuTab = () => {
         <SC.Container>
             <ScrollView>
                 {menuList.map((item) => (
-                    <Menu menuName={item.menuName} menuDes={item.menuDes} menuPrice={item.menuPrice} />
+                    <MenuEle menuName={item.menuName} menuDes={item.menuDes} menuPrice={item.menuPrice} />
                 ))}
             </ScrollView>
         </SC.Container>

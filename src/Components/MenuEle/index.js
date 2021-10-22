@@ -37,7 +37,7 @@ const SC = {
     `,
 }
 
-const Menu = (props) => {
+const MenuEle = (props) => {
     return (
         <SC.menuEleWrap>
             <SC.contentWrap>
@@ -51,4 +51,4 @@ const Menu = (props) => {
     )
 }
 
-export default Menu;
+export default MenuEle;

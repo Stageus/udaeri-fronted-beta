@@ -2,7 +2,7 @@ import React from "react";
 import { SafeAreaView, ScrollView } from 'react-native';
 import styled from 'styled-components/native';
 import HeaderBar from '../../Components/HeaderBar';
-import MiddleCatList from '../../Components/MiddleCatList';
+import CatEle from '../../Components/CatEle';
 
 
 const SC = {
@@ -34,7 +34,7 @@ const MiddleCat = ({ navigation, route }) => {
                 <SC.mainContainer>
                     <ScrollView>
                         {middleCatList.map((item) => (
-                            <MiddleCatList name={item.category} navigation={navigation} />
+                            <CatEle name={item.category} icon={<></>} navi={navigation} />
                         ))}
                     </ScrollView>
                 </SC.mainContainer>
