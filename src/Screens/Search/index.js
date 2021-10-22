@@ -52,9 +52,7 @@ const Search = ({ navigation }) => {
     { word: "영종식당", date: "09.03" },
     { word: "서브웨이", date: "09.02" },
     { word: "오겡끼", date: "09.01" },
-
-  ]
-
+  ];
 
   return <Container>
     <Top>
@@ -74,7 +72,6 @@ const Search = ({ navigation }) => {
       </TouchableOpacity>
     </Top>
 
-
     <Middle>
       <MiddleHeader>
         <RecentSearch>최근 검색어</RecentSearch>
@@ -85,25 +82,8 @@ const Search = ({ navigation }) => {
 
       <ScrollView showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 15 }}>
         {recentSearchWord.map((item, index) => {
-
           return <SearchEle key={index} text={item.word} date={item.date}></SearchEle>
         }
-
-
-          // <View style={styles.searchElement}>
-          //   <Text>
-          //     <Ionicons name="ios-search-outline" style={styles.recentSearchIcon} color="#797D7F" />
-          //   </Text>
-          //   <TouchableOpacity style={styles.searchWordWrap}>
-          //     <Text style={styles.searchWord} numberOfLines={1}>{item.word}</Text>
-          //     <Text style={styles.searchDate}>{item.date}</Text>
-          //   </TouchableOpacity>
-          //   <TouchableOpacity>
-          //     <Text>
-          //       <Feather name="x" style={styles.recentSearchIcon}  color="black" />
-          //     </Text>
-          //   </TouchableOpacity>
-          // </View>
         )}
       </ScrollView>
     </Middle>

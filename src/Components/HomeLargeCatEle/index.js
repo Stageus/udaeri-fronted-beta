@@ -14,7 +14,7 @@ const IconWrap = styled.View`
   height: 40px;
   align-items: center;
   justify-content: center;
-  border-radius: 20px;
+  border-radius: 15px;
   margin-right: 15px;
 `
 const CatTitle = styled.Text`

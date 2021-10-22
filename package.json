@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@expo/ngrok": "^4.1.0",
     "@react-navigation/bottom-tabs": "^6.0.8",
     "@react-navigation/material-top-tabs": "^6.0.4",
     "@react-navigation/native": "^6.0.4",
@@ -21,9 +22,15 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
+    "react-native-gesture-handler": "^1.10.3",
+    "react-native-paper": "^4.9.2",
     "react-native-ratings": "^8.1.0",
     "react-native-responsive-fontsize": "^0.5.1",
-    "react-native-web": "~0.13.12",
+    "react-native-safe-area-context": "^3.3.2",
+    "react-native-screens": "^3.8.0",
+    "react-native-tab-view": "^3.1.1",
+    "react-native-web": "^0.17.5",
+    "styled-components": "^5.3.3",
     "typescript": "^4.4.3"
   },
   "devDependencies": {
@@ -32,7 +39,8 @@
     "@types/react": "^17.0.27",
     "@types/react-native": "^0.65.5",
     "@types/react-navigation": "^3.4.0",
-    "@types/styled-components": "^5.1.14",
+    "@types/styled-components": "^5.1.15",
+    "@types/styled-components-react-native": "^5.1.1",
     "babel-plugin-styled-components": "^1.13.2",
     "react-native-scrollable-tab-view": "^1.0.0"
   },

@@ -47,9 +47,6 @@ const SignUp = ({ navigation }) => {
             <TextInput placeholder="이메일을 입력하세요" style={styles.textInput}
               onChangeText={text => setEmail(text)} />
           </View>
-          {/* <TouchableOpacity style={{backgroundColor:'#ff9933', borderRadius:30, alignItems:"center", justifyContent: 'center', marginLeft:10, paddingHorizontal:10, height: screenHeight*0.04}}>
-            <Text style={{color:'#fff', }}>확인</Text>
-          </TouchableOpacity> */}
           <ShortBtn
             text="확인"
             onPress={() => alert('아직 안 만듦~.~')}>
@@ -112,20 +109,10 @@ const SignUp = ({ navigation }) => {
           onValueChange={(newValue) => setToggleCheckBox(newValue)}
         /> */}
 
-        {/* Login페이지에서 로그인하기 버튼이랑 스타일 똑같음~ */}
         <LongBarBtn
           text="가입하기"
-          onPress={() => { navigation.navigate('Home') }}>
+          onPress={() => { navigation.navigate('Welcome') }}>
         </LongBarBtn>
-        {/* <TouchableOpacity 
-          onPress={()=>{
-            navigation.navigate('Welcome');
-          }}
-          style={styles.loginBtn}>
-          <Text style={styles.loginText}>
-            가입하기
-          </Text>
-        </TouchableOpacity> */}
       </View>
 
 
