@@ -3,6 +3,7 @@ import styled from 'styled-components/native';
 import { Dimensions } from 'react-native';
 import { Foundation } from '@expo/vector-icons';
 const { width, height } = Dimensions.get('window');
+
 const SC = {
     Container: styled.TouchableOpacity`
         position: absolute;

@@ -13,7 +13,7 @@ const SC = {
         background-color: #ffffff;
     `
 }
-const StoreListPage = ({ navigation, route }) => {
+const Store = ({ navigation, route }) => {
 
     const StoreList = [
         { storeName: "맛사랑", content: "제육볶음 6,000 / 순두부찌개 6,000", location: "후문", distance: "350m", likes: 33 },
@@ -28,22 +28,20 @@ const StoreListPage = ({ navigation, route }) => {
     ]
     return (
         <SC.storeContainer>
-            <ScrollView>
-                {StoreList.map((item) => (
-                    <StoreEle
-                        storeName={item.storeName}
-                        content={item.content}
-                        location={item.location}
-                        distance={item.distance}
-                        likes={item.likes}
-                        navigation={navigation}
-                    />
-                ))}
-            </ScrollView>
+            {StoreList.map((item) => (
+                <StoreEle
+                    storeName={item.storeName}
+                    content={item.content}
+                    location={item.location}
+                    distance={item.distance}
+                    likes={item.likes}
+                    navigation={navigation}
+                />
+            ))}
         </SC.storeContainer>
 
 
     )
 }
 
-export default StoreListPage;
+export default Store;
