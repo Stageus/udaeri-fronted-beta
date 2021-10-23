@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, ScrollView, Dimensions } from 'react-native';
-import MenuEle from '../../../Components/MenuEle'
+import MenuEle from '../../../Components/MenuEle';
 import styled from 'styled-components/native'
 
 const Container = styled.View`

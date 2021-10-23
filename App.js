@@ -19,7 +19,11 @@ import Login from './src/Screens/Login';
 import SignUp from './src/Screens/SignUp';
 import MyInfoEdit from './src/Screens/InfoEdit';
 import Welcome from './src/Screens/Welcome';
+import { Dimensions } from 'react-native';
 const Stack = createStackNavigator();
+
+const { width, height } = Dimensions.get('window');
+console.log("width :", width, "height :", height);
 
 const App = () => {
   return (
