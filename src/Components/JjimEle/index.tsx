@@ -38,21 +38,26 @@ const SC = {
     font-size: 2.2px;
     font-weight: bold;
   `
-
 }
 
-const JjimEle = (props) => {
+interface Props {
+  icon: string;
+  category: string;
+  name: string;
+}
+
+const JjimEle = ({icon, category, name}: Props) => {
 
   return (
     <SC.JjimEleWrap>
       <SC.Top>
         <SC.IconWrap>
-          {props.icon}
+          {icon}
         </SC.IconWrap>
       </SC.Top>
       <SC.Bottom>
-        <SC.CatTitle>{props.category}</SC.CatTitle>
-        <SC.ShopName numberOfLines={1}>{props.name}</SC.ShopName>
+        <SC.CatTitle>{category}</SC.CatTitle>
+        <SC.ShopName numberOfLines={1}>{name}</SC.ShopName>
       </SC.Bottom>
 
 

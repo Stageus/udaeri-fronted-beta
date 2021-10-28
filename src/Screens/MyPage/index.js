@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, StatusBar, ScrollView, Dimensions  } from 'react-native';
+import {Text, View, TouchableOpacity } from 'react-native';
 import {AntDesign, Ionicons ,FontAwesome,Entypo,Fontisto, FontAwesome5    } from '@expo/vector-icons';
 import { RFPercentage } from "react-native-responsive-fontsize";
 import styled from 'styled-components/native';
+import MyPageEle from '../../Components/MyPageEle';
 
 
 const SC = {
@@ -42,22 +43,28 @@ const SC = {
   MyPageList: styled.View`
     padding: 15px 20px 0 20px;
   `,
-  MyPageListEle: styled.TouchableOpacity`
-    margin-bottom: 10px;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: 5px 0;
-  `,
-  MyPageListText: styled.Text`
-    font-size: 16px;
-  `
-
+  // MyPageListEle: styled.TouchableOpacity`
+  //   margin-bottom: 10px;
+  //   flex-direction: row;
+  //   align-items: center;
+  //   justify-content: space-between;
+  //   padding: 5px 0;
+  // `,
+  // MyPageListText: styled.Text`
+  //   font-size: 16px;
+  // `
 }
 
 const MyPage = ({navigation}) => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(true);
+
+  // const myPageList = [
+  //   {title: "문의하기"},
+  //   {title: "버전정보"},
+  //   {title: "로그아웃"},
+  //   {title: "후원하기"},
+  // ]
 
   return (
     <SC.Container>

@@ -29,7 +29,7 @@ const MiddleCat = ({ navigation, route }) => {
     return (
         <SafeAreaView>
             <SC.Container>
-                <HeaderBar left="arrow" title="먹거리" right="magni" navigation={navigation} />
+                <HeaderBar left="arrow" title={route.params.key} right="magni" navigation={navigation} />
 
                 <SC.mainContainer>
                     <ScrollView>

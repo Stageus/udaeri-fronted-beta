@@ -6,9 +6,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { AntDesign, Ionicons, FontAwesome, Entypo, Fontisto } from '@expo/vector-icons';
 import { RFPercentage } from "react-native-responsive-fontsize";
 
-import Home from '../../Screens/Home';
-import Search from '../../Screens/Search';
-import MyPage from '../../Screens/MyPage';
+import Home from '../../../Screens/Home';
+import Search from '../../../Screens/Search';
+import MyPage from '../../../Screens/MyPage';
 
 
 const Tab = createBottomTabNavigator();
@@ -26,7 +26,7 @@ const BottomNavigator = () => {
 
     return (
         <Tab.Navigator
-            initialRouteName="Search"
+            initialRouteName="Home"
             tabBarOptions={{
                 showLabel: false,
             }}

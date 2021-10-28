@@ -5,7 +5,7 @@ import { AntDesign, Ionicons, Feather } from '@expo/vector-icons';
 import { RFPercentage } from "react-native-responsive-fontsize";
 import styled from 'styled-components/native';
 
-import SearchEle from '../../Components/SearchEle';
+import SearchEle from '../../Components/SearchEle/index';
 
 const Container = styled.View`
   background-color: #fff;

@@ -29,7 +29,7 @@ const HomeLargeCatEle = (props) => {
 
   return (
     <CatEleWrap onPress={() => {
-      props.navigation.navigate('MiddleCat', { key: props.cat });
+      props.navigation.navigate('MiddleCat', { key: props.title });
     }}>
       <IconWrap>
         {props.icon}
