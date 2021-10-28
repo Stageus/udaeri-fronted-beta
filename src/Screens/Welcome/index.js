@@ -4,7 +4,7 @@ import { Feather } from '@expo/vector-icons';
 import { RFPercentage } from "react-native-responsive-fontsize";
 import styled from 'styled-components/native';
 
-import LongBarBtn from '../../Components/LongBarBtn';
+import LongBarBtn from '../../Components/LongBarBtn/index';
 
 const SC = {
   Container: styled.View`

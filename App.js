@@ -10,7 +10,7 @@ Font.loadAsync({
   'Regular': require('./assets/fonts/SpoqaHanSansNeo-Regular.otf'),
   'Thin': require('./assets/fonts/SpoqaHanSansNeo-Thin.otf'),
 });
-import BottomNavigator from './src/Components/Navigation/BottomNavi';
+import BottomNavigator from './src/Components/Navigation/BottomNavigator';
 import Loading from './src/Screens/Loading';
 import StorePage from './src/Screens/StorePage';
 import StoreList from './src/Screens/StoreList';

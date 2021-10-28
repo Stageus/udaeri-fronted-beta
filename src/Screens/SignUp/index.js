@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, StatusBar, ScrollView, Dimensions, TextInput } from 'react-native';
 import { AntDesign, Ionicons, FontAwesome, Entypo, Fontisto, Feather } from '@expo/vector-icons';
 import { RFPercentage } from "react-native-responsive-fontsize";
-import LongBarBtn from '../../Components/LongBarBtn/index.js';
+import LongBarBtn from '../../Components/LongBarBtn/index';
 import ShortBtn from '../../Components/ShortBtn/index.js';
 
 const SignUp = ({ navigation }) => {

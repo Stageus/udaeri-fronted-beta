@@ -19,14 +19,16 @@ const BtnText = styled.Text`
   font-weight: bold;
 `
 
+interface Props {
+  text: string;
+}
 
-const LongBarBtn = (props) => {
+const LongBarBtn = ({text}:Props) => {
 
   return (
-    <LongBtn
-      onPress={props.onPress}>
+    <LongBtn>
       <BtnText>
-        {props.text}
+        {text}
       </BtnText>
     </LongBtn>
   )

@@ -26,7 +26,13 @@ const SearchDate = styled.Text`
   font-size: ${RFPercentage(2.2)};
 `
 
-const SearchEle = (props) => {
+interface Props {
+  text: string;
+  date: string;
+}
+
+
+const SearchEle = ({text, date}: Props) => {
 
   return (
     <SearchEleWrap>
@@ -34,8 +40,8 @@ const SearchEle = (props) => {
         <Ionicons name="ios-search-outline" size={15} color="#797D7F" />
       </Text>
       <SearchWordWrap>
-        <SearchWord numberOfLines={1}>{props.text}</SearchWord>
-        <SearchDate>{props.date}</SearchDate>
+        <SearchWord numberOfLines={1}>{text}</SearchWord>
+        <SearchDate>{date}</SearchDate>
       </SearchWordWrap>
 
       <TouchableOpacity>
