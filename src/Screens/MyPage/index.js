@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
-import {Text, View, TouchableOpacity } from 'react-native';
-import {AntDesign, Ionicons ,FontAwesome,Entypo,Fontisto, FontAwesome5    } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { Text, View, TouchableOpacity } from 'react-native';
+import { AntDesign, Ionicons, FontAwesome, Entypo, Fontisto, FontAwesome5 } from '@expo/vector-icons';
 import { RFPercentage } from "react-native-responsive-fontsize";
 import styled from 'styled-components/native';
 import MyPageEle from '../../Components/MyPageEle';
@@ -17,7 +17,7 @@ const SC = {
     padding: 0 20px;
     flex-direction: row;
     padding-bottom: 15px;
-    align-iItems: center;
+    align-Items: center;
     border-bottom-width : 1px;
     border-bottom-color: #797D7F;
   `,
@@ -25,7 +25,7 @@ const SC = {
     padding: 0 20px;
     flex-direction: row;
     padding-bottom: 15px;
-    align-iItems: center;
+    align-Items: center;
     justify-content: space-between;
     border-bottom-width : 1px;
     border-bottom-color: #797D7F;
@@ -55,7 +55,7 @@ const SC = {
   // `
 }
 
-const MyPage = ({navigation}) => {
+const MyPage = ({ navigation }) => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(true);
 
@@ -69,38 +69,38 @@ const MyPage = ({navigation}) => {
   return (
     <SC.Container>
       {isLoggedIn
-      ? (<SC.HeaderYseLogin>
+        ? (<SC.HeaderYseLogin>
           <SC.NickNameWrap>
             <SC.NickName>유진진</SC.NickName>
             <Text>
-              <FontAwesome5 name="crown" style={{fontSize:RFPercentage(2.5), color:"#ffec00"}}/>
+              <FontAwesome5 name="crown" style={{ fontSize: RFPercentage(2.5), color: "#ffec00" }} />
             </Text>
           </SC.NickNameWrap>
           <TouchableOpacity
-            onPress={()=>{ navigation.navigate('MyInfoEdit')}}>
-            <FontAwesome name="gear" style={{fontSize:RFPercentage(2.5), color: '#797D7F'}} />
+            onPress={() => { }}>
+            <FontAwesome name="gear" style={{ fontSize: RFPercentage(2.5), color: '#797D7F' }} />
           </TouchableOpacity>
         </SC.HeaderYseLogin>)
-      : (<SC.HeaderNoLogin>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('Login');
-          }}>
-          <Text style={{color:"#ff9933", fontSize:RFPercentage(3), fontWeight:'bold'}}>로그인</Text>
-         </TouchableOpacity>
-        <Text style={{color:"#797D7F", fontSize:RFPercentage(3), fontWeight:'bold'}}>이 필요합니다</Text>
+        : (<SC.HeaderNoLogin>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Login');
+            }}>
+            <Text style={{ color: "#ff9933", fontSize: RFPercentage(3), fontWeight: 'bold' }}>로그인</Text>
+          </TouchableOpacity>
+          <Text style={{ color: "#797D7F", fontSize: RFPercentage(3), fontWeight: 'bold' }}>이 필요합니다</Text>
         </SC.HeaderNoLogin>)
       }
-       
+
       <SC.MyPageList>
         <SC.MyPageListEle>
           <SC.MyPageListText>문의하기</SC.MyPageListText>
         </SC.MyPageListEle>
         <SC.MyPageListEle>
           <SC.MyPageListText>버전정보</SC.MyPageListText>
-          <Text style={{fontSize: RFPercentage(2.2), letterSpacing:2}}>v1.0.0</Text>
+          <Text style={{ fontSize: RFPercentage(2.2), letterSpacing: 2 }}>v1.0.0</Text>
         </SC.MyPageListEle>
-          {isLoggedIn
+        {isLoggedIn
           ? (<>
             <SC.MyPageListEle
               onPress={() => setIsLoggedIn(false)}>
@@ -110,11 +110,11 @@ const MyPage = ({navigation}) => {
               <SC.MyPageListText>후원하기</SC.MyPageListText>
             </SC.MyPageListEle>
           </>)
-          : (<></>) }
-        
+          : (<></>)}
+
       </SC.MyPageList>
     </SC.Container>
-   
+
   )
 }
 

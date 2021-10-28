@@ -1,20 +1,26 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 // import 'react-native-gesture-handler';
-import { StyleSheet, Text, View, TouchableOpacity, StatusBar, ScrollView, Dimensions } from 'react-native';
-import {AntDesign, Ionicons ,FontAwesome,Entypo,Fontisto   } from '@expo/vector-icons';
+import { TouchableOpacity, ScrollView, SafeAreaView, StatusBar, Platform } from 'react-native';
+import { AntDesign, Ionicons, FontAwesome, Entypo, Fontisto } from '@expo/vector-icons';
 import { RFPercentage } from "react-native-responsive-fontsize";
-import styled from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
 import LongBarBtn from '../../Components/LongBarBtn/index';
 import HomeLargeCatEle from '../../Components/HomeLargeCatEle';
 import JjimEle from '../../Components/JjimEle/index';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import CatEle from '../../Components/CatEle';
+
+const StatusBarHeight = StatusBar.currentHeight;
 
 const SC = {
   Container: styled.View`
     background-color: #fff;
     padding: 0 20px;
-    padding-Top: 45px;
     height: 100%;
+
+    ${(Platform.OS === 'android') ?
+      css`
+      padding-top : ${StatusBarHeight + 15}px;
+      `: undefined}
   `,
   Top: styled.View`
     height: 5%;
@@ -62,7 +68,7 @@ const SC = {
 
 
 
-const Home = ({navigation}) => {
+const Home = ({ navigation }) => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(true);
 
@@ -83,69 +89,72 @@ const Home = ({navigation}) => {
   //   }, [data])
 
   const categoryList = [
-    {category: "먹거리", icon: <Ionicons name="fast-food" size={24} color="white" />},
-    {category: "카페", icon: <FontAwesome name="coffee" size={24} color="white" />},
-    {category: "술집", icon: <Ionicons name="beer" size={24} color="white" />},
-    {category: "놀거리", icon: <Entypo name="game-controller" size={24} color="white" />},
-    {category: "편의시설/서비스", icon: <Ionicons name="fast-food" size={24} color="white" />},
-    {category: "상점", icon: <Fontisto name="shopping-basket" size={24} color="white" />},
+    { category: "먹거리", icon: <Ionicons name="fast-food" size={24} color="white" /> },
+    { category: "카페", icon: <FontAwesome name="coffee" size={24} color="white" /> },
+    { category: "술집", icon: <Ionicons name="beer" size={24} color="white" /> },
+    { category: "놀거리", icon: <Entypo name="game-controller" size={24} color="white" /> },
+    { category: "편의시설/서비스", icon: <Ionicons name="fast-food" size={24} color="white" /> },
+    { category: "상점", icon: <Fontisto name="shopping-basket" size={24} color="white" /> },
   ]
 
   const myJjim = [
-    {category:"먹거리", name:"맛사랑", icon: <Ionicons name="fast-food" size={22} color="white" />},
-    {category:"상점", name:"다이소", icon: <Fontisto name="shopping-basket" size={22} color="white" />},
-    {category:"카페", name:"스타벅스", icon: <FontAwesome   name="coffee" size={22} color="white" />},
-    {category:"놀거리", name:"코인노래방방방방", icon: <Entypo name="game-controller" size={22} color="white" />},
-    {category:"편의시설/서비스", name:"미용미용실", icon: <Entypo name="game-controller" size={22} color="white" />}
-  
+    { category: "먹거리", name: "맛사랑", icon: <Ionicons name="fast-food" size={22} color="white" /> },
+    { category: "상점", name: "다이소", icon: <Fontisto name="shopping-basket" size={22} color="white" /> },
+    { category: "카페", name: "스타벅스", icon: <FontAwesome name="coffee" size={22} color="white" /> },
+    { category: "놀거리", name: "코인노래방방방방", icon: <Entypo name="game-controller" size={22} color="white" /> },
+    { category: "편의시설/서비스", name: "미용미용실", icon: <Entypo name="game-controller" size={22} color="white" /> }
+
   ];
 
-  return <SafeAreaView>
-   <SC.Container>
-    {/* Top */}
-    <SC.Top>
-      <SC.MainTitle>우리대학거리</SC.MainTitle>
-      <SC.SchoolTitle>인하대학교</SC.SchoolTitle>
-      <TouchableOpacity
-        onPress={() => {navigation.navigate('Search'); }}>
-        <Ionicons name="ios-search-outline" size={24} color="black" />
-      </TouchableOpacity>
-    </SC.Top>
+  return (
+    <SafeAreaView style={{
+      backgroundColor: '#FFFFFF',
+    }}>
+      <SC.Container>
+        {/* Top */}
+        <SC.Top>
+          <SC.MainTitle>우리대학거리</SC.MainTitle>
+          <SC.SchoolTitle>인하대학교</SC.SchoolTitle>
+          <TouchableOpacity
+            onPress={() => { navigation.navigate('Search'); }}>
+            <Ionicons name="ios-search-outline" size={24} color="black" />
+          </TouchableOpacity>
+        </SC.Top>
 
-    <ScrollView>
-       {/* Middle */}
-      <SC.Middle>
-        {/* 대분류 카테고리 */}
-        <SC.CategoryWrap>
-          {categoryList.map((item, index)=> {
-            return <HomeLargeCatEle key={index} title={item.category} icon={item.icon} navigation={navigation}></HomeLargeCatEle>
-          })}
-        </SC.CategoryWrap>
-        
-        {/* 지도로 보기 버튼 */}
-        <LongBarBtn text="지도로 보기"></LongBarBtn>
-      </SC.Middle>
+        <ScrollView>
+          {/* Middle */}
+          <SC.Middle>
+            {/* 대분류 카테고리 */}
+            <SC.CategoryWrap>
+              {categoryList.map((item, index) => {
+                return <CatEle name={item.category} icon={item.icon} page="MiddleCat" navi={navigation}></CatEle>
+              })}
+            </SC.CategoryWrap>
+
+            {/* 지도로 보기 버튼 */}
+            <LongBarBtn text="지도로 보기"></LongBarBtn>
+          </SC.Middle>
 
 
-      {/* 내가 찜한 가게 */}
-      <SC.Bottom>
-        <SC.MainTitle>내가 찜한 가게</SC.MainTitle>
-        {isLoggedIn 
-        ? (<ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{marginTop:15, flexDirection: 'row'}}>
-            {myJjim.map((item, index) => {
-              return <JjimEle key={index} category={item.category} icon={item.icon} name={item.name}></JjimEle>
-            })}
-          </ScrollView>)
-        :  (<SC.JjimWrapNoLogin>
-          <SC.JjimTextNoLogin>로그인을 해주세요 ^0^</SC.JjimTextNoLogin>
-          </SC.JjimWrapNoLogin>)
-        }
-      </SC.Bottom>
-    </ScrollView>
-   
-  </SC.Container>  
-  </SafeAreaView>
- 
+          {/* 내가 찜한 가게 */}
+          <SC.Bottom>
+            <SC.MainTitle>내가 찜한 가게</SC.MainTitle>
+            {isLoggedIn
+              ? (<ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ marginTop: 15, flexDirection: 'row' }}>
+                {myJjim.map((item, index) => {
+                  return <JjimEle key={index} category={item.category} icon={item.icon} name={item.name}></JjimEle>
+                })}
+              </ScrollView>)
+              : (<SC.JjimWrapNoLogin>
+                <SC.JjimTextNoLogin>로그인을 해주세요 ^0^</SC.JjimTextNoLogin>
+              </SC.JjimWrapNoLogin>)
+            }
+          </SC.Bottom>
+        </ScrollView>
+
+      </SC.Container>
+    </SafeAreaView>
+  )
 }
 
 export default Home;

@@ -16,8 +16,6 @@ import StorePage from './src/Screens/StorePage';
 import StoreList from './src/Screens/StoreList';
 import MiddleCat from './src/Screens/MiddleCat';
 import Login from './src/Screens/Login';
-import SignUp from './src/Screens/SignUp';
-import MyInfoEdit from './src/Screens/InfoEdit';
 import Welcome from './src/Screens/Welcome';
 const Stack = createStackNavigator();
 
@@ -34,8 +32,6 @@ const App = () => {
 
         <Stack.Screen name="BottomNavigator" component={BottomNavigator} />
         <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="SignUp" component={SignUp} />
-        <Stack.Screen name="MyInfoEdit" component={MyInfoEdit} />
         <Stack.Screen name="Welcome" component={Welcome} />
         <Stack.Screen name="MiddleCat" component={MiddleCat} />
         <Stack.Screen name="StoreList" component={StoreList} />

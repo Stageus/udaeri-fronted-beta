@@ -11,6 +11,7 @@ const SC = {
     `,
     mainContainer: styled.View`
         height : 100%;
+        padding : 0 20px;
     `,
 }
 
@@ -34,7 +35,7 @@ const MiddleCat = ({ navigation, route }) => {
                 <SC.mainContainer>
                     <ScrollView>
                         {middleCatList.map((item) => (
-                            <CatEle name={item.category} icon={<></>} navi={navigation} />
+                            <CatEle name={item.category} icon={<></>} page="StoreList" navi={navigation} />
                         ))}
                     </ScrollView>
                 </SC.mainContainer>

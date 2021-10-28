@@ -12,30 +12,32 @@ import LongBarBtn from '../../Components/LongBarBtn/index'
 const Login = ({ navigation }) => {
 
   return (
+    <SafeAreaView style={{
+      backgroundColor: '#FFFFFF',
+    }}>
+      <View style={styles.container}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.goBack()
+          }}>
+          <Feather name="x" style={styles.xIcon} />
+        </TouchableOpacity>
 
-    <View style={styles.container}>
-      <TouchableOpacity
-        onPress={() => {
-          navigation.goBack()
-        }}>
-        <Feather name="x" style={styles.xIcon} />
-      </TouchableOpacity>
-
-      {/* 로그인 */}
-      <View style={styles.loginWrap}>
-        <TextInput
-          style={styles.textInput}
-          placeholder="이메일"
-        />
-        <TextInput
-          style={styles.textInputPwd}
-          placeholder="비밀번호"
-        />
-        <LongBarBtn
-          text="로그인"
-          onPress={() => { navigation.navigate('Home') }}>
-        </LongBarBtn>
-        {/* <TouchableOpacity 
+        {/* 로그인 */}
+        <View style={styles.loginWrap}>
+          <TextInput
+            style={styles.textInput}
+            placeholder="이메일"
+          />
+          <TextInput
+            style={styles.textInputPwd}
+            placeholder="비밀번호"
+          />
+          <LongBarBtn
+            text="로그인"
+            onPress={() => { navigation.navigate('Home') }}>
+          </LongBarBtn>
+          {/* <TouchableOpacity 
             onPress={()=> {
               navigation.navigate('Home')
             }}
@@ -44,36 +46,36 @@ const Login = ({ navigation }) => {
               로그인
             </Text>
           </TouchableOpacity> */}
-        <View style={styles.findWrap}>
-          <TouchableOpacity style={{ marginRight: 20, }}>
-            <Text style={styles.findBtn}>
-              이메일 찾기
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Text style={styles.findBtn}>
-              비밀번호 찾기
+          <View style={styles.findWrap}>
+            <TouchableOpacity style={{ marginRight: 20, }}>
+              <Text style={styles.findBtn}>
+                이메일 찾기
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Text style={styles.findBtn}>
+                비밀번호 찾기
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* 회원가입 */}
+        <View style={styles.signUpWrap}>
+          <Text style={{ fontSize: RFPercentage(1.7), color: '#797D7F', marginRight: 20 }}>
+            우대리가 처음이시라면?
+          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('SignUp');
+            }}>
+            <Text style={{ fontSize: RFPercentage(1.7), color: '#ff9933', fontWeight: 'bold' }}>
+              회원가입
             </Text>
           </TouchableOpacity>
         </View>
       </View>
-
-      {/* 회원가입 */}
-      <View style={styles.signUpWrap}>
-        <Text style={{ fontSize: RFPercentage(1.7), color: '#797D7F', marginRight: 20 }}>
-          우대리가 처음이시라면?
-        </Text>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('SignUp');
-          }}>
-          <Text style={{ fontSize: RFPercentage(1.7), color: '#ff9933', fontWeight: 'bold' }}>
-            회원가입
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-
+    </SafeAreaView>
   )
 }
 

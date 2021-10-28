@@ -8,7 +8,6 @@ const SC = {
         align-Items: center;
         flex-Direction: row;
         justify-Content: space-between;
-        padding: 0 20px;
         margin : 7.5px 0;
     `,
     left: styled.View`
@@ -42,7 +41,7 @@ const SC = {
 const CatEle = (props) => {
     return (
         <SC.Container onPress={() => {
-            props.navi.navigate('StoreList', { key: props.name });
+            props.navi.navigate(props.page, { key: props.name });
         }}>
             <SC.left>
                 <SC.thumbnail>{props.icon}</SC.thumbnail>
