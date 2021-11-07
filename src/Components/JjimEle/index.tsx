@@ -6,8 +6,8 @@ const { width, height } = Dimensions.get('window');
 
 const SC = {
   JjimEleWrap: styled.View`
-    width: ${width*0.35};
-    height: ${width*0.35};
+    width: ${width*0.35}px;
+    height: ${width*0.35}px;
     background-color: #EBEDEF;
     margin-right: 15px;
     border-radius: 20px;
@@ -20,8 +20,8 @@ const SC = {
     flex-direction: row;
   `,
   IconWrap: styled.View`
-    width: ${width*0.1};
-    height: ${width*0.1};
+    width: ${width*0.1}px;
+    height: ${width*0.1}px;
     background-color: #A9CCE3;
     align-items: center;
     justify-content: center;
@@ -59,8 +59,6 @@ const JjimEle = ({icon, category, name}: Props) => {
         <SC.CatTitle>{category}</SC.CatTitle>
         <SC.ShopName numberOfLines={1}>{name}</SC.ShopName>
       </SC.Bottom>
-
-
     </SC.JjimEleWrap>
 
 
