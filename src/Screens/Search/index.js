@@ -1,8 +1,8 @@
-import React from 'react';
-// import 'react-native-gesture-handler';
-import { StyleSheet, Text, View, TouchableOpacity, Platform, StatusBar, ScrollView, Dimensions, TextInput, SafeAreaView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Platform, StatusBar, ScrollView, Dimensions, TextInput, SafeAreaView, Alert } from 'react-native';
 import { AntDesign, Ionicons, Feather } from '@expo/vector-icons';
 import { RFPercentage } from "react-native-responsive-fontsize";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import styled from 'styled-components/native';
 import SearchEle from '../../Components/SearchEle/index';
 
@@ -48,35 +48,53 @@ const SC = {
   `,
 }
 
+const STORAGE_KEY = "@searchWords";
 
 const Search = ({ navigation }) => {
+  const [text, setText] = useState("");
+  const [searchWords, setSearchWords] = useState({});
 
-  const recentSearchWord = [
-    { word: "맛사랑", date: "09.08" },
-    { word: "찌개사랑", date: "09.07" },
-    { word: "스타벅스", date: "09.06" },
-    { word: "투썸플레이스", date: "09.05" },
-    { word: "가메이", date: "09.04" },
-    { word: "영종식당", date: "09.03" },
-    { word: "맛사랑", date: "09.08" },
-    { word: "찌개사랑", date: "09.07" },
-    { word: "스타벅스", date: "09.06" },
-    { word: "투썸플레이스", date: "09.05" },
-    { word: "가메이", date: "09.04" },
-    { word: "영종식당", date: "09.03" },
-    { word: "맛사랑", date: "09.08" },
-    { word: "찌개사랑", date: "09.07" },
-    { word: "스타벅스", date: "09.06" },
-    { word: "투썸플레이스", date: "09.05" },
-    { word: "가메이", date: "09.04" },
-    { word: "영종식당", date: "09.03" },
-    { word: "맛사랑", date: "09.08" },
-    { word: "찌개사랑", date: "09.07" },
-    { word: "스타벅스", date: "09.06" },
-    { word: "투썸플레이스", date: "09.05" },
-    { word: "가메이", date: "09.04" },
-    { word: "영종식당", date: "09.03" },
-  ];
+  useEffect(() => {
+    loadSearch();
+  }, []);
+
+  const onChangeText = (payload) => setText(payload);
+  const saveSearch = async (toSave) => {
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(toSave))
+  }
+  const loadSearch = async () => {
+    try {const s = await AsyncStorage.getItem(STORAGE_KEY);
+    setSearchWords(JSON.parse(s));
+    } catch (e) {
+      alert(e);
+    }
+  };
+  const addSearch = async () => {
+    if (text === "") return
+    const newSearch = {...searchWords, [Date.now()]: text};
+    setSearchWords(newSearch);
+    await saveSearch(newSearch);
+    setText("");
+  };
+  const deleteSearch = async (key) => {
+    const newSearch = {...searchWords};
+    delete newSearch[key];
+    setSearchWords(newSearch);
+    await saveSearch(newSearch);
+  };
+  const allDeleteSearch = () => {
+    Alert.alert("최근검색어를 모두 삭제하시겠습니까?", 
+    [
+      {text:"취소"},
+      {text:"확인", onPress: async () => {
+        setSearchWords({});
+        await saveSearch({});
+      }},
+    ],
+    {cancelable: true}
+    );
+    return;
+  }
 
   return (
     <SafeAreaView style={{
@@ -92,6 +110,11 @@ const Search = ({ navigation }) => {
             <AntDesign name="arrowleft" style={styles.topIcon} color="#797D7F" />
           </TouchableOpacity>
           <TextInput
+            multiline={false}
+            returnKeyType={"search"}
+            value={text}
+            onChangeText={onChangeText}
+            onSubmitEditing={addSearch}
             style={styles.searchInput}
             maxLength={10}
             placeholder="검색어를 입력하세요"
@@ -105,15 +128,14 @@ const Search = ({ navigation }) => {
           <SC.MiddleHeader>
             <SC.RecentSearch>최근 검색어</SC.RecentSearch>
             <TouchableOpacity>
-              <SC.AllDeleteBtn>전체삭제</SC.AllDeleteBtn>
+              <SC.AllDeleteBtn onPress={() => allDeleteSearch()}>전체삭제</SC.AllDeleteBtn>
             </TouchableOpacity>
           </SC.MiddleHeader>
 
           <ScrollView showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingVertical: 15 }}>
-            {recentSearchWord.map((item, index) => {
-              return <SearchEle key={index} text={item.word} date={item.date}></SearchEle>
-            }
-            )}
+            {Object.keys(searchWords).map((key) => {
+              return <SearchEle key={key} text={searchWords[key]} onPress={() => deleteSearch(key)}></SearchEle>
+            })}
           </ScrollView>
         </SC.Middle>
 
