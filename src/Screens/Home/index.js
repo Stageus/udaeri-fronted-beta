@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 // import 'react-native-gesture-handler';
-import { TouchableOpacity, ScrollView, SafeAreaView, StatusBar, Platform } from 'react-native';
+import { TouchableOpacity, ScrollView, SafeAreaView, StatusBar, Platform, Dimensions } from 'react-native';
 import { AntDesign, Ionicons, FontAwesome, Entypo, Fontisto } from '@expo/vector-icons';
 import { RFPercentage } from "react-native-responsive-fontsize";
 import styled, { css } from 'styled-components/native';
@@ -10,12 +10,12 @@ import JjimEle from '../../Components/JjimEle/index';
 import CatEle from '../../Components/CatEle';
 
 const StatusBarHeight = StatusBar.currentHeight;
+const { width, height } = Dimensions.get('window');
 
 const SC = {
   Container: styled.View`
     background-color: #fff;
     padding: 0 20px;
-    height: 100%;
 
     ${(Platform.OS === 'android') ?
       css`
@@ -23,7 +23,7 @@ const SC = {
       `: undefined}
   `,
   Top: styled.View`
-    height: 5%;
+    // height: ${height * 0.05}px;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
@@ -38,18 +38,19 @@ const SC = {
     color: #ff9933;
   `,
   Middle: styled.View`
-    height: 65%;
+    // height: ${height * 0.5}px;
     padding-top: 10px;
-    margin-bottom: 15px;
-    // background-color: yellow;
+    margin-bottom: 25px;
     justify-content: space-between;
   `,
   CategoryWrap: styled.View`
-    height: 85%;
+    // height: ${height * 0.2}px;
     justify-content: space-between;
+    margin-bottom: 10px;
   `,
   Bottom: styled.View`
-    height: 25%;
+    height: ${height * 0.25}px;
+    
   `,
   JjimWrapNoLogin: styled.View`
     background-color: #EBEDEF;
@@ -95,6 +96,7 @@ const Home = ({ navigation }) => {
     { category: "놀거리", icon: <Entypo name="game-controller" size={24} color="white" /> },
     { category: "편의시설/서비스", icon: <Ionicons name="fast-food" size={24} color="white" /> },
     { category: "상점", icon: <Fontisto name="shopping-basket" size={24} color="white" /> },
+    
   ]
 
   const myJjim = [
@@ -109,6 +111,7 @@ const Home = ({ navigation }) => {
   return (
     <SafeAreaView style={{
       backgroundColor: '#FFFFFF',
+      flex:1
     }}>
       <SC.Container>
         {/* Top */}
@@ -121,22 +124,15 @@ const Home = ({ navigation }) => {
           </TouchableOpacity>
         </SC.Top>
 
-        <ScrollView>
-          {/* Middle */}
+        <ScrollView showsHorizontalScrollIndicator={false}  >
           <SC.Middle>
-            {/* 대분류 카테고리 */}
             <SC.CategoryWrap>
               {categoryList.map((item, index) => {
                 return <CatEle name={item.category} icon={item.icon} page="MiddleCat" navi={navigation}></CatEle>
               })}
             </SC.CategoryWrap>
-
-            {/* 지도로 보기 버튼 */}
             <LongBarBtn text="지도로 보기"></LongBarBtn>
           </SC.Middle>
-
-
-          {/* 내가 찜한 가게 */}
           <SC.Bottom>
             <SC.MainTitle>내가 찜한 가게</SC.MainTitle>
             {isLoggedIn
