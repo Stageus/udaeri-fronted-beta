@@ -8,6 +8,7 @@ import LongBarBtn from '../../Components/LongBarBtn/index';
 import HomeLargeCatEle from '../../Components/HomeLargeCatEle';
 import JjimEle from '../../Components/JjimEle/index';
 import CatEle from '../../Components/CatEle';
+import axios from 'axios';
 
 const StatusBarHeight = StatusBar.currentHeight;
 const { width, height } = Dimensions.get('window');
@@ -73,7 +74,6 @@ const Home = ({ navigation }) => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(true);
 
-
   // const [data, setData] = useState();
   // let res;
   // useEffect(() => {
@@ -88,16 +88,31 @@ const Home = ({ navigation }) => {
   //       setData(res.data)
   //     })
   //   }, [data])
+  
+  const [categoryList, setCategoryList] = useState([]);
 
-  const categoryList = [
-    { category: "먹거리", icon: <Ionicons name="fast-food" size={24} color="white" /> },
-    { category: "카페", icon: <FontAwesome name="coffee" size={24} color="white" /> },
-    { category: "술집", icon: <Ionicons name="beer" size={24} color="white" /> },
-    { category: "놀거리", icon: <Entypo name="game-controller" size={24} color="white" /> },
-    { category: "편의시설/서비스", icon: <Ionicons name="fast-food" size={24} color="white" /> },
-    { category: "상점", icon: <Fontisto name="shopping-basket" size={24} color="white" /> },
-    
-  ]
+  const url = 'http://3.12.241.33:8000';
+  useEffect(() => {
+    axios.get(url+'/l-categories/')
+      .then((res) => {
+        console.log(res.data.list);
+        setCategoryList(res.data.list)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }, [])
+  
+  console.log(categoryList)
+
+  // const categoryList = [
+  //   { category: "먹거리", icon: <Ionicons name="fast-food" size={24} color="white" /> },
+  //   { category: "카페", icon: <FontAwesome name="coffee" size={24} color="white" /> },
+  //   { category: "술집", icon: <Ionicons name="beer" size={24} color="white" /> },
+  //   { category: "놀거리", icon: <Entypo name="game-controller" size={24} color="white" /> },
+  //   { category: "편의시설/서비스", icon: <Ionicons name="fast-food" size={24} color="white" /> },
+  //   { category: "상점", icon: <Fontisto name="shopping-basket" size={24} color="white" /> },
+  // ]
 
   const myJjim = [
     { category: "먹거리", name: "맛사랑", icon: <Ionicons name="fast-food" size={22} color="white" /> },
@@ -128,7 +143,7 @@ const Home = ({ navigation }) => {
           <SC.Middle>
             <SC.CategoryWrap>
               {categoryList.map((item, index) => {
-                return <CatEle name={item.category} icon={item.icon} page="MiddleCat" navi={navigation}></CatEle>
+                return <CatEle name={item.name} page="MiddleCat" navi={navigation}></CatEle>
               })}
             </SC.CategoryWrap>
             <LongBarBtn text="지도로 보기"></LongBarBtn>
