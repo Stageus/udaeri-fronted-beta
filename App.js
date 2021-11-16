@@ -29,7 +29,6 @@ const App = () => {
           backgroundColor: '#FFFFFF',
         }}
       >
-
         <Stack.Screen name="BottomNavigator" component={BottomNavigator} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Welcome" component={Welcome} />
