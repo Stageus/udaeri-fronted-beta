@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Text, View, TouchableOpacity, Platform, SafeAreaView } from 'react-native';
+import { Text, View, TouchableOpacity, Platform, SafeAreaView, StatusBar } from 'react-native';
 import { AntDesign, Ionicons, FontAwesome, Entypo, Fontisto, FontAwesome5 } from '@expo/vector-icons';
 import { RFPercentage } from "react-native-responsive-fontsize";
-import styled from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
 
+const StatusBarHeight = StatusBar.currentHeight;
 
 const SC = {
   Container: styled.View`
@@ -27,7 +28,7 @@ const SC = {
   HeaderYesLogin: styled.View`
     // padding: 0 20px;
     flex-direction: row;
-    padding-bottom: 15px;
+    padding-bottom: 15px; 
     align-Items: center;
     justify-content: space-between;
     border-bottom-width : 1px;
@@ -64,8 +65,8 @@ const MyPage = ({ navigation }) => {
 
   return (
     <SafeAreaView style={{
-        backgroundColor: '#FFFFFF',
-        flex: 1
+      backgroundColor: '#FFFFFF',
+      flex: 1
     }}>
       <SC.Container>
         {isLoggedIn
@@ -100,10 +101,10 @@ const MyPage = ({ navigation }) => {
           </SC.MyPageListEle>
           {isLoggedIn
             ? (<>
-                <SC.MyPageListEle>
-                  <SC.MyPageListText onPress={() => setIsLoggedIn(false)}>로그아웃</SC.MyPageListText>
-                </SC.MyPageListEle>
-                <SC.MyPageListEle><SC.MyPageListText>후원하기</SC.MyPageListText></SC.MyPageListEle>  
+              <SC.MyPageListEle>
+                <SC.MyPageListText onPress={() => setIsLoggedIn(false)}>로그아웃</SC.MyPageListText>
+              </SC.MyPageListEle>
+              <SC.MyPageListEle><SC.MyPageListText>후원하기</SC.MyPageListText></SC.MyPageListEle>
             </>)
             : (<></>)}
         </SC.MyPageList>

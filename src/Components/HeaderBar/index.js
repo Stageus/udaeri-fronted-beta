@@ -9,6 +9,8 @@ const SC = {
         flex-direction: row;
         justify-content: space-between;
         padding : 0 20px;
+        border-bottom-width : 1px;
+        border-color: #d3d3d3;
     `,
     storeName: styled.Text`
         font-family: Bold;
@@ -30,7 +32,7 @@ const HeaderBar = (props) => {
                     ? <Entypo name="magnifying-glass" size={24} color="gray" />
                     : props.right === "heart"
                         ? <Ionicons name="heart-circle-sharp" size={24} color="red" />
-                        : null
+                        : <View></View>
             }
         </SC.headerBar>
     )
