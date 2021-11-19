@@ -20,23 +20,54 @@ import Welcome from "./src/Screens/Welcome";
 const Stack = createStackNavigator();
 
 const App = () => {
-  return (
+  const [loaded, setLoaded] = useState(false);
+
+  const preLoad = async () => {
+    try {
+      await Font.loadAsync({
+        Bold: require("./assets/fonts/SpoqaHanSansNeo-Bold.otf"),
+        Light: require("./assets/fonts/SpoqaHanSansNeo-Light.otf"),
+        Medium: require("./assets/fonts/SpoqaHanSansNeo-Medium.otf"),
+        Regular: require("./assets/fonts/SpoqaHanSansNeo-Regular.otf"),
+        Thin: require("./assets/fonts/SpoqaHanSansNeo-Thin.otf"),
+      });
+      setTimeout(() => {
+        setLoaded(true);
+      }, 2000);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    preLoad();
+  }, []);
+
+  return loaded ? (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Home"
+        initialRouteName="Login"
         screenOptions={{
           headerShown: false,
           backgroundColor: "#FFFFFF",
         }}
       >
+        <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="BottomNavigator" component={BottomNavigator} />
         <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="EmailLogin" component={EmailLogin} />
+        <Stack.Screen name="SignUpID" component={SignUpID} />
+        <Stack.Screen name="SignUpPW" component={SignUpPW} />
+        <Stack.Screen name="SignUpNickname" component={SignUpNickname} />
+        <Stack.Screen name="SignUpPhone" component={SignUpPhone} />
         <Stack.Screen name="Welcome" component={Welcome} />
         <Stack.Screen name="MiddleCat" component={MiddleCat} />
         <Stack.Screen name="StoreList" component={StoreList} />
         <Stack.Screen name="StorePage" component={StorePage} />
       </Stack.Navigator>
     </NavigationContainer>
+  ) : (
+    <></>
   );
 };
 

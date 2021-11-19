@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Platform, StatusBar, ScrollVi
 import { AntDesign, Ionicons, Feather } from '@expo/vector-icons';
 import { RFPercentage } from "react-native-responsive-fontsize";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import styled from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
 import SearchEle from '../../Components/SearchEle/index';
 
 const StatusBarHeight = StatusBar.currentHeight;
@@ -11,14 +11,14 @@ const { width, height } = Dimensions.get('window');
 
 const SC = {
   Container: styled.View`
-  background-color: #fff;
-  padding: 0 20px;
-  // height: 100%;
+    background-color: #fff;
+    padding: 0 20px;
+    // height: 100%;
 
-  ${(Platform.OS === 'android') ?
-    css`
-    padding-top : ${StatusBarHeight + 15}px;
-    `: undefined}
+    ${(Platform.OS === 'android') ?
+      css`
+        padding-top : ${StatusBarHeight + 15}px;
+      `: undefined}
   `,
   Top: styled.View`
     height: ${height * 0.07}px;
@@ -63,35 +63,38 @@ const Search = ({ navigation }) => {
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(toSave))
   }
   const loadSearch = async () => {
-    try {const s = await AsyncStorage.getItem(STORAGE_KEY);
-    setSearchWords(JSON.parse(s));
+    try {
+      const s = await AsyncStorage.getItem(STORAGE_KEY);
+      setSearchWords(JSON.parse(s));
     } catch (e) {
       alert(e);
     }
   };
   const addSearch = async () => {
     if (text === "") return
-    const newSearch = {...searchWords, [Date.now()]: text};
+    const newSearch = { ...searchWords, [Date.now()]: text };
     setSearchWords(newSearch);
     await saveSearch(newSearch);
     setText("");
   };
   const deleteSearch = async (key) => {
-    const newSearch = {...searchWords};
+    const newSearch = { ...searchWords };
     delete newSearch[key];
     setSearchWords(newSearch);
     await saveSearch(newSearch);
   };
   const allDeleteSearch = () => {
-    Alert.alert("최근검색어를 모두 삭제하시겠습니까?", 
-    [
-      {text:"취소"},
-      {text:"확인", onPress: async () => {
-        setSearchWords({});
-        await saveSearch({});
-      }},
-    ],
-    {cancelable: true}
+    Alert.alert("최근검색어를 모두 삭제하시겠습니까?",
+      [
+        { text: "취소" },
+        {
+          text: "확인", onPress: async () => {
+            setSearchWords({});
+            await saveSearch({});
+          }
+        },
+      ],
+      { cancelable: true }
     );
     return;
   }

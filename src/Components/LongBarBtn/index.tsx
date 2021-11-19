@@ -9,8 +9,8 @@ const LongBtn = styled.TouchableOpacity`
   border-radius: 5px;
   align-items: center;
   justify-content: center;
-  height: ${height*0.05};
-  width: 100%;
+  width : ${width * 0.8}px;
+  height : 40px;
 `
 
 const BtnText = styled.Text`
@@ -21,13 +21,17 @@ const BtnText = styled.Text`
 
 interface Props {
   text: string;
+  navigation: any;
+  nextPage: string;
 }
 
-const LongBarBtn = ({text}:Props) => {
+const LongBarBtn = ({ text, nextPage, navigation }: Props) => {
 
   return (
     <LongBtn>
-      <BtnText>
+      <BtnText onPress={() => {
+        navigation.navigate(nextPage);
+      }}>
         {text}
       </BtnText>
     </LongBtn>
