@@ -7,6 +7,7 @@ import {
   StatusBar,
   Platform,
   Dimensions,
+  View,
 } from "react-native";
 import {
   AntDesign,
@@ -82,8 +83,6 @@ const SC = {
 };
 
 const Home = ({ navigation }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-
   // const [data, setData] = useState();
   // let res;
   // useEffect(() => {
@@ -205,32 +204,28 @@ const Home = ({ navigation }) => {
                 );
               })}
             </SC.CategoryWrap>
-            <LongBarBtn text="지도로 보기"></LongBarBtn>
+            <View style={{ alignItems: "center" }}>
+              <LongBarBtn text="지도로 보기"></LongBarBtn>
+            </View>
           </SC.Middle>
           <SC.Bottom>
             <SC.MainTitle>내가 찜한 가게</SC.MainTitle>
-            {isLoggedIn ? (
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ marginTop: 15, flexDirection: "row" }}
-              >
-                {myJjim.map((item, index) => {
-                  return (
-                    <JjimEle
-                      key={index}
-                      category={item.category}
-                      icon={item.icon}
-                      name={item.name}
-                    ></JjimEle>
-                  );
-                })}
-              </ScrollView>
-            ) : (
-              <SC.JjimWrapNoLogin>
-                <SC.JjimTextNoLogin>로그인을 해주세요 ^0^</SC.JjimTextNoLogin>
-              </SC.JjimWrapNoLogin>
-            )}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ marginTop: 15, flexDirection: "row" }}
+            >
+              {myJjim.map((item, index) => {
+                return (
+                  <JjimEle
+                    key={index}
+                    category={item.category}
+                    icon={item.icon}
+                    name={item.name}
+                  ></JjimEle>
+                );
+              })}
+            </ScrollView>
           </SC.Bottom>
         </ScrollView>
       </SC.Container>

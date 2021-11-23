@@ -11,12 +11,20 @@ Font.loadAsync({
   Thin: require("./assets/fonts/SpoqaHanSansNeo-Thin.otf"),
 });
 import BottomNavigator from "./src/Components/Navigation/BottomNavigator";
-// import Loading from "./src/Screens/Loading";
+import Loading from "./src/Screens/Loading";
+import Home from "./src/Screens/Home";
 import StorePage from "./src/Screens/StorePage";
 import StoreList from "./src/Screens/StoreList";
 import MiddleCat from "./src/Screens/MiddleCat";
 import Login from "./src/Screens/Login";
+import EmailLogin from "./src/Screens/EmailLogin";
+import SignUpID from "./src/Screens/SignUp/ID";
+import SignUpPW from "./src/Screens/SignUp/PW";
+import SignUpNickname from "./src/Screens/SignUp/Nickname";
+import SignUpPhone from "./src/Screens/SignUp/Phone";
 import Welcome from "./src/Screens/Welcome";
+import Search from "./src/Screens/Search";
+
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -52,8 +60,9 @@ const App = () => {
           backgroundColor: "#FFFFFF",
         }}
       >
-        <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="BottomNavigator" component={BottomNavigator} />
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Search" component={Search} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="EmailLogin" component={EmailLogin} />
         <Stack.Screen name="SignUpID" component={SignUpID} />
