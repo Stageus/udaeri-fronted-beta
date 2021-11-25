@@ -1,6 +1,7 @@
 import React from "react";
 import { Dimensions } from "react-native";
 import styled from "styled-components/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 const { width, height } = Dimensions.get("window");
 
@@ -19,22 +20,15 @@ const BtnText = styled.Text`
   font-weight: bold;
 `;
 
-interface Props {
-  text: string;
-  navigation: any;
-  nextPage: string;
-}
+// interface Props {
+//   text: string;
+//   page: string;
+// }
 
-const LongBarBtn = ({ text, nextPage, navigation }: Props) => {
+const LongBarBtn = (props) => {
   return (
-    <LongBtn>
-      <BtnText
-        onPress={() => {
-          navigation.navigate(nextPage);
-        }}
-      >
-        {text}
-      </BtnText>
+    <LongBtn onPress={() => props.navi.navigate(props.page)}>
+      <BtnText>{props.text}</BtnText>
     </LongBtn>
   );
 };

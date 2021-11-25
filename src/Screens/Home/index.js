@@ -197,6 +197,7 @@ const Home = ({ navigation }) => {
               {categoryList.map((item, index) => {
                 return (
                   <CatEle
+                    key={index}
                     name={item.name}
                     page="MiddleCat"
                     navi={navigation}
@@ -205,7 +206,11 @@ const Home = ({ navigation }) => {
               })}
             </SC.CategoryWrap>
             <View style={{ alignItems: "center" }}>
-              <LongBarBtn text="지도로 보기"></LongBarBtn>
+              <LongBarBtn
+                text="지도로 보기"
+                page="Map"
+                navi={navigation}
+              ></LongBarBtn>
             </View>
           </SC.Middle>
           <SC.Bottom>

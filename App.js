@@ -24,6 +24,7 @@ import SignUpNickname from "./src/Screens/SignUp/Nickname";
 import SignUpPhone from "./src/Screens/SignUp/Phone";
 import Welcome from "./src/Screens/Welcome";
 import Search from "./src/Screens/Search";
+import Map from "./src/Screens/Map";
 
 const Stack = createStackNavigator();
 
@@ -73,6 +74,7 @@ const App = () => {
         <Stack.Screen name="MiddleCat" component={MiddleCat} />
         <Stack.Screen name="StoreList" component={StoreList} />
         <Stack.Screen name="StorePage" component={StorePage} />
+        <Stack.Screen name="Map" component={Map} />
       </Stack.Navigator>
     </NavigationContainer>
   ) : (
