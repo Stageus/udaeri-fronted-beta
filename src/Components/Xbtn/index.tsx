@@ -12,7 +12,7 @@ interface Props {
 const SC = {
     container: styled.TouchableOpacity`
         position : absolute;
-        top : ${height * -0.32}px;
+        top : ${height * -0.35}px;
         left : -10px;
     `,
 }

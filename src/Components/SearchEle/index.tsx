@@ -31,11 +31,11 @@ const SearchDate = styled.Text`
 interface Props {
   text: string;
   date: string;
-  onPress: void;
+  onPress: () => void;
 }
 
 
-const SearchEle = ({text, date, onPress}: Props) => {
+const SearchEle = ({ text, date, onPress }: Props) => {
 
   return (
     <SearchEleWrap>

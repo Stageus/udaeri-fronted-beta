@@ -5,26 +5,26 @@ import styled from 'styled-components/native'
 interface Props {
     placeHolder: string;
     type: 'id' | 'pw';
+    value: string;
+    getValue: () => void;
 }
 
-const inputText = ({ placeHolder, type }: Props) => {
-
-    const [text, onChangeText] = React.useState<string>("");
+const inputText = ({ placeHolder, type, value, getValue }: Props) => {
 
     return (
         type == 'pw' ?
             <TextInput
                 style={styles.input}
-                onChangeText={onChangeText}
-                value={text}
+                onChangeText={getValue}
+                value={value}
                 placeholder={placeHolder}
                 placeholderTextColor={'#C0C0C0'}
                 secureTextEntry={true}
             /> :
             <TextInput
                 style={styles.input}
-                onChangeText={onChangeText}
-                value={text}
+                onChangeText={getValue}
+                value={value}
                 placeholder={placeHolder}
                 placeholderTextColor={'#C0C0C0'}
             />

@@ -11,6 +11,7 @@ Font.loadAsync({
   'Thin': require('./assets/fonts/SpoqaHanSansNeo-Thin.otf'),
 });
 import BottomNavigator from './src/Components/Navigation/BottomNavigator';
+import Search from './src/Screens/Search';
 import Loading from './src/Screens/Loading';
 import Home from './src/Screens/Home';
 import StorePage from './src/Screens/StorePage';
@@ -59,6 +60,8 @@ const App = () => {
         }}
       >
         <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Search" component={Search} />
+
         <Stack.Screen name="BottomNavigator" component={BottomNavigator} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="EmailLogin" component={EmailLogin} />

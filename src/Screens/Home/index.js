@@ -70,31 +70,20 @@ const SC = {
 
 
 
-const Home = ({ navigation }) => {
-
+const Home = ({ navigation, route }) => {
+  const token = route.params;
+  console.log(token);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
 
-  // const [data, setData] = useState();
-  // let res;
-  // useEffect(() => {
-  //   async function test() {
-  //     const res = await axios.get('http://3.12.241.33:8000/l-categories/먹거리/m-categories');
-  //     setData(res.data)
-  //   }
-  //   test()
-
-  //   axios.get('http://3.12.241.33:8000/l-categories/먹거리/m-categories')
-  //     .then((res)=> {
-  //       setData(res.data)
-  //     })
-  //   }, [data])
-  
   const [categoryList, setCategoryList] = useState([]);
+  const [jjim, setJJim] = useState([]);
 
   const url = 'http://3.12.241.33:8000';
+
   useEffect(() => {
-    axios.get(url+'/l-categories/')
+    axios.get(url + '/l-categories/')
       .then((res) => {
+        console.log(res);
         console.log(res.data.list);
         setCategoryList(res.data.list)
       })
@@ -102,7 +91,21 @@ const Home = ({ navigation }) => {
         console.log(err)
       })
   }, [])
-  
+
+  useEffect(() => {
+    axios.get(url + '/users/favorites', {
+      headers: {
+        authorization: token
+      }
+    })
+      .then(function (response) {
+        console.log(response)
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, [])
+
   console.log(categoryList)
 
   // const categoryList = [
@@ -126,7 +129,7 @@ const Home = ({ navigation }) => {
   return (
     <SafeAreaView style={{
       backgroundColor: '#FFFFFF',
-      flex:1
+      flex: 1
     }}>
       <SC.Container>
         {/* Top */}

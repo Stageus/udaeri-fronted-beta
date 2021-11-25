@@ -28,7 +28,6 @@ const SC = {
     nextBtn: styled.View`
         display: flex;
         align-items: center;
-        position : absolute;
         top : ${height * 0.8}px;
     `
 }
