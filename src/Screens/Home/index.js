@@ -82,7 +82,6 @@ const SC = {
   `,
 };
 
-<<<<<<< HEAD
 const Home = ({ navigation, route }) => {
   const token = route.params;
   console.log(token);
@@ -120,110 +119,67 @@ const Home = ({ navigation, route }) => {
   }, [])
 
   console.log(categoryList)
-=======
-const Home = ({ navigation }) => {
-  // const [data, setData] = useState();
-  // let res;
-  // useEffect(() => {
-  //   async function test() {
-  //     const res = await axios.get('http://3.12.241.33:8000/l-categories/먹거리/m-categories');
-  //     setData(res.data)
-  //   }
-  //   test()
 
-  //   axios.get('http://3.12.241.33:8000/l-categories/먹거리/m-categories')
-  //     .then((res)=> {
-  //       setData(res.data)
-  //     })
-  //   }, [data])
+  // const categoryList = [
+  //   {
+  //     name: "먹거리",
+  //     icon: <Ionicons name="fast-food" size={24} color="white" />,
+  //   },
+  //   {
+  //     name: "카페",
+  //     icon: <FontAwesome name="coffee" size={24} color="white" />,
+  //   },
+  //   {
+  //     name: "술집",
+  //     icon: <Ionicons name="beer" size={24} color="white" />,
+  //   },
+  //   {
+  //     name: "놀거리",
+  //     icon: <Entypo name="game-controller" size={24} color="white" />,
+  //   },
+  //   {
+  //     name: "편의시설/서비스",
+  //     icon: <Ionicons name="fast-food" size={24} color="white" />,
+  //   },
+  //   {
+  //     name: "상점",
+  //     icon: <Fontisto name="shopping-basket" size={24} color="white" />,
+  //   },
+  // ];
 
-  // const [categoryList, setCategoryList] = useState([]);
->>>>>>> c417c3bc0fb42def7e5f0a66e7a89298da52c038
-
-  // const url = "http://3.12.241.33:8000";
-  // useEffect(() => {
-  //   axios
-  //     .get(url + "/l-categories/")
-  //     .then((res) => {
-  //       console.log(res.data.list);
-  //       setCategoryList(res.data.list);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // }, []);
-
-  // console.log(categoryList);
-
-  const categoryList = [
-    {
-      name: "먹거리",
-      icon: <Ionicons name="fast-food" size={24} color="white" />,
-    },
-    {
-      name: "카페",
-      icon: <FontAwesome name="coffee" size={24} color="white" />,
-    },
-    {
-      name: "술집",
-      icon: <Ionicons name="beer" size={24} color="white" />,
-    },
-    {
-      name: "놀거리",
-      icon: <Entypo name="game-controller" size={24} color="white" />,
-    },
-    {
-      name: "편의시설/서비스",
-      icon: <Ionicons name="fast-food" size={24} color="white" />,
-    },
-    {
-      name: "상점",
-      icon: <Fontisto name="shopping-basket" size={24} color="white" />,
-    },
-  ];
-
-  const myJjim = [
-    {
-      category: "먹거리",
-      name: "맛사랑",
-      icon: <Ionicons name="fast-food" size={22} color="white" />,
-    },
-    {
-      category: "상점",
-      name: "다이소",
-      icon: <Fontisto name="shopping-basket" size={22} color="white" />,
-    },
-    {
-      category: "카페",
-      name: "스타벅스",
-      icon: <FontAwesome name="coffee" size={22} color="white" />,
-    },
-    {
-      category: "놀거리",
-      name: "코인노래방방방방",
-      icon: <Entypo name="game-controller" size={22} color="white" />,
-    },
-    {
-      category: "편의시설/서비스",
-      name: "미용미용실",
-      icon: <Entypo name="game-controller" size={22} color="white" />,
-    },
-  ];
+  // const myJjim = [
+  //   {
+  //     category: "먹거리",
+  //     name: "맛사랑",
+  //     icon: <Ionicons name="fast-food" size={22} color="white" />,
+  //   },
+  //   {
+  //     category: "상점",
+  //     name: "다이소",
+  //     icon: <Fontisto name="shopping-basket" size={22} color="white" />,
+  //   },
+  //   {
+  //     category: "카페",
+  //     name: "스타벅스",
+  //     icon: <FontAwesome name="coffee" size={22} color="white" />,
+  //   },
+  //   {
+  //     category: "놀거리",
+  //     name: "코인노래방방방방",
+  //     icon: <Entypo name="game-controller" size={22} color="white" />,
+  //   },
+  //   {
+  //     category: "편의시설/서비스",
+  //     name: "미용미용실",
+  //     icon: <Entypo name="game-controller" size={22} color="white" />,
+  //   },
+  // ];
 
   return (
-<<<<<<< HEAD
     <SafeAreaView style={{
       backgroundColor: '#FFFFFF',
       flex: 1
     }}>
-=======
-    <SafeAreaView
-      style={{
-        backgroundColor: "#FFFFFF",
-        flex: 1,
-      }}
-    >
->>>>>>> c417c3bc0fb42def7e5f0a66e7a89298da52c038
       <SC.Container>
         {/* Top */}
         <SC.Top>

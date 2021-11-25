@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState } from 'react';
 import { Dimensions, SafeAreaView, Alert, Keyboard } from 'react-native';
 import styled from 'styled-components/native';
@@ -8,15 +7,6 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import Xbtn from '../../Components/Xbtn';
 import InputText from '../../Components/InputText';
 
-=======
-import React from "react";
-import { Dimensions, SafeAreaView, TouchableOpacity } from "react-native";
-import styled from "styled-components/native";
-
-import Xbtn from "../../Components/Xbtn";
-import InputText from "../../Components/InputText";
-import LongBarBtn from "../../Components/LongBarBtn";
->>>>>>> c417c3bc0fb42def7e5f0a66e7a89298da52c038
 
 const { width, height } = Dimensions.get("window");
 
@@ -98,21 +88,11 @@ const EmailLogin = ({ navigation }) => {
       <SC.container>
         <SC.loginContainer>
           <Xbtn nextPage="Login" navigation={navigation}></Xbtn>
-<<<<<<< HEAD
           <InputText placeHolder='아이디 또는 이메일' type='id' value={IDValue} getValue={setIDValue}></InputText>
           <InputText placeHolder='비밀번호' type='pw' value={PWValue} getValue={setPWValue}></InputText>
           <SC.loginBtn onPress={() => {
             login()
           }}>
-=======
-          <InputText placeHolder="아이디 또는 이메일" type="id"></InputText>
-          <InputText placeHolder="비밀번호" type="pw"></InputText>
-          <SC.loginBtn
-            onPress={() => {
-              navigation.reset({ routes: [{ name: "Home" }] });
-            }}
-          >
->>>>>>> c417c3bc0fb42def7e5f0a66e7a89298da52c038
             <SC.loginBtnText>로그인</SC.loginBtnText>
           </SC.loginBtn>
         </SC.loginContainer>
