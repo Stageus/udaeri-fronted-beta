@@ -31,11 +31,11 @@ const SC = {
     margin-left: 7px;
   `,
   CatTitle: styled.Text`
-    font-size: 1.7px;
+    font-size: 14px;
     color: #797D7F;
   `,
   ShopName: styled.Text`
-    font-size: 2.2px;
+    font-size: 12px;
     font-weight: bold;
   `
 }
