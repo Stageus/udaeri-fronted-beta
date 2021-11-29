@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
-import { Dimensions, SafeAreaView, Alert, Keyboard } from 'react-native';
-import styled from 'styled-components/native';
-import axios from 'axios';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import React, { useState } from "react";
+import { Dimensions, SafeAreaView, Alert, Keyboard } from "react-native";
+import styled from "styled-components/native";
+import axios from "axios";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import Xbtn from '../../Components/Xbtn';
-import InputText from '../../Components/InputText';
+import Xbtn from "../../Components/Xbtn";
+import InputText from "../../Components/InputText";
 
+import { useSelector, useDispatch } from "react-redux";
+import { restoreToken } from "../../../reducer/index";
 
 const { width, height } = Dimensions.get("window");
 
@@ -56,43 +59,55 @@ const SC = {
   `,
 };
 const EmailLogin = ({ navigation }) => {
-
   const [IDValue, setIDValue] = useState("");
   const [PWValue, setPWValue] = useState("");
+  const TOKEN_KEY = "@userKey";
+  const dispatch = useDispatch();
+
+  const saveToken = async (token) => {
+    await AsyncStorage.setItem(TOKEN_KEY, JSON.stringify(token));
+  };
 
   const login = () => {
-    axios.post('http://3.12.241.33:8000/auth/login', {
-      id: IDValue,
-      password: PWValue,
-    })
+    axios
+      .post("http://18.216.199.39:8000/auth/login", {
+        id: IDValue,
+        password: PWValue,
+      })
       .then(function (response) {
-        console.log(response)
-        response.data.success ?
-          navigation.reset({ routes: [{ name: 'Home', params: response.data.token }] })
-          :
-          Alert.alert(
-            "아이디 또는 비밀번호가 틀립니다!",
-            "다시 입력해주세요.",
-            [
-              { text: "OK", onPress: () => console.log("OK Pressed") }
-            ]
-          );
+        response.data.success
+          ? (saveToken(response.data.token),
+            dispatch(restoreToken(response.data.token)),
+            console.log("로그인성공"))
+          : Alert.alert(
+              "아이디 또는 비밀번호가 틀립니다!",
+              "다시 입력해주세요.",
+              [{ text: "OK", onPress: () => console.log("OK Pressed") }]
+            );
       })
       .catch(function (error) {
         console.log(error);
       });
-  }
+  };
 
   return (
     <SafeAreaView style={{ backgroundColor: "#ffffff" }}>
       <SC.container>
         <SC.loginContainer>
           <Xbtn nextPage="Login" navigation={navigation}></Xbtn>
-          <InputText placeHolder='아이디 또는 이메일' type='id' value={IDValue} getValue={setIDValue}></InputText>
-          <InputText placeHolder='비밀번호' type='pw' value={PWValue} getValue={setPWValue}></InputText>
-          <SC.loginBtn onPress={() => {
-            login()
-          }}>
+          <InputText
+            placeHolder="아이디 또는 이메일"
+            type="id"
+            value={IDValue}
+            getValue={setIDValue}
+          ></InputText>
+          <InputText
+            placeHolder="비밀번호"
+            type="pw"
+            value={PWValue}
+            getValue={setPWValue}
+          ></InputText>
+          <SC.loginBtn onPress={() => login()}>
             <SC.loginBtnText>로그인</SC.loginBtnText>
           </SC.loginBtn>
         </SC.loginContainer>
@@ -110,7 +125,6 @@ const EmailLogin = ({ navigation }) => {
           </SC.signupText>
         </SC.bottomContainer>
       </SC.container>
-
     </SafeAreaView>
   );
 };

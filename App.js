@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import { store } from "./store/index";
+import { Provider } from "react-redux";
+
+import { useSelector, useDispatch } from "react-redux";
+
+import { restoreToken } from "./reducer/index";
 
 import * as Font from "expo-font";
 Font.loadAsync({
@@ -10,22 +16,6 @@ Font.loadAsync({
   Regular: require("./assets/fonts/SpoqaHanSansNeo-Regular.otf"),
   Thin: require("./assets/fonts/SpoqaHanSansNeo-Thin.otf"),
 });
-<<<<<<< HEAD
-import BottomNavigator from './src/Components/Navigation/BottomNavigator';
-import Search from './src/Screens/Search';
-import Loading from './src/Screens/Loading';
-import Home from './src/Screens/Home';
-import StorePage from './src/Screens/StorePage';
-import StoreList from './src/Screens/StoreList';
-import MiddleCat from './src/Screens/MiddleCat';
-import Login from './src/Screens/Login';
-import EmailLogin from './src/Screens/EmailLogin';
-import SignUpID from './src/Screens/SignUp/ID';
-import SignUpPW from './src/Screens/SignUp/PW';
-import SignUpNickname from './src/Screens/SignUp/Nickname';
-import SignUpPhone from './src/Screens/SignUp/Phone';
-import Welcome from './src/Screens/Welcome';
-=======
 import BottomNavigator from "./src/Components/Navigation/BottomNavigator";
 import Loading from "./src/Screens/Loading";
 import Home from "./src/Screens/Home";
@@ -41,12 +31,16 @@ import SignUpPhone from "./src/Screens/SignUp/Phone";
 import Welcome from "./src/Screens/Welcome";
 import Search from "./src/Screens/Search";
 import Map from "./src/Screens/Map";
+import MyPage from "./src/Screens/MyPage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
->>>>>>> c417c3bc0fb42def7e5f0a66e7a89298da52c038
 const Stack = createStackNavigator();
 
 const App = () => {
   const [loaded, setLoaded] = useState(false);
+
+  const TOKEN_KEY = "@userKey";
+  const dispatch = useDispatch();
 
   const preLoad = async () => {
     try {
@@ -65,44 +59,55 @@ const App = () => {
     }
   };
 
+  const bootstrapAsync = async () => {
+    let userToken;
+    try {
+      userToken = await AsyncStorage.getItem(TOKEN_KEY);
+    } catch (e) {
+      console.log("토큰을 가져오지 못했어유");
+    }
+    dispatch(restoreToken(userToken));
+  };
+
   useEffect(() => {
     preLoad();
+    bootstrapAsync();
   }, []);
 
-  return loaded ? (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Login"
-        screenOptions={{
-          headerShown: false,
-          backgroundColor: "#FFFFFF",
-        }}
-      >
-<<<<<<< HEAD
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Search" component={Search} />
+  const tokentoken = useSelector((state) => state.userToken);
 
-=======
->>>>>>> c417c3bc0fb42def7e5f0a66e7a89298da52c038
-        <Stack.Screen name="BottomNavigator" component={BottomNavigator} />
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Search" component={Search} />
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="EmailLogin" component={EmailLogin} />
-        <Stack.Screen name="SignUpID" component={SignUpID} />
-        <Stack.Screen name="SignUpPW" component={SignUpPW} />
-        <Stack.Screen name="SignUpNickname" component={SignUpNickname} />
-        <Stack.Screen name="SignUpPhone" component={SignUpPhone} />
-        <Stack.Screen name="Welcome" component={Welcome} />
-        <Stack.Screen name="MiddleCat" component={MiddleCat} />
-        <Stack.Screen name="StoreList" component={StoreList} />
-        <Stack.Screen name="StorePage" component={StorePage} />
-        <Stack.Screen name="Map" component={Map} />
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {!loaded ? (
+          <Stack.Screen name="Loading" component={Loading} />
+        ) : tokentoken == null ? (
+          <>
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="EmailLogin" component={EmailLogin} />
+          </>
+        ) : (
+          <>
+            <Stack.Screen name="BottomNavigator" component={BottomNavigator} />
+            <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="Search" component={Search} />
+            <Stack.Screen name="MiddleCat" component={MiddleCat} />
+            <Stack.Screen name="StoreList" component={StoreList} />
+            <Stack.Screen name="StorePage" component={StorePage} />
+            <Stack.Screen name="Map" component={Map} />
+            <Stack.Screen name="MyPage" component={MyPage} />
+          </>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
-  ) : (
-    <></>
   );
 };
 
-export default App;
+const AppWrapper = () => {
+  return (
+    <Provider store={store}>
+      <App />
+    </Provider>
+  );
+};
+export default AppWrapper;
