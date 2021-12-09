@@ -18,11 +18,13 @@ import {
 } from "@expo/vector-icons";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import styled, { css } from "styled-components/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import LongBarBtn from "../../Components/LongBarBtn/index";
 import HomeLargeCatEle from "../../Components/HomeLargeCatEle";
 import JjimEle from "../../Components/JjimEle/index";
 import CatEle from "../../Components/CatEle";
 import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
 
 const StatusBarHeight = StatusBar.currentHeight;
 const { width, height } = Dimensions.get("window");
@@ -90,35 +92,37 @@ const Home = ({ navigation, route }) => {
   const [categoryList, setCategoryList] = useState([]);
   const [jjim, setJJim] = useState([]);
 
-  const url = 'http://3.12.241.33:8000';
+  const url = "http://18.216.199.39:8000";
+
+  const tokentoken = useSelector((state) => state.userToken);
 
   useEffect(() => {
-    axios.get(url + '/l-categories/')
+    axios
+      .get(url + "/l-categories/")
       .then((res) => {
-        console.log(res);
-        console.log(res.data.list);
-        setCategoryList(res.data.list)
+        console.log("카테고리 받아쑴");
+        setCategoryList(res.data.list);
       })
       .catch((err) => {
-        console.log(err)
-      })
-  }, [])
+        console.log("카테고리 못받아쑴");
+        console.log(err);
+      });
 
-  useEffect(() => {
-    axios.get(url + '/users/favorites', {
-      headers: {
-        authorization: token
-      }
-    })
-      .then(function (response) {
-        console.log(response)
+    axios
+      .get(url + "/users/favorites", {
+        headers: {
+          authorization: token,
+        },
+      })
+      .then(function (res) {
+        console.log(res.data.list);
       })
       .catch(function (error) {
         console.log(error);
       });
-  }, [])
+  }, []);
 
-  console.log(categoryList)
+  //console.log(categoryList);
 
   // const categoryList = [
   //   {
@@ -147,39 +151,41 @@ const Home = ({ navigation, route }) => {
   //   },
   // ];
 
-  // const myJjim = [
-  //   {
-  //     category: "먹거리",
-  //     name: "맛사랑",
-  //     icon: <Ionicons name="fast-food" size={22} color="white" />,
-  //   },
-  //   {
-  //     category: "상점",
-  //     name: "다이소",
-  //     icon: <Fontisto name="shopping-basket" size={22} color="white" />,
-  //   },
-  //   {
-  //     category: "카페",
-  //     name: "스타벅스",
-  //     icon: <FontAwesome name="coffee" size={22} color="white" />,
-  //   },
-  //   {
-  //     category: "놀거리",
-  //     name: "코인노래방방방방",
-  //     icon: <Entypo name="game-controller" size={22} color="white" />,
-  //   },
-  //   {
-  //     category: "편의시설/서비스",
-  //     name: "미용미용실",
-  //     icon: <Entypo name="game-controller" size={22} color="white" />,
-  //   },
-  // ];
+  const myJjim = [
+    {
+      category: "먹거리",
+      name: "맛사랑",
+      icon: <Ionicons name="fast-food" size={22} color="white" />,
+    },
+    {
+      category: "상점",
+      name: "다이소",
+      icon: <Fontisto name="shopping-basket" size={22} color="white" />,
+    },
+    {
+      category: "카페",
+      name: "스타벅스",
+      icon: <FontAwesome name="coffee" size={22} color="white" />,
+    },
+    {
+      category: "놀거리",
+      name: "코인노래방방방방",
+      icon: <Entypo name="game-controller" size={22} color="white" />,
+    },
+    {
+      category: "편의시설/서비스",
+      name: "미용미용실",
+      icon: <Entypo name="game-controller" size={22} color="white" />,
+    },
+  ];
 
   return (
-    <SafeAreaView style={{
-      backgroundColor: '#FFFFFF',
-      flex: 1
-    }}>
+    <SafeAreaView
+      style={{
+        backgroundColor: "#FFFFFF",
+        flex: 1,
+      }}
+    >
       <SC.Container>
         {/* Top */}
         <SC.Top>

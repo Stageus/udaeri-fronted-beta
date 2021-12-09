@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TouchableOpacity,
   ScrollView,
@@ -10,8 +10,11 @@ import {
   View,
 } from "react-native";
 import styled, { css } from "styled-components/native";
-import HeaderBar from "../../Components/HeaderBar";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+
+import HeaderBar from "../../Components/HeaderBar";
+import MiddleCatBtn from "./MiddleCatBtn/index";
+import MiddleCatBtnWrap from "./MiddleCatBtnWrap/index";
 
 const StatusBarHeight = StatusBar.currentHeight;
 const SC = {
@@ -25,12 +28,12 @@ const SC = {
       : undefined}
   `,
   Category: styled.View`
-    width: 50px;
     height: 25px;
     background-color: yellow;
     align-items: center;
     justify-content: space-between;
     margin-right: 15px;
+    padding: 4px 10px;
   `,
   LargeCatWrap: styled.View`
     flex-direction: row;
@@ -39,6 +42,9 @@ const SC = {
 };
 
 const Map = ({ navigation, route }) => {
+  const [clickedCat, setClickedCat] = useState("");
+  useEffect(() => {}, [clickedCat]);
+
   const [initialRegion, setInitialRegion] = useState({
     latitude: 37.4513546060566,
     longitude: 126.65759221275367,
@@ -74,7 +80,25 @@ const Map = ({ navigation, route }) => {
       },
     ],
   });
-  console.log(markers.food);
+
+  const middleCatFood = [
+    { title: "한식" },
+    { title: "중식" },
+    { title: "일식" },
+    { title: "양식" },
+    { title: "분식" },
+    { title: "아시안" },
+    { title: "치킨/피자" },
+    { title: "패스트푸드" },
+    { title: "기타" },
+  ];
+
+  const middleCatCafe = [
+    { title: "커피" },
+    { title: "베이커리" },
+    { title: "스터디카페" },
+    { title: "기타" },
+  ];
 
   return (
     <SafeAreaView
@@ -87,16 +111,24 @@ const Map = ({ navigation, route }) => {
         <SC.LargeCatWrap>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <SC.Category>
-              <Text>먹거리</Text>
+              <Text onPress={() => setClickedCat("먹거리")}>먹거리</Text>
             </SC.Category>
             <SC.Category>
-              <Text>카페</Text>
+              <Text onPress={() => setClickedCat("카페")}>카페</Text>
             </SC.Category>
             <SC.Category>
-              <Text>술집</Text>
+              <Text onPress={() => setClickedCat("술집")}>술집</Text>
             </SC.Category>
           </ScrollView>
         </SC.LargeCatWrap>
+        <View>
+          {
+            {
+              먹거리: <MiddleCatBtnWrap cat={middleCatFood}></MiddleCatBtnWrap>,
+              카페: <MiddleCatBtnWrap cat={middleCatCafe}></MiddleCatBtnWrap>,
+            }[clickedCat]
+          }
+        </View>
 
         <MapView
           initialRegion={initialRegion}
