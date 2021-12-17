@@ -70,7 +70,7 @@ const EmailLogin = ({ navigation }) => {
 
   const login = () => {
     axios
-      .post("http://18.216.199.39:8000/auth/login", {
+      .post("http://3.35.67.117:8000/auth/login", {
         id: IDValue,
         password: PWValue,
       })
