@@ -84,21 +84,18 @@ const SC = {
   `,
 };
 
-const Home = ({ navigation, route }) => {
-  const token = route.params;
-  console.log(token);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+const Home = ({ navigation }) => {
 
   const [categoryList, setCategoryList] = useState([]);
   const [jjim, setJJim] = useState([]);
 
-  const url = "http://18.216.199.39:8000";
-
+  const url = useSelector((state) => state.url);
+  axios.defaults.baseURL = url;
   const tokentoken = useSelector((state) => state.userToken);
 
   useEffect(() => {
     axios
-      .get(url + "/l-categories/")
+      .get("/l-categories/")
       .then((res) => {
         console.log("카테고리 받아쑴");
         setCategoryList(res.data.list);
@@ -109,9 +106,9 @@ const Home = ({ navigation, route }) => {
       });
 
     axios
-      .get(url + "/users/favorites", {
+      .get("/users/favorites", {
         headers: {
-          authorization: token,
+          authorization: tokentoken,
         },
       })
       .then(function (res) {
@@ -121,35 +118,6 @@ const Home = ({ navigation, route }) => {
         console.log(error);
       });
   }, []);
-
-  //console.log(categoryList);
-
-  // const categoryList = [
-  //   {
-  //     name: "먹거리",
-  //     icon: <Ionicons name="fast-food" size={24} color="white" />,
-  //   },
-  //   {
-  //     name: "카페",
-  //     icon: <FontAwesome name="coffee" size={24} color="white" />,
-  //   },
-  //   {
-  //     name: "술집",
-  //     icon: <Ionicons name="beer" size={24} color="white" />,
-  //   },
-  //   {
-  //     name: "놀거리",
-  //     icon: <Entypo name="game-controller" size={24} color="white" />,
-  //   },
-  //   {
-  //     name: "편의시설/서비스",
-  //     icon: <Ionicons name="fast-food" size={24} color="white" />,
-  //   },
-  //   {
-  //     name: "상점",
-  //     icon: <Fontisto name="shopping-basket" size={24} color="white" />,
-  //   },
-  // ];
 
   const myJjim = [
     {

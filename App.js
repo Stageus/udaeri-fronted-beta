@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { store } from "./store/index";
-import { Provider } from "react-redux";
+import { Provider, useSelector, useDispatch } from "react-redux";
 
-import { useSelector, useDispatch } from "react-redux";
-
+import { StatusBar, Platform, View } from 'react-native';
 import { restoreToken } from "./reducer/index";
 
 import * as Font from "expo-font";
+
 Font.loadAsync({
   Bold: require("./assets/fonts/SpoqaHanSansNeo-Bold.otf"),
   Light: require("./assets/fonts/SpoqaHanSansNeo-Light.otf"),
@@ -16,6 +16,7 @@ Font.loadAsync({
   Regular: require("./assets/fonts/SpoqaHanSansNeo-Regular.otf"),
   Thin: require("./assets/fonts/SpoqaHanSansNeo-Thin.otf"),
 });
+
 import BottomNavigator from "./src/Components/Navigation/BottomNavigator";
 import Loading from "./src/Screens/Loading";
 import Home from "./src/Screens/Home";
@@ -85,6 +86,8 @@ const App = () => {
           <>
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="EmailLogin" component={EmailLogin} />
+            <Stack.Screen name="SignUpID" component={SignUpID} />
+            <Stack.Screen name="SignUpPW" component={SignUpPW} />
           </>
         ) : (
           <>

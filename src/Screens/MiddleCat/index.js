@@ -1,13 +1,19 @@
-import React from "react";
-import { SafeAreaView, ScrollView } from 'react-native';
-import styled from 'styled-components/native';
+import React, { useState, useEffect } from "react";
+import { SafeAreaView, ScrollView, Platform, StatusBar } from 'react-native';
+import styled, { css } from 'styled-components/native';
 import HeaderBar from '../../Components/HeaderBar';
 import CatEle from '../../Components/CatEle';
-
+import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
 
 const SC = {
     Container: styled.View`
         background-color: #ffffff;
+        ${Platform.OS === "android"
+            ? css`
+          padding-top: ${StatusBar.currentHeight}px;
+        `
+            : undefined}
     `,
     mainContainer: styled.View`
         height : 100%;
@@ -16,16 +22,25 @@ const SC = {
 }
 
 const MiddleCat = ({ navigation, route }) => {
-    const middleCatList = [
-        { category: "한식" },
-        { category: "분식" },
-        { category: "양식" },
-        { category: "일식" },
-        { category: "중식" },
-        { category: "피자" },
-        { category: "치킨" },
-        { category: "찜/탕" },
-    ]
+
+    const [midCatList, setMidCatList] = useState([]);
+    const url = useSelector((state) => state.url);
+    axios.defaults.baseURL = url;
+
+    const curCat = useSelector((state) => state.curCat);
+
+    useEffect(() => {
+        axios
+            .get("/l-categories/" + curCat + "/m-categories/")
+            .then((res) => {
+                console.log("OK");
+                setMidCatList(res.data.list);
+            })
+            .catch((err) => {
+                console.log("카테고리 못받아쑴");
+                console.log(err);
+            });
+    }, []);
 
     return (
         <SafeAreaView>
@@ -34,8 +49,8 @@ const MiddleCat = ({ navigation, route }) => {
 
                 <SC.mainContainer>
                     <ScrollView>
-                        {middleCatList.map((item) => (
-                            <CatEle name={item.category} icon={<></>} page="StoreList" navi={navigation} />
+                        {midCatList.map((item) => (
+                            <CatEle name={item.name} icon={<></>} page="StoreList" navi={navigation} />
                         ))}
                     </ScrollView>
                 </SC.mainContainer>

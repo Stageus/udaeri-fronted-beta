@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { Dimensions, SafeAreaView, } from 'react-native';
 import styled from 'styled-components/native';
 import SNSLoginBar from '../../Components/SNSLoginBtn/index';
@@ -75,7 +75,6 @@ const Login = ({ navigation }: any) => {
                     </SC.barContainer>
                     <SNSLoginBar id={"nothing"} navigation={navigation} />
                 </SC.loginContainer>
-
             </SC.container>
         </SafeAreaView>
     )

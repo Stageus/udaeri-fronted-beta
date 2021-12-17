@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components/native';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useSelector, useDispatch } from "react-redux";
+import { restoreCurCat } from '../../../reducer/index';
 
 const SC = {
     Container: styled.TouchableOpacity`
@@ -38,10 +40,14 @@ const SC = {
         color : black;
     `,
 }
+
+
 const CatEle = (props) => {
+    const dispatch = useDispatch();
     return (
         <SC.Container onPress={() => {
             props.navi.navigate(props.page, { key: props.name });
+            dispatch(restoreCurCat(props.name))
         }}>
             <SC.left>
                 <SC.thumbnail>{props.icon}</SC.thumbnail>

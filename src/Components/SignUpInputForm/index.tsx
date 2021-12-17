@@ -20,32 +20,33 @@ const SC = {
 interface Props {
     placeHolder: string;
     type: 'text' | 'pw' | 'phone';
+    value: string;
+    getValue: () => void;
 }
 
-const SignUpInputForm = ({ placeHolder, type }: Props) => {
-    const [text, onChangeText] = React.useState<string>("");
+const SignUpInputForm = ({ placeHolder, type, value, getValue }: Props) => {
 
     return (
         <SC.container>
             {
                 type === 'pw' ?
                     <SC.formInput
-                        onChangeText={onChangeText}
-                        value={text}
+                        onChangeText={getValue}
+                        value={value}
                         placeholder={placeHolder}
                         placeholderTextColor={'#c0c0c0'}
                         secureTextEntry={true}
                     /> : type === 'phone' ?
                         <SC.formInput
-                            onChangeText={onChangeText}
-                            value={text}
+                            onChangeText={getValue}
+                            value={value}
                             placeholder={placeHolder}
                             keyboardType={'phone-pad'}
                             placeholderTextColor={'#c0c0c0'}
                         /> :
                         <SC.formInput
-                            onChangeText={onChangeText}
-                            value={text}
+                            onChangeText={getValue}
+                            value={value}
                             placeholder={placeHolder}
                             placeholderTextColor={'#c0c0c0'}
                         />

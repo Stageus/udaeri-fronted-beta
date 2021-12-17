@@ -1,12 +1,12 @@
 import React from "react";
 import { Dimensions } from "react-native";
-import styled from "styled-components/native";
+import styled, { css } from "styled-components/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 const { width, height } = Dimensions.get("window");
 
 const LongBtn = styled.TouchableOpacity`
-  background-color: #ff9933;
+  background-color:#ff9933;
   border-radius: 5px;
   align-items: center;
   justify-content: center;
@@ -22,12 +22,14 @@ const BtnText = styled.Text`
 
 // interface Props {
 //   text: string;
-//   page: string;
+//   nextPage: string;
+//   active: boolean;
+//   navigation: any
 // }
-
 const LongBarBtn = (props) => {
+  console.log(props.active);
   return (
-    <LongBtn onPress={() => props.navi.navigate(props.page)}>
+    <LongBtn active={props.active} onPress={() => props.navigation.navigate(props.nextPage)}>
       <BtnText>{props.text}</BtnText>
     </LongBtn>
   );

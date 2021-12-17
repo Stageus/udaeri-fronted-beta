@@ -61,29 +61,34 @@ const SC = {
 const EmailLogin = ({ navigation }) => {
   const [IDValue, setIDValue] = useState("");
   const [PWValue, setPWValue] = useState("");
+
   const TOKEN_KEY = "@userKey";
   const dispatch = useDispatch();
+
+  const url = useSelector((state) => state.url);
+  axios.defaults.baseURL = url;
 
   const saveToken = async (token) => {
     await AsyncStorage.setItem(TOKEN_KEY, JSON.stringify(token));
   };
 
-  const login = () => {
-    axios
-      .post("http://18.216.199.39:8000/auth/login", {
-        id: IDValue,
-        password: PWValue,
-      })
+  const onLogin = () => {
+
+    axios.post("/auth/login", {
+      id: IDValue,
+      password: PWValue,
+    })
       .then(function (response) {
+        console.log(response)
         response.data.success
           ? (saveToken(response.data.token),
             dispatch(restoreToken(response.data.token)),
             console.log("로그인성공"))
           : Alert.alert(
-              "아이디 또는 비밀번호가 틀립니다!",
-              "다시 입력해주세요.",
-              [{ text: "OK", onPress: () => console.log("OK Pressed") }]
-            );
+            "아이디 또는 비밀번호가 틀립니다!",
+            "다시 입력해주세요.",
+            [{ text: "OK", onPress: () => console.log("OK Pressed") }]
+          );
       })
       .catch(function (error) {
         console.log(error);
@@ -107,7 +112,7 @@ const EmailLogin = ({ navigation }) => {
             value={PWValue}
             getValue={setPWValue}
           ></InputText>
-          <SC.loginBtn onPress={() => login()}>
+          <SC.loginBtn onPress={onLogin}>
             <SC.loginBtnText>로그인</SC.loginBtnText>
           </SC.loginBtn>
         </SC.loginContainer>

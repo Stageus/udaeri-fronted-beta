@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, StatusBar, ScrollView, Dimensions, TouchableOpacity, SafeAreaView } from 'react-native';
-import styled from 'styled-components/native';
+import { SafeAreaView, StatusBar, Platform, } from 'react-native';
+import styled, { css } from 'styled-components/native';
 
 import HeaderBar from '../../Components/HeaderBar';
 import HorizontalBar from '../../Components/HorizontalBar';
@@ -10,6 +10,11 @@ import StoreListNavi from '../../Components/Navigation/StoreListNavi';
 const SC = {
     Container: styled.View`
         background-Color: #fff;
+        ${Platform.OS === "android"
+            ? css`
+          padding-top: ${StatusBar.currentHeight}px;
+        `
+            : undefined}
     `,
     storeContainer: styled.View`
         height: 100%;
