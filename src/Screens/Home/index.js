@@ -22,10 +22,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import LongBarBtn from "../../Components/LongBarBtn/index";
 import HomeLargeCatEle from "../../Components/HomeLargeCatEle";
 import JjimEle from "../../Components/JjimEle/index";
-import CatEle from "../../Components/CatEle";
+import LargeCatEle from "../../Components/LargeCatEle";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { restoreLargeCatList } from "../../../reducer/index";
+import { restoreMidCatList } from "../../../reducer/index";
 
 const StatusBarHeight = StatusBar.currentHeight;
 const { width, height } = Dimensions.get("window");
@@ -98,12 +99,23 @@ const Home = ({ navigation }) => {
     axios
       .get("/l-categories/")
       .then((res) => {
-        console.log("대분류 카테고리 받음");
+        console.log("대분류 리스트 받음");
         setCategoryList(res.data.list);
         dispatch(restoreLargeCatList(res.data.list));
       })
       .catch((err) => {
         console.log("대분류 카테고리 못 받음");
+        console.log(err);
+      });
+
+    axios
+      .get("/l-categories/all/m-categories/")
+      .then((res) => {
+        console.log("대분류 - 중분류 리스트 받음");
+        console.log(res.data)
+        dispatch(restoreMidCatList(res.data));
+      }).catch((err) => {
+        console.log("중분류카테고리 못 받음");
         console.log(err);
       });
 
@@ -120,11 +132,11 @@ const Home = ({ navigation }) => {
         console.log(error);
       });
   }, []);
-
+  console.log("중분류 : ", useSelector((state) => state.midCatList));
   const myJjim = [
     {
       category: "먹거리",
-      name: "맛사랑",
+      name: "맛사랑2",
       icon: <Ionicons name="fast-food" size={22} color="white" />,
     },
     {
@@ -173,14 +185,14 @@ const Home = ({ navigation }) => {
         <ScrollView showsHorizontalScrollIndicator={false}>
           <SC.Middle>
             <SC.CategoryWrap>
-              {categoryList.map((item, index) => {
+              {categoryList && categoryList.map((item, index) => {
                 return (
-                  <CatEle
+                  <LargeCatEle
                     key={index}
                     name={item.name}
                     page="MiddleCat"
                     navi={navigation}
-                  ></CatEle>
+                  ></LargeCatEle>
                 );
               })}
             </SC.CategoryWrap>

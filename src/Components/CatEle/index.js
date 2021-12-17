@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useSelector, useDispatch } from "react-redux";
-import { restoreCurCat } from '../../../reducer/index';
+import { restoreCurLargeCat } from '../../../reducer/index';
 
 const SC = {
     Container: styled.TouchableOpacity`
@@ -47,7 +47,7 @@ const CatEle = (props) => {
     return (
         <SC.Container onPress={() => {
             props.navi.navigate(props.page, { key: props.name });
-            dispatch(restoreCurCat(props.name))
+            dispatch(restoreCurLargeCat(props.name))
         }}>
             <SC.left>
                 <SC.thumbnail>{props.icon}</SC.thumbnail>

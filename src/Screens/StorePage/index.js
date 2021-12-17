@@ -18,7 +18,10 @@ const SC = {
 
 const StorePage = ({ navigation, route }) => {
     return (
-        <SafeAreaView>
+        <SafeAreaView style={{
+            backgroundColor: "#FFFFFF",
+            flex: 1,
+        }}>
             <SC.Container>
                 {/* 헤더 */}
                 <HeaderBar left="arrow" title={route.params.key} right="heart" navigation={navigation} />
