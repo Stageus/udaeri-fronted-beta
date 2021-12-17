@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TouchableOpacity,
   ScrollView,
@@ -10,6 +10,8 @@ import {
   View,
 } from "react-native";
 import styled, { css } from "styled-components/native";
+import { useSelector, useDispatch } from "react-redux";
+import { mapMiddleCatClick } from "../../../../reducer/index";
 
 const SC = {
   Wrap: styled.View`
@@ -21,9 +23,18 @@ const SC = {
 };
 
 const MiddleCatBtn = (props) => {
+  const dispatch = useDispatch();
+  // const clickedBtn = useSelector((state) => state.mapMiddleCatBtn);
+
   return (
     <SC.Wrap>
-      <Text>{props.name}</Text>
+      <Text
+        onPress={() => {
+          dispatch(mapMiddleCatClick(props.name));
+        }}
+      >
+        {props.name}
+      </Text>
     </SC.Wrap>
   );
 };

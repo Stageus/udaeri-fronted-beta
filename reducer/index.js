@@ -3,21 +3,35 @@ const initState = {
   url: 'http://3.35.67.117:8000/',
   mainColor: '#ff9933',
   grayColor: '#999999',
-  curCat: null
+  largeCatList: null,
+  curLargeCat: null,
+  curMidCat: null
 };
 
+const RESTORE_CUR_LARGECAT = "RESTORE_CUR_LARGECAT";
 const RESTORE_TOKEN = "RESTORE_TOKEN";
-const RESTORE_CURCAT = "RESTORE_CURCAT";
+const RESTORE_CUR_MIDCAT = "RESTORE_CUR_MIDCAT";
+const RESTORE_LARGECATLIST = "RESTORE_LARGECATLIST";
 
 export const restoreToken = (token) => ({
   type: RESTORE_TOKEN,
   token,
 });
 
-export const restoreCurCat = (curCat) => ({
-  type: RESTORE_CURCAT,
-  curCat,
-});
+export const restoreLargeCatList = (catList) => ({
+  type: RESTORE_LARGECATLIST,
+  catList,
+})
+
+export const restoreCurLargeCat = (cat) => ({
+  type: RESTORE_CUR_LARGECAT,
+  cat,
+})
+
+export const restoreCurMidCat = (cat) => ({
+  type: RESTORE_CUR_MIDCAT,
+  cat,
+})
 
 const reducer = (state = initState, action) => {
   switch (action.type) {
@@ -26,10 +40,20 @@ const reducer = (state = initState, action) => {
         ...state,
         userToken: action.token,
       };
-    case RESTORE_CURCAT:
+    case RESTORE_LARGECATLIST:
       return {
         ...state,
-        curCat: action.curCat,
+        largeCatList: action.catlist,
+      };
+    case RESTORE_CUR_LARGECAT:
+      return {
+        ...state,
+        curLargeCat: action.cat,
+      };
+    case RESTORE_CUR_MIDCAT:
+      return {
+        ...state,
+        curMidCat: action.cat,
       };
     default:
       return state;

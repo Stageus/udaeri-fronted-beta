@@ -25,6 +25,7 @@ import JjimEle from "../../Components/JjimEle/index";
 import CatEle from "../../Components/CatEle";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
+import { largeCategory } from "../../../reducer/index";
 
 const StatusBarHeight = StatusBar.currentHeight;
 const { width, height } = Dimensions.get("window");
@@ -86,11 +87,12 @@ const SC = {
 
 const Home = ({ navigation }) => {
 
-  const [categoryList, setCategoryList] = useState([]);
-  const [jjim, setJJim] = useState([]);
+  const dispatch = useDispatch();
 
   const url = useSelector((state) => state.url);
   axios.defaults.baseURL = url;
+  const [categoryList, setCategoryList] = useState([]);
+
   const tokentoken = useSelector((state) => state.userToken);
 
   useEffect(() => {
@@ -99,6 +101,7 @@ const Home = ({ navigation }) => {
       .then((res) => {
         console.log("카테고리 받아쑴");
         setCategoryList(res.data.list);
+        dispatch(largeCategory(res.data.list));
       })
       .catch((err) => {
         console.log("카테고리 못받아쑴");
