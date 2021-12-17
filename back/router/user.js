@@ -6,7 +6,7 @@ const path = require('path');
 
 
 
-dotenv.config({path : path.join(__dirname, "../.env")});
+dotenv.config({path : path.join(__dirname, "../../.env")});
 const config = {
     user: process.env.DB_USER,
     host : process.env.DB_HOST,
@@ -23,16 +23,15 @@ exports.CreateUser = async(req,res) => {
     const nickname = req.body.nickname;
     const phone_number = req.body.phone_number;
     const password = req.body.password;
+    const sponsor = "N";
     const result = {
         "success" : false
-    }
-    console.log(password);
-    
+    }    
     const client = new Client(config);    
     try{
         await client.connect();
         const encodedPassword = await bcrypt.hash(password, saltRounds);
-        await client.query('INSERT INTO public.user_information(id,nickname, password, phone_number,created_at) VALUES($1, $2, $3, $4, $5);',[id, nickname, encodedPassword, phone_number,new Date()])
+        await client.query('INSERT INTO service.user_information(id,nickname, password, phone_number,sponsor,created_at) VALUES($1, $2, $3, $4, $5, $6 );',[id, nickname, encodedPassword, phone_number,sponsor,new Date()])
         client.end();
     }
     catch(err){
@@ -51,7 +50,7 @@ exports.DeleteUser = async(req,res)=>{
     const id = req.id;
         try{
             await client.connect();
-            await client.query('DELETE FROM public.user_information WHERE id=$1',[id]);
+            await client.query('DELETE FROM service.user_information WHERE id=$1',[id]);
             client.end();
             result.success = true;
             return res.status(200).send(result);
@@ -72,7 +71,7 @@ exports.UpdateUser = async(req,res)=>{
     const id = req.id;
     try{
         await client.connect();
-        await client.query('UPDATE public.user_information SET WHERE id = $1',[id]);
+        await client.query('UPDATE service.user_information SET WHERE id = $1',[id]);
         client.end();
         result.success = true;
         return res.send(result);
@@ -99,7 +98,7 @@ exports.ReadUser = async(req,res)=>{
     }
     try{
         await client.connect();      
-        const query = await client.query('SELECT phone_number FROM public.user_information WHERE id =$1',[result.id]);
+        const query = await client.query('SELECT phone_number FROM service.user_information WHERE id =$1',[result.id]);
         client.end();
 
         result.success = true;
@@ -122,9 +121,9 @@ exports.CreateUserFavorite = async(req,res) =>{
 
         try{
             await client.connect();
-            const userIndex = await client.query("SELECT user_index FROM public.user_information WHERE id = $1;", [id]);
-            const storeIndex = await client.query("SELECT store_info_index FROM public.store_information WHERE store_name = $1;", [store]);
-            await client.query("INSERT INTO public.user_favorite (user_index, store_info_index) VALUES ($1, $2);",[userIndex.rows[0].user_index, storeIndex.rows[0].store_info_index]);
+            const userIndex = await client.query("SELECT user_index FROM service.user_information WHERE id = $1;", [id]);
+            const storeIndex = await client.query("SELECT store_info_index FROM service.store_information WHERE store_name = $1;", [store]);
+            await client.query("INSERT INTO service.user_favorite (user_index, store_info_index) VALUES ($1, $2);",[userIndex.rows[0].user_index, storeIndex.rows[0].store_info_index]);
             client.end();
             result.success = true;
             return res.status(200).send(result);
@@ -142,9 +141,9 @@ exports.DeleteUserFavorite = async(req,res) =>{
     const client = new Client(config);
     try{
         await client.connect();
-        const userIndex = await client.query("SELECT user_index FROM public.user_information WHERE id = $1;", [id]);
-        const storeIndex = await client.query("SELECT store_info_index FROM public.store_information WHERE store_name = $1;", [store]);
-        await client.query("DELETE FROM public.user_favorite WHERE user_index = $1 AND store_info_index = $2",[userIndex.rows[0].user_index, storeIndex.rows[0].store_info_index]);
+        const userIndex = await client.query("SELECT user_index FROM service.user_information WHERE id = $1;", [id]);
+        const storeIndex = await client.query("SELECT store_info_index FROM service.store_information WHERE store_name = $1;", [store]);
+        await client.query("DELETE FROM service.user_favorite WHERE user_index = $1 AND store_info_index = $2",[userIndex.rows[0].user_index, storeIndex.rows[0].store_info_index]);
         client.end();
         result.success = true;
         return res.status(200).send(result);
@@ -164,8 +163,8 @@ exports.ReadUserFavorite = async(req,res) =>{
     const client = new Client(config);
         try{
             await client.connect();
-            const userIndex = await client.query("SELECT user_index FROM public.user_information WHERE id = $1;", [id]);
-            const favorite = await client.query("SELECT store_information.store_name, store_information.image_url FROM public.store_information WHERE store_info_index IN (SELECT store_info_index FROM public.user_favorite WHERE user_index =$1);",[userIndex.rows[0].user_index]);
+            const userIndex = await client.query("SELECT user_index FROM service.user_information WHERE id = $1;", [id]);
+            const favorite = await client.query("SELECT store_information.store_name, store_information.image_url FROM service.store_information WHERE store_info_index IN (SELECT store_info_index FROM service.user_favorite WHERE user_index =$1);",[userIndex.rows[0].user_index]);
             client.end();
             result.success = true;
             result.list = favorite.rows;

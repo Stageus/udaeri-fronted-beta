@@ -9,7 +9,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 
 
-dotenv.config({path : path.join(__dirname, './back/.env')});
+dotenv.config({path : path.join(__dirname, './.env')});
 
 const corsOptions = {
     origin: '*',

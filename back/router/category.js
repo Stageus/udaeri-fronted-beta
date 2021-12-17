@@ -2,7 +2,7 @@ const {Client} = require('pg');
 const dotenv = require('dotenv');
 const path = require('path');
 
-dotenv.config({path : path.join(__dirname, "../.env")});
+dotenv.config({path : path.join(__dirname, "../../.env")});
 
 const config = {
     user: process.env.DB_USER,
@@ -19,7 +19,7 @@ exports.getRandom = async(req,res) =>{
 
         try{
             await client.connect();
-            const query = await client.query('SELECT store_name FROM store_information INNER JOIN m_category ON m_category.m_category_index = store_information.m_category_index AND m_category.name =$1;',[category]);
+            const query = await client.query('SELECT store_name FROM service.store_information INNER JOIN service.m_category ON m_category.m_category_index = store_information.m_category_index AND m_category.name =$1;',[category]);
             client.end();
             const rand = Math.floor(Math.random() * query.rowCount);
             const result = {
@@ -49,7 +49,8 @@ exports.getStoreList = async(req,res) =>{
     const category = req.params.m;
         try{
             await client.connect();
-            const query = await client.query('SELECT store_information.store_name, store_information.image_url  FROM store_information INNER JOIN m_category ON m_category.name =$1 AND m_category.m_category_index = store_information.m_category_index;',[category]);
+            const query = await client.query('SELECT store_information.store_name, store_information.image_url  FROM service.store_information INNER JOIN service.m_category ON m_category.name =$1 AND m_category.m_category_index = store_information.m_category_index;',[category]);
+            // 찜한 개수 넣기, 후문 정문 여부, 간략한 소개
             client.end();
             result.success= true;
             result.list = query.rows;
@@ -68,7 +69,7 @@ exports.getStoreInformation = async(req,res) =>{
 
         try{
             await client.connect();
-            const query = await client.query('SELECT * FROM public.store_information WHERE store_name = $1;',[store_name]);
+            const query = await client.query('SELECT * FROM service.store_information WHERE store_name = $1;',[store_name]);
             client.end();
             const result = { 
                 "success" : true,
@@ -89,6 +90,26 @@ exports.getStoreInformation = async(req,res) =>{
         }
 }
 
+exports.getStoreLocation = async(req,res) =>{
+    const client = new Client(config);
+    const category = req.params.m;
+    const result ={
+        "success" : false,
+        "list" : null
+    }
+        try{
+            await client.connect();
+            const query = await client.query('SELECT store_name, latitude, longitude FROM service.store_information INNER JOIN service.m_category ON m_category.name = $1 AND m_category.m_category_index = store_information.m_category_index',[category]);
+            client.end();
+            result.success = true;
+            result.list = query.rows;
+            return res.send(result);
+        }
+        catch(err){
+            console.log(err);
+            return res.send(result);
+        }
+}
 
 exports.getLargeCategory = async(req,res) =>{
     // 대분류 가져오기
@@ -99,7 +120,7 @@ exports.getLargeCategory = async(req,res) =>{
     const client = new Client(config);
         try{
             await client.connect();
-            const query = await client.query("SELECT name, icon_url FROM public.l_category;");
+            const query = await client.query("SELECT name, icon_url FROM service.l_category;");
             client.end();
             result.success = true;
             result.list = query.rows;
@@ -117,11 +138,48 @@ exports.getMiddleCategory = async(req,res) =>{
         "success" : false,
         "list" : null
     }
+    const all ={
+        "먹거리" : [],
+        "카페" : [],
+        "놀거리" : [] ,
+        "서비스" : [] ,
+        "상점" : []
+    }
     const largeCategory = req.params.l;
     const client = new Client(config);
         try{
-            await client.connect();
-                const query = await client.query("SELECT m_category.name, m_category.icon_url FROM m_category INNER JOIN l_category ON l_category.name = $1 AND m_category.l_category_index = l_category.l_category_index;",[largeCategory]);
+              await client.connect();
+
+                  if(largeCategory == "all"){
+                    const query = await client.query("SELECT B.name AS l_name, A.name AS m_name FROM service.m_category A LEFT JOIN service.l_category B ON A.l_category_index = B.l_category_index;");
+                    client.end();
+                    for(let i=0; i<query.rowCount; i++){
+                        switch(query.rows[i].l_name){
+                            case "먹거리" :
+                                all.먹거리.push(query.rows[i].m_name);
+                                break;
+                            case "카페" :
+                                all.카페.push(query.rows[i].m_name);
+                                break;
+                            case "놀거리" :
+                                all.놀거리.push(query.rows[i].m_name);
+                                break;
+                            case "서비스" :
+                                all.서비스.push(query.rows[i].m_name);
+                                break;
+                            case "상점" :
+                                all.상점.push(query.rows[i].m_name);
+                                break;
+                            
+                            default :
+                                continue;
+                        }
+                    }
+                    return res.status(200).send(all);
+
+                }
+
+                const query = await client.query("SELECT m_category.name, m_category.icon_url FROM service.m_category INNER JOIN service.l_category ON l_category.name = $1 AND m_category.l_category_index = l_category.l_category_index;",[largeCategory]);
                 client.end();
                 result.success = true;
                 result.list = query.rows;
@@ -129,7 +187,7 @@ exports.getMiddleCategory = async(req,res) =>{
             }
         catch(err){
             console.log(err);
-            return res.send(result);
+            return res.send(result);x
         }
 }
 
@@ -144,7 +202,7 @@ exports.getStoreMenu = async(req,res) =>{
 
         try{
             await client.connect();
-            const query = await client.query("SELECT menu_name, brief_info, price, store_menu.image_url FROM store_menu INNER JOIN store_information ON store_information.store_name = $1 AND store_information.store_info_index = store_menu.store_info_index;",[store_name]);
+            const query = await client.query("SELECT menu_name, brief_info, price, store_menu.image_url FROM service.store_menu INNER JOIN service.store_information ON store_information.store_name = $1 AND store_information.store_info_index = store_menu.store_info_index;",[store_name]);
             client.end();
             result.success = true;
             result.list = query.rows;
@@ -173,7 +231,7 @@ exports.getReview = async(req,res) =>{
     }
     try{
         await client.connect();
-            const review = await client.query("SELECT nickname, star_rating, review, writed_at FROM store_review INNER JOIN store_information ON store_information.store_name = $1 AND store_information.store_info_index = store_review.store_info_index ORDER BY " + order +" DESC;",[store]);
+            const review = await client.query("SELECT nickname, star_rating, review, writed_at FROM service.store_review INNER JOIN service.store_information ON store_information.store_name = $1 AND store_information.store_info_index = store_review.store_info_index ORDER BY " + order +" DESC;",[store]);
             client.end();
             result.success = true;
             console.log(review);
@@ -198,8 +256,8 @@ exports.createReview = async(req,res) =>{
 
         try{
             await client.connect();
-            const index = await client.query("SELECT store_info_index FROM public.store_information WHERE store_name = $1",[store]);
-            await client.query("INSERT INTO public.store_review (store_info_index, nickname, star_rating, review, writed_at) VALUES($1, $2, $3, $4, $5);",[index.rows[0].store_info_index, nickname, star_rating, review, new Date()]);
+            const index = await client.query("SELECT store_info_index FROM service.store_information WHERE store_name = $1",[store]);
+            await client.query("INSERT INTO service.store_review (store_info_index, nickname, star_rating, review, writed_at) VALUES($1, $2, $3, $4, $5);",[index.rows[0].store_info_index, nickname, star_rating, review, new Date()]);
             client.end();
             result.success = true;
             return res.send(result);

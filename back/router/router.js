@@ -27,6 +27,7 @@ Route.post('/auth/login', auth.login, auth.CreateToken);
 Route.get('/l-categories', category.getLargeCategory);
 Route.get('/l-categories/:l/m-categories', category.getMiddleCategory);
 Route.get('/l-categories/:l/m-categories/:m/stores', category.getStoreList);
+Route.get('/l-categories/:l/m-categories/:m/stores/location', category.getStoreLocation);
 Route.get('/l-categories/:l/m-categories/:m/stores/:name/information', category.getStoreInformation)
 Route.get('/l-categories/:l/m-categories/:m/stores/:name/menu', category.getStoreMenu)
 Route.route('/l-categories/:l/m-categories/:m/stores/:name/review')
