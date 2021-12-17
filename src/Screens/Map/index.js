@@ -16,6 +16,9 @@ import HeaderBar from "../../Components/HeaderBar";
 import MiddleCatBtn from "./MiddleCatBtn/index";
 import MiddleCatBtnWrap from "./MiddleCatBtnWrap/index";
 
+import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+
 const StatusBarHeight = StatusBar.currentHeight;
 const SC = {
   Container: styled.View`
@@ -43,6 +46,12 @@ const SC = {
 
 const Map = ({ navigation, route }) => {
   const [clickedCat, setClickedCat] = useState("");
+  const url = useSelector((state) => state.url);
+  const clickedMiddle = useSelector((state) => state.mapMiddleCatBtn);
+  const largeCat = useSelector((state) => state.largeCat);
+
+  console.log("대분류" + largeCat);
+
   useEffect(() => {}, [clickedCat]);
 
   const [initialRegion, setInitialRegion] = useState({
@@ -52,53 +61,70 @@ const Map = ({ navigation, route }) => {
     longitudeDelta: 0.01,
   });
 
-  const [markers, setMarkers] = useState({
-    food: [
-      {
-        latitude: 37.45181047308198,
-        longitude: 126.65688354141875,
-        title: "가메이",
-      },
-      {
-        latitude: 37.45133942595257,
-        longitude: 126.65938738189837,
-        title: "산쪼메",
-      },
-    ],
-    cafe: [
-      {
-        latitude: 37.451789,
-        longitude: 126.654988,
-        title: "스타벅스",
-      },
-    ],
-    bar: [
-      {
-        latitude: 37.45236872360831,
-        longitude: 126.65653699724074,
-        title: "병헤는 밤",
-      },
-    ],
-  });
+  // const [markers, setMarkers] = useState({
+  //   food: [
+  //     {
+  //       latitude: 37.45181047308198,
+  //       longitude: 126.65688354141875,
+  //       title: "가메이",
+  //     },
+  //     {
+  //       latitude: 37.45133942595257,
+  //       longitude: 126.65938738189837,
+  //       title: "산쪼메",
+  //     },
+  //   ],
+  //   cafe: [
+  //     {
+  //       latitude: 37.451789,
+  //       longitude: 126.654988,
+  //       title: "스타벅스",
+  //     },
+  //   ],
+  //   bar: [
+  //     {
+  //       latitude: 37.45236872360831,
+  //       longitude: 126.65653699724074,
+  //       title: "병헤는 밤",
+  //     },
+  //   ],
+  // });
 
-  const middleCatFood = [
-    { title: "한식" },
-    { title: "중식" },
-    { title: "일식" },
-    { title: "양식" },
-    { title: "분식" },
-    { title: "아시안" },
-    { title: "치킨/피자" },
-    { title: "패스트푸드" },
-    { title: "기타" },
-  ];
+  const [largeCatList, setLargeCatList] = useState([]);
+  const [middleCatList, setMiddleCatList] = useState([]);
+  const [middleCatLocation, setMiddleCatLocation] = useState([]);
 
-  const middleCatCafe = [
-    { title: "커피" },
-    { title: "베이커리" },
-    { title: "스터디카페" },
-    { title: "기타" },
-  ];
+  const MiddleCatListAPI = (largeCat) => {
+    setClickedCat(largeCat);
+    axios
+      .get(url + "/l-categories/" + largeCat + "/m-categories")
+      .then((res) => {
+        setMiddleCatList(res.data.list);
+      })
+      .catch((err) => {
+        console.log("중분류 카테고리 못 받음");
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    axios
+      .get(
+        url +
+          "/l-categories/" +
+          clickedCat +
+          "/m-categories/" +
+          clickedMiddle +
+          "/stores/location"
+      )
+      .then((res) => {
+        setMiddleCatLocation(res.data.list);
+      })
+      .catch((err) => {
+        console.log("클릭한 중분류를 찾을 수 없어요");
+        console.log(err);
+      });
+  }, [clickedMiddle]);
 
   return (
     <SafeAreaView
@@ -110,22 +136,26 @@ const Map = ({ navigation, route }) => {
       <SC.Container>
         <SC.LargeCatWrap>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <SC.Category>
-              <Text onPress={() => setClickedCat("먹거리")}>먹거리</Text>
-            </SC.Category>
-            <SC.Category>
-              <Text onPress={() => setClickedCat("카페")}>카페</Text>
-            </SC.Category>
-            <SC.Category>
-              <Text onPress={() => setClickedCat("술집")}>술집</Text>
-            </SC.Category>
+            {largeCat.map((item, index) => {
+              return (
+                <SC.Category>
+                  <Text onPress={() => MiddleCatListAPI(item.name)}>
+                    {item.name}
+                  </Text>
+                </SC.Category>
+              );
+            })}
           </ScrollView>
         </SC.LargeCatWrap>
         <View>
           {
             {
-              먹거리: <MiddleCatBtnWrap cat={middleCatFood}></MiddleCatBtnWrap>,
-              카페: <MiddleCatBtnWrap cat={middleCatCafe}></MiddleCatBtnWrap>,
+              먹거리: <MiddleCatBtnWrap cat={middleCatList}></MiddleCatBtnWrap>,
+              카페: <MiddleCatBtnWrap cat={middleCatList}></MiddleCatBtnWrap>,
+              놀거리: <MiddleCatBtnWrap cat={middleCatList}></MiddleCatBtnWrap>,
+              술집: <MiddleCatBtnWrap cat={middleCatList}></MiddleCatBtnWrap>,
+              서비스: <MiddleCatBtnWrap cat={middleCatList}></MiddleCatBtnWrap>,
+              상점: <MiddleCatBtnWrap cat={middleCatList}></MiddleCatBtnWrap>,
             }[clickedCat]
           }
         </View>
@@ -136,14 +166,25 @@ const Map = ({ navigation, route }) => {
           showsUserLocation={true}
           style={{ flex: 1, width: "100%", height: "100%" }}
         >
-          <MapView.Marker
+          {middleCatLocation.map((item, index) => {
+            return (
+              <MapView.Marker
+                coordinate={{
+                  latitude: item.latitude,
+                  longitude: item.longitude,
+                }}
+                title={item.store_name}
+              />
+            );
+          })}
+          {/* <MapView.Marker
             coordinate={{
               latitude: 37.451789,
               longitude: 126.654988,
             }}
             title="스타벅스"
             description="스타스타스타벅스"
-          />
+          /> */}
         </MapView>
       </SC.Container>
     </SafeAreaView>

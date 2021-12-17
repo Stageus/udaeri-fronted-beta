@@ -25,6 +25,7 @@ import JjimEle from "../../Components/JjimEle/index";
 import CatEle from "../../Components/CatEle";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
+import { largeCategory } from "../../../reducer/index";
 
 const StatusBarHeight = StatusBar.currentHeight;
 const { width, height } = Dimensions.get("window");
@@ -86,14 +87,13 @@ const SC = {
 
 const Home = ({ navigation, route }) => {
   const token = route.params;
-  console.log(token);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  // console.log(token);
+
+  const dispatch = useDispatch();
 
   const [categoryList, setCategoryList] = useState([]);
-  const [jjim, setJJim] = useState([]);
 
-  const url = "http://18.216.199.39:8000";
-
+  const url = useSelector((state) => state.url);
   const tokentoken = useSelector((state) => state.userToken);
 
   useEffect(() => {
@@ -102,6 +102,7 @@ const Home = ({ navigation, route }) => {
       .then((res) => {
         console.log("카테고리 받아쑴");
         setCategoryList(res.data.list);
+        dispatch(largeCategory(res.data.list));
       })
       .catch((err) => {
         console.log("카테고리 못받아쑴");
@@ -121,35 +122,6 @@ const Home = ({ navigation, route }) => {
         console.log(error);
       });
   }, []);
-
-  //console.log(categoryList);
-
-  // const categoryList = [
-  //   {
-  //     name: "먹거리",
-  //     icon: <Ionicons name="fast-food" size={24} color="white" />,
-  //   },
-  //   {
-  //     name: "카페",
-  //     icon: <FontAwesome name="coffee" size={24} color="white" />,
-  //   },
-  //   {
-  //     name: "술집",
-  //     icon: <Ionicons name="beer" size={24} color="white" />,
-  //   },
-  //   {
-  //     name: "놀거리",
-  //     icon: <Entypo name="game-controller" size={24} color="white" />,
-  //   },
-  //   {
-  //     name: "편의시설/서비스",
-  //     icon: <Ionicons name="fast-food" size={24} color="white" />,
-  //   },
-  //   {
-  //     name: "상점",
-  //     icon: <Fontisto name="shopping-basket" size={24} color="white" />,
-  //   },
-  // ];
 
   const myJjim = [
     {
