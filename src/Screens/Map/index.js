@@ -5,7 +5,6 @@ import {
   SafeAreaView,
   StatusBar,
   Platform,
-  Dimensions,
   Text,
   View,
 } from "react-native";
@@ -13,7 +12,6 @@ import styled, { css } from "styled-components/native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 
 import HeaderBar from "../../Components/HeaderBar";
-import MiddleCatBtn from "./MiddleCatBtn/index";
 import MiddleCatBtnWrap from "./MiddleCatBtnWrap/index";
 
 import axios from "axios";
@@ -47,10 +45,8 @@ const SC = {
 const Map = ({ navigation, route }) => {
   const [clickedCat, setClickedCat] = useState("");
   const url = useSelector((state) => state.url);
-  const clickedMiddle = useSelector((state) => state.mapMiddleCatBtn);
-  const largeCat = useSelector((state) => state.largeCat);
-
-  console.log("대분류" + largeCat);
+  const clickedMiddle = useSelector((state) => state.curMidCat);
+  const largeCat = useSelector((state) => state.largeCatList);
 
   useEffect(() => {}, [clickedCat]);
 
@@ -90,7 +86,6 @@ const Map = ({ navigation, route }) => {
   //   ],
   // });
 
-  const [largeCatList, setLargeCatList] = useState([]);
   const [middleCatList, setMiddleCatList] = useState([]);
   const [middleCatLocation, setMiddleCatLocation] = useState([]);
 

@@ -25,7 +25,7 @@ import JjimEle from "../../Components/JjimEle/index";
 import CatEle from "../../Components/CatEle";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { largeCategory } from "../../../reducer/index";
+import { restoreLargeCatList } from "../../../reducer/index";
 
 const StatusBarHeight = StatusBar.currentHeight;
 const { width, height } = Dimensions.get("window");
@@ -86,7 +86,6 @@ const SC = {
 };
 
 const Home = ({ navigation }) => {
-
   const dispatch = useDispatch();
 
   const url = useSelector((state) => state.url);
@@ -99,12 +98,12 @@ const Home = ({ navigation }) => {
     axios
       .get("/l-categories/")
       .then((res) => {
-        console.log("카테고리 받아쑴");
+        console.log("대분류 카테고리 받음");
         setCategoryList(res.data.list);
-        dispatch(largeCategory(res.data.list));
+        dispatch(restoreLargeCatList(res.data.list));
       })
       .catch((err) => {
-        console.log("카테고리 못받아쑴");
+        console.log("대분류 카테고리 못 받음");
         console.log(err);
       });
 
@@ -188,8 +187,8 @@ const Home = ({ navigation }) => {
             <View style={{ alignItems: "center" }}>
               <LongBarBtn
                 text="지도로 보기"
-                page="Map"
-                navi={navigation}
+                nextPage="Map"
+                navigation={navigation}
               ></LongBarBtn>
             </View>
           </SC.Middle>

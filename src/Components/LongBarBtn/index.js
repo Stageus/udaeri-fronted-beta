@@ -6,7 +6,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 const { width, height } = Dimensions.get("window");
 
 const LongBtn = styled.TouchableOpacity`
-  background-color:#ff9933;
+  background-color: #ff9933;
   border-radius: 5px;
   align-items: center;
   justify-content: center;
@@ -29,7 +29,7 @@ const BtnText = styled.Text`
 const LongBarBtn = (props) => {
   console.log(props.active);
   return (
-    <LongBtn active={props.active} onPress={() => props.navigation.navigate(props.nextPage)}>
+    <LongBtn onPress={() => props.navigation.navigate(props.nextPage)}>
       <BtnText>{props.text}</BtnText>
     </LongBtn>
   );

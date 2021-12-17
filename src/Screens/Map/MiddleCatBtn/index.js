@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import styled, { css } from "styled-components/native";
 import { useSelector, useDispatch } from "react-redux";
-import { mapMiddleCatClick } from "../../../../reducer/index";
+import { restoreCurMidCat } from "../../../../reducer/index";
 
 const SC = {
   Wrap: styled.View`
@@ -30,7 +30,7 @@ const MiddleCatBtn = (props) => {
     <SC.Wrap>
       <Text
         onPress={() => {
-          dispatch(mapMiddleCatClick(props.name));
+          dispatch(restoreCurMidCat(props.name));
         }}
       >
         {props.name}

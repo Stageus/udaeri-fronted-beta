@@ -1,11 +1,11 @@
 const initState = {
   userToken: null,
-  url: 'http://3.35.67.117:8000/',
-  mainColor: '#ff9933',
-  grayColor: '#999999',
+  url: "http://3.35.67.117:8000/",
+  mainColor: "#ff9933",
+  grayColor: "#999999",
   largeCatList: null,
   curLargeCat: null,
-  curMidCat: null
+  curMidCat: null,
 };
 
 const RESTORE_CUR_LARGECAT = "RESTORE_CUR_LARGECAT";
@@ -21,17 +21,17 @@ export const restoreToken = (token) => ({
 export const restoreLargeCatList = (catList) => ({
   type: RESTORE_LARGECATLIST,
   catList,
-})
+});
 
 export const restoreCurLargeCat = (cat) => ({
   type: RESTORE_CUR_LARGECAT,
   cat,
-})
+});
 
 export const restoreCurMidCat = (cat) => ({
   type: RESTORE_CUR_MIDCAT,
   cat,
-})
+});
 
 const reducer = (state = initState, action) => {
   switch (action.type) {
@@ -43,7 +43,7 @@ const reducer = (state = initState, action) => {
     case RESTORE_LARGECATLIST:
       return {
         ...state,
-        largeCatList: action.catlist,
+        largeCatList: action.catList,
       };
     case RESTORE_CUR_LARGECAT:
       return {
