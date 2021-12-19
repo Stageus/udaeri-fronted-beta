@@ -112,7 +112,6 @@ const Home = ({ navigation }) => {
       .get("/l-categories/all/m-categories/")
       .then((res) => {
         console.log("대분류 - 중분류 리스트 받음");
-        console.log(res.data)
         dispatch(restoreMidCatList(res.data));
       }).catch((err) => {
         console.log("중분류카테고리 못 받음");
@@ -132,7 +131,6 @@ const Home = ({ navigation }) => {
         console.log(error);
       });
   }, []);
-  console.log("중분류 : ", useSelector((state) => state.midCatList));
   const myJjim = [
     {
       category: "먹거리",

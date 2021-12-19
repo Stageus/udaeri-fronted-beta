@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ScrollView } from 'react-native';
 import styled from 'styled-components/native';
-import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 
 import StoreEle from '../../../Components/StoreEle';
@@ -15,38 +14,21 @@ const SC = {
         background-color: #ffffff;
     `
 }
-const Store = ({ navigation }) => {
-
-    const [StoreList, setStoreList] = useState({});
-    const curLargeCat = useSelector((state) => state.curLargeCat);
-    const curMidCat = useSelector((state) => state.curMidCat);
-
-    const url = useSelector((state) => state.url);
-    axios.defaults.baseURL = url;
-    useEffect(() => {
-        axios
-            .get("/l-categories/" + curLargeCat + "/m-categories/" + curMidCat + "/stores")
-            .then((res) => {
-                console.log(res.data.list);
-            })
-            .catch((err) => {
-                console.log("error");
-                console.log(err);
-            });
-    }, [])
+const Store = ({ navigation, route }) => {
+    const selectedMidCatList = route.params.selectedMidCatList;
+    console.log("------------4번------------")
+    console.log("받은 리스트" + selectedMidCatList)
 
     return (
         <SC.storeContainer>
-            {/* {StoreList && StoreList.map((item) => (
+            {selectedMidCatList && selectedMidCatList.map((item) => (
                 <StoreEle
-                    storeName={item.storeName}
-                    content={item.content}
-                    location={item.location}
-                    distance={item.distance}
-                    likes={item.likes}
+                    storeName={item.store_name}
+                    content={item.main_menu}
+                    location={item.s_name}
                     navigation={navigation}
                 />
-            ))} */}
+            ))}
         </SC.storeContainer>
     )
 }

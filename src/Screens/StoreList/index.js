@@ -3,11 +3,8 @@ import { SafeAreaView, StatusBar, Platform, } from 'react-native';
 import styled, { css } from 'styled-components/native';
 
 import HeaderBar from '../../Components/HeaderBar';
-import HorizontalBar from '../../Components/HorizontalBar';
-import StoreEle from '../../Components/StoreEle';
 import StoreListNavi from '../../Components/Navigation/StoreListNavi';
 
-import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 
 const SC = {
