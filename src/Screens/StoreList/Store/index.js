@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { ScrollView } from 'react-native';
 import styled from 'styled-components/native';
+import { useSelector, useDispatch } from "react-redux";
 
 import StoreEle from '../../../Components/StoreEle';
 
@@ -14,33 +15,21 @@ const SC = {
     `
 }
 const Store = ({ navigation, route }) => {
+    const selectedMidCatList = route.params.selectedMidCatList;
+    console.log("------------4번------------")
+    console.log("받은 리스트" + selectedMidCatList)
 
-    const StoreList = [
-        { storeName: "맛사랑", content: "제육볶음 6,000 / 순두부찌개 6,000", location: "후문", distance: "350m", likes: 33 },
-        { storeName: "탄포포", content: "로스카츠 8,000 / 히레카츠 7,000", location: "후문", distance: "224m", likes: 21 },
-        { storeName: "준호네 부대찌개", content: "부대찌개 6,000", location: "후문", distance: "422m", likes: 12 },
-        { storeName: "영종식당", content: "제육볶음(2인분) 12,000", location: "후문", distance: "123m", likes: 22 },
-        { storeName: "닭살쀼", content: "목삽겸 14,000 / 전기구이통닭 12,000", location: "후문", distance: "552m", likes: 11 },
-        { storeName: "모모3", content: "우리집", location: "후문", distance: "679m", likes: 93 },
-        { storeName: "스테이지 어스", content: "개발자 맛집", location: "후문", distance: "10m", likes: 999 },
-        { storeName: "마약집", content: "곱도리탕 1인분 12,000", location: "후문", distance: "500m", likes: 51 },
-        { storeName: "화장실", content: "급함", location: "정문", distance: "1Km", likes: 1 },
-    ]
     return (
         <SC.storeContainer>
-            {StoreList.map((item) => (
+            {selectedMidCatList && selectedMidCatList.map((item) => (
                 <StoreEle
-                    storeName={item.storeName}
-                    content={item.content}
-                    location={item.location}
-                    distance={item.distance}
-                    likes={item.likes}
+                    storeName={item.store_name}
+                    content={item.main_menu}
+                    location={item.s_name}
                     navigation={navigation}
                 />
             ))}
         </SC.storeContainer>
-
-
     )
 }
 

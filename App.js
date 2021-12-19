@@ -66,7 +66,7 @@ const App = () => {
     try {
       userToken = await AsyncStorage.getItem(TOKEN_KEY);
     } catch (e) {
-      console.log("토큰을 가져오지 못했어유");
+      console.log("토큰을 가져오지 못했어유bn");
     }
     dispatch(restoreToken(userToken));
   };

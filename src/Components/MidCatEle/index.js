@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useSelector, useDispatch } from "react-redux";
-import { restoreCurLargeCat } from '../../../reducer/index';
+import { restoreCurMidCat } from '../../../reducer/index';
 
 const SC = {
     Container: styled.TouchableOpacity`
@@ -42,12 +42,13 @@ const SC = {
 }
 
 
-const LargeCatEle = (props) => {
+const MidCatEle = (props) => {
     const dispatch = useDispatch();
+
     return (
         <SC.Container onPress={() => {
             props.navi.navigate(props.page, { key: props.name });
-            dispatch(restoreCurLargeCat(props.name))
+            dispatch(restoreCurMidCat(props.name));
         }}>
             <SC.left>
                 <SC.thumbnail>{props.icon}</SC.thumbnail>
@@ -58,4 +59,4 @@ const LargeCatEle = (props) => {
     )
 }
 
-export default LargeCatEle
+export default MidCatEle
