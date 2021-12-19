@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-// import 'react-native-gesture-handler';
 import {
   TouchableOpacity,
   ScrollView,
@@ -26,6 +25,7 @@ import CatEle from "../../Components/CatEle";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { restoreLargeCatList } from "../../../reducer/index";
+import { restoreMiddleCatList } from "../../../reducer/index";
 
 const StatusBarHeight = StatusBar.currentHeight;
 const { width, height } = Dimensions.get("window");
@@ -98,7 +98,7 @@ const Home = ({ navigation }) => {
     axios
       .get("/l-categories/")
       .then((res) => {
-        console.log("대분류 카테고리 받음");
+        console.log("대분류 리스트 받음");
         setCategoryList(res.data.list);
         dispatch(restoreLargeCatList(res.data.list));
       })
@@ -107,18 +107,24 @@ const Home = ({ navigation }) => {
         console.log(err);
       });
 
-    axios
-      .get("/users/favorites", {
-        headers: {
-          authorization: tokentoken,
-        },
-      })
-      .then(function (res) {
-        console.log(res.data.list);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    axios.get("/l-categories/all/m-categories/").then((res) => {
+      console.log("대분류 - 중분류 리스트 받음");
+      dispatch(restoreMiddleCatList(res.data));
+    });
+
+    // 찜 불러오기
+    // axios
+    //   .get("/users/favorites", {
+    //     headers: {
+    //       authorization: tokentoken,
+    //     },
+    //   })
+    //   .then(function (res) {
+    //     console.log(res.data.list);
+    //   })
+    //   .catch(function (error) {
+    //     console.log(error);
+    //   });
   }, []);
 
   const myJjim = [

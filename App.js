@@ -4,7 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { store } from "./store/index";
 import { Provider, useSelector, useDispatch } from "react-redux";
 
-import { StatusBar, Platform, View } from 'react-native';
+import { StatusBar, Platform, View } from "react-native";
 import { restoreToken } from "./reducer/index";
 
 import * as Font from "expo-font";
@@ -34,6 +34,7 @@ import Search from "./src/Screens/Search";
 import Map from "./src/Screens/Map";
 import MyPage from "./src/Screens/MyPage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import KakaoLogin from "./src/Screens/SocialLogin/Kakao/index";
 
 const Stack = createStackNavigator();
 
@@ -88,6 +89,7 @@ const App = () => {
             <Stack.Screen name="EmailLogin" component={EmailLogin} />
             <Stack.Screen name="SignUpID" component={SignUpID} />
             <Stack.Screen name="SignUpPW" component={SignUpPW} />
+            <Stack.Screen name="KakaoLogin" component={KakaoLogin} />
           </>
         ) : (
           <>

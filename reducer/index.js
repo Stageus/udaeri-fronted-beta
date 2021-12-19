@@ -4,6 +4,7 @@ const initState = {
   mainColor: "#ff9933",
   grayColor: "#999999",
   largeCatList: null,
+  middleCatList: null,
   curLargeCat: null,
   curMidCat: null,
 };
@@ -12,6 +13,7 @@ const RESTORE_CUR_LARGECAT = "RESTORE_CUR_LARGECAT";
 const RESTORE_TOKEN = "RESTORE_TOKEN";
 const RESTORE_CUR_MIDCAT = "RESTORE_CUR_MIDCAT";
 const RESTORE_LARGECATLIST = "RESTORE_LARGECATLIST";
+const RESTORE_MIDDLECATLIST = "RESTORE_MIDDLECATLIST";
 
 export const restoreToken = (token) => ({
   type: RESTORE_TOKEN,
@@ -20,6 +22,11 @@ export const restoreToken = (token) => ({
 
 export const restoreLargeCatList = (catList) => ({
   type: RESTORE_LARGECATLIST,
+  catList,
+});
+
+export const restoreMiddleCatList = (catList) => ({
+  type: RESTORE_MIDDLECATLIST,
   catList,
 });
 
@@ -44,6 +51,11 @@ const reducer = (state = initState, action) => {
       return {
         ...state,
         largeCatList: action.catList,
+      };
+    case RESTORE_MIDDLECATLIST:
+      return {
+        ...state,
+        middleCatList: action.catList,
       };
     case RESTORE_CUR_LARGECAT:
       return {

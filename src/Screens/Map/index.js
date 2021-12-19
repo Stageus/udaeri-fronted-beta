@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import styled, { css } from "styled-components/native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import * as Location from "expo-location";
 
 import HeaderBar from "../../Components/HeaderBar";
 import MiddleCatBtnWrap from "./MiddleCatBtnWrap/index";
@@ -43,10 +44,17 @@ const SC = {
 };
 
 const Map = ({ navigation, route }) => {
-  const [clickedCat, setClickedCat] = useState("");
   const url = useSelector((state) => state.url);
+  axios.defaults.baseURL = url;
+
+  const [location, setLocation] = useState(null); //사용자 현재위치
+  const [errorMsg, setErrorMsg] = useState(null); //사용자 현재위치 받아올 때 출력할 에러메시지
+
+  const [clickedCat, setClickedCat] = useState("");
+
   const clickedMiddle = useSelector((state) => state.curMidCat);
   const largeCat = useSelector((state) => state.largeCatList);
+  const middleCat = useSelector((state) => state.middleCatList);
 
   useEffect(() => {}, [clickedCat]);
 
@@ -57,56 +65,18 @@ const Map = ({ navigation, route }) => {
     longitudeDelta: 0.01,
   });
 
-  // const [markers, setMarkers] = useState({
-  //   food: [
-  //     {
-  //       latitude: 37.45181047308198,
-  //       longitude: 126.65688354141875,
-  //       title: "가메이",
-  //     },
-  //     {
-  //       latitude: 37.45133942595257,
-  //       longitude: 126.65938738189837,
-  //       title: "산쪼메",
-  //     },
-  //   ],
-  //   cafe: [
-  //     {
-  //       latitude: 37.451789,
-  //       longitude: 126.654988,
-  //       title: "스타벅스",
-  //     },
-  //   ],
-  //   bar: [
-  //     {
-  //       latitude: 37.45236872360831,
-  //       longitude: 126.65653699724074,
-  //       title: "병헤는 밤",
-  //     },
-  //   ],
-  // });
-
-  const [middleCatList, setMiddleCatList] = useState([]);
+  const [midCatList, setMidCatList] = useState({});
   const [middleCatLocation, setMiddleCatLocation] = useState([]);
 
   const MiddleCatListAPI = (largeCat) => {
     setClickedCat(largeCat);
-    axios
-      .get(url + "/l-categories/" + largeCat + "/m-categories")
-      .then((res) => {
-        setMiddleCatList(res.data.list);
-      })
-      .catch((err) => {
-        console.log("중분류 카테고리 못 받음");
-        console.log(err);
-      });
+    setMidCatList(middleCat[largeCat]);
   };
 
   useEffect(() => {
     axios
       .get(
-        url +
-          "/l-categories/" +
+        "/l-categories/" +
           clickedCat +
           "/m-categories/" +
           clickedMiddle +
@@ -117,7 +87,6 @@ const Map = ({ navigation, route }) => {
       })
       .catch((err) => {
         console.log("클릭한 중분류를 찾을 수 없어요");
-        console.log(err);
       });
   }, [clickedMiddle]);
 
@@ -145,12 +114,12 @@ const Map = ({ navigation, route }) => {
         <View>
           {
             {
-              먹거리: <MiddleCatBtnWrap cat={middleCatList}></MiddleCatBtnWrap>,
-              카페: <MiddleCatBtnWrap cat={middleCatList}></MiddleCatBtnWrap>,
-              놀거리: <MiddleCatBtnWrap cat={middleCatList}></MiddleCatBtnWrap>,
-              술집: <MiddleCatBtnWrap cat={middleCatList}></MiddleCatBtnWrap>,
-              서비스: <MiddleCatBtnWrap cat={middleCatList}></MiddleCatBtnWrap>,
-              상점: <MiddleCatBtnWrap cat={middleCatList}></MiddleCatBtnWrap>,
+              먹거리: <MiddleCatBtnWrap cat={midCatList}></MiddleCatBtnWrap>,
+              카페: <MiddleCatBtnWrap cat={midCatList}></MiddleCatBtnWrap>,
+              놀거리: <MiddleCatBtnWrap cat={midCatList}></MiddleCatBtnWrap>,
+              술집: <MiddleCatBtnWrap cat={midCatList}></MiddleCatBtnWrap>,
+              서비스: <MiddleCatBtnWrap cat={midCatList}></MiddleCatBtnWrap>,
+              상점: <MiddleCatBtnWrap cat={midCatList}></MiddleCatBtnWrap>,
             }[clickedCat]
           }
         </View>
@@ -159,17 +128,26 @@ const Map = ({ navigation, route }) => {
           initialRegion={initialRegion}
           provider={PROVIDER_GOOGLE}
           showsUserLocation={true}
-          style={{ flex: 1, width: "100%", height: "100%" }}
+          showsMyLocationButton={true}
+          style={{ flex: 1, width: "100%" }}
         >
           {middleCatLocation.map((item, index) => {
             return (
-              <MapView.Marker
-                coordinate={{
-                  latitude: item.latitude,
-                  longitude: item.longitude,
-                }}
-                title={item.store_name}
-              />
+              <>
+                <MapView.Marker
+                  coordinate={{
+                    latitude: item.latitude,
+                    longitude: item.longitude,
+                  }}
+                  title={item.store_name}
+                />
+                <MapView.Marker
+                  coordinate={{
+                    latitude: 37.4219983,
+                    longitude: -122.084 + 360,
+                  }}
+                />
+              </>
             );
           })}
           {/* <MapView.Marker

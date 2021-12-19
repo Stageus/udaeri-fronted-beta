@@ -1,3 +1,4 @@
+import { NavigationContainer } from "@react-navigation/native";
 import React from "react";
 import { Dimensions, Image } from "react-native";
 import styled, { css } from "styled-components/native";
@@ -29,11 +30,15 @@ const logoData = {
 interface Props {
   navigation: any;
   id: "nothing" | "kakao" | "naver" | "fb";
+  moveScreen: string;
 }
 
-const SNSLoginBtn = ({ navigation, id }: Props) => {
+const SNSLoginBtn = ({ navigation, id, moveScreen }: Props) => {
   return id != "nothing" ? (
-    <SC.container color={logoData[id].color}>
+    <SC.container color={logoData[id].color}
+    onPress = {() => {
+      navigation.navigate(moveScreen);
+    }}>
       <SC.logo source={logoData[id].src} />
       <SC.text id={id}>{logoData[id].text}</SC.text>
     </SC.container>

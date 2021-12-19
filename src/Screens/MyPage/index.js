@@ -131,6 +131,15 @@ const MyPage = ({ navigation }) => {
           <SC.MyPageListEle>
             <SC.MyPageListText>후원하기</SC.MyPageListText>
           </SC.MyPageListEle>
+          <SC.MyPageListEle>
+            <SC.MyPageListText
+              onPress={() => {
+                navigation.navigate("KakaoLogin");
+              }}
+            >
+              카카오 로그인
+            </SC.MyPageListText>
+          </SC.MyPageListEle>
         </SC.MyPageList>
       </SC.Container>
     </SafeAreaView>
