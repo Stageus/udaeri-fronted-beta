@@ -9,7 +9,7 @@ const SC = {
         justify-Content: space-between;
         padding: 20px;
         border-Bottom-Width: 1px;
-        border-Bottom-Color: gray;
+        border-Bottom-Color: #d3d3d3;
     `,
     leftWrap: styled.View`
         align-items:flex-start;

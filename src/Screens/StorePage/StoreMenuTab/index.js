@@ -18,7 +18,7 @@ const StoreMenuTab = () => {
     const curLargeCat = useSelector((state) => state.curLargeCat);
     const curMidCat = useSelector((state) => state.curMidCat);
     const curStore = useSelector((state) => state.curStore);
-    const [storeMenu, setStoreMenu] = useState({});
+    const [storeMenu, setStoreMenu] = useState([]);
 
     useEffect(() => {
         const getStore = async () => {
@@ -34,15 +34,14 @@ const StoreMenuTab = () => {
         }
         getStore();
     }, [])
-    console.log(storeMenu)
     return (
         <SC.Container>
             <ScrollView>
-                {/* {storeMenu && storeMenu.map((item, index) => {
+                {storeMenu && storeMenu.map((item) => {
                     return (
                         <MenuEle menuName={item.menu_name} menuDes={item.brief_info} menuPrice={item.price} />
                     );
-                })} */}
+                })}
             </ScrollView>
         </SC.Container>
     );

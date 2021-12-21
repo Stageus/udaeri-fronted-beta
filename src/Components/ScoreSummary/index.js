@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import { Dimensions, View } from 'react-native';
-
+import EStyleSheet from 'react-native-extended-stylesheet';
+EStyleSheet.build();
 const { width, height } = Dimensions.get('window');
 
 const SC = {
@@ -16,7 +17,7 @@ const SC = {
         font-size: 14px;
     `,
     scoreFilledBar: styled.View`
-        width : ${props => ((props.gauge / props.total) * (width / 3))}px;
+        width : ${props => (props.total ? (props.gauge / props.total) * (width / 3) : 0)}px;
         height : 8px;
         background-color: #ff9933;
         margin-right: 5px;
@@ -38,6 +39,8 @@ const SC = {
 }
 
 const ScoreSummary = (props) => {
+    console.log("props.nums : ", props.nums);
+    console.log("props.total : ", props.total);
     return (
         <SC.Container>
             <SC.scoreNumber>{5 - props.score}점</SC.scoreNumber>
