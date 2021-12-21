@@ -2,6 +2,8 @@ import React from "react";
 import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
+
+
 import StoreInfoTab from '../../../Screens/StorePage/StoreInfoTab';
 import StoreMenuTab from '../../../Screens/StorePage/StoreMenuTab';
 import StoreReviewTab from '../../../Screens/StorePage/StoreReviewTab';
@@ -9,6 +11,8 @@ import StoreReviewTab from '../../../Screens/StorePage/StoreReviewTab';
 const Tab = createMaterialTopTabNavigator();
 
 const StoreTapNavigator = () => {
+
+
     return (
         <Tab.Navigator tabBarOptions={{
             labelStyle: {

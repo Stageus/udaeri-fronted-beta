@@ -38,7 +38,7 @@ const StoreList = ({ navigation }) => {
                 {/* 헤더 */}
                 <HeaderBar left="arrow" title={curLargeCat} right="magni" navigation={navigation} />
                 <SC.Content>
-                    <StoreListNavi title={curMidCat} />
+                    <StoreListNavi title={curMidCat} navigation={navigation} />
                 </SC.Content>
             </SC.Container>
         </SafeAreaView>

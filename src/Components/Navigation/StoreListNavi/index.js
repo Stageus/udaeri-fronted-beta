@@ -28,42 +28,47 @@ const StoreListNavi = (props) => {
   };
 
   useEffect(() => {
+    const getStore = async () => {
+      await axios
+        .get("/l-categories/" + curLargeCat + "/m-categories/all/stores")
+        .then((res) => {
+          setStoreList(res.data);
+        })
+        .catch((err) => {
+          console.log("error");
+          console.log(err);
+        });
+    }
     getStore();
-  }, []);
-
+  }, [])
   return (
-    <Tab.Navigator
-      tabBarOptions={{
-        labelStyle: {
-          fontSize: 14,
-          fontFamily: "Medium",
-        },
-        indicatorStyle: {
-          borderColor: "#ff9933",
-          borderWidth: 1,
-        },
-        scrollEnabled: true,
-        tabStyle: {
-          width: 90,
-        },
-        activeTintColor: "#ff9933",
-        inactiveTintColor: "gray",
-      }}
+    <Tab.Navigator tabBarOptions={{
+      labelStyle: {
+        fontSize: 14,
+        fontFamily: 'Medium',
+      },
+      indicatorStyle: {
+        borderColor: '#ff9933',
+        borderWidth: 1
+      },
+      scrollEnabled: true,
+      tabStyle: {
+        width: 90,
+      },
+      activeTintColor: '#ff9933',
+      inactiveTintColor: 'gray',
+
+    }}
       initialRouteName={props.title}
       tabBarLabel={{
         focused: false,
       }}
     >
-      {MidCatList &&
-        MidCatList.map((item) => {
-          return (
-            <Tab.Screen name={item}>
-              {(props) => <Store {...props} data={storeList[item]} />}
-            </Tab.Screen>
-          );
-        })}
+      {MidCatList.map((item) => (
+        <Tab.Screen name={item} children={() => <Store selectedMidCatList={storeList[item]} navigation={props.navigation} />} />
+      ))}
     </Tab.Navigator>
   );
-};
+}
 
 export default StoreListNavi;

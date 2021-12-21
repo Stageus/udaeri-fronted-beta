@@ -1,28 +1,35 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components/native';
-
+import { useSelector } from 'react-redux';
+import axios from "axios";
 import StoreInfoEle from '../../../Components/StoreInfoEle';
 
 const StoreInfoTap = () => {
-    const storeInfo =
-    {
-        storeName: "맛사랑",
-        storeTel: "032-860-1234",
-        storeDayOff: '매일',
-        storeOpenTime: '09:00',
-        storeCloseTime: '20:00',
-        storePriceRange: '1만원 이하',
-        storeLoaction: '인천광역시 미추홀구 인주대로 123번길 20'
-    }
-
+    const curLargeCat = useSelector((state) => state.curLargeCat);
+    const curMidCat = useSelector((state) => state.curMidCat);
+    const curStore = useSelector((state) => state.curStore);
+    const [storeInfo, setStoreInfo] = useState({});
+    useEffect(() => {
+        const getStore = async () => {
+            await axios
+                .get("/l-categories/" + curLargeCat + "/m-categories/" + curMidCat + "/stores/" + curStore + "/information")
+                .then((res) => {
+                    setStoreInfo(res.data);
+                })
+                .catch((err) => {
+                    console.log("error");
+                    console.log(err);
+                });
+        }
+        getStore();
+    }, [])
     return (
         <SC.Container>
-            <SC.storeName>{storeInfo.storeName}</SC.storeName>
-            <StoreInfoEle infoTitle="전화번호" infoContent={storeInfo.storeTel} />
-            <StoreInfoEle infoTitle="휴무일/영업시간" infoContent={storeInfo.storeDayOff + " / " + storeInfo.storeOpenTime + " ~ " + storeInfo.storeCloseTime} />
-            <StoreInfoEle infoTitle="가격대" infoContent={storeInfo.storePriceRange} />
-            <StoreInfoEle infoTitle="주소" infoContent={storeInfo.storeLoaction} />
+            <SC.storeName>{storeInfo.store}</SC.storeName>
+            <StoreInfoEle infoTitle="전화번호" infoContent={storeInfo.call_number} />
+            <StoreInfoEle infoTitle="휴무일/영업시간" infoContent={storeInfo.day_off + " / " + storeInfo.opening_hours + " ~ " + storeInfo.opening_hours} />
+            <StoreInfoEle infoTitle="가격대" infoContent={storeInfo.prices} />
+            <StoreInfoEle infoTitle="주소" infoContent={storeInfo.location} />
             <SC.storeInfoWrap>
                 <SC.storeInfoTitle>지도</SC.storeInfoTitle>
             </SC.storeInfoWrap>
