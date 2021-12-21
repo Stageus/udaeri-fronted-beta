@@ -4,7 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { store } from "./store/index";
 import { Provider, useSelector, useDispatch } from "react-redux";
 
-import { StatusBar, Platform, View } from 'react-native';
+import { StatusBar, Platform, View } from "react-native";
 import { restoreToken } from "./reducer/index";
 
 import * as Font from "expo-font";
@@ -34,6 +34,9 @@ import Search from "./src/Screens/Search";
 import Map from "./src/Screens/Map";
 import MyPage from "./src/Screens/MyPage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import KakaoLogin from "./src/Screens/Social/Login/Kakao/index";
+import KakaoLogout from "./src/Screens/Social/Logout/Kakao/index";
+import NaverLogin from "./src/Screens/Social/Login/Naver/index";
 
 const Stack = createStackNavigator();
 
@@ -51,28 +54,30 @@ const App = () => {
         Medium: require("./assets/fonts/SpoqaHanSansNeo-Medium.otf"),
         Regular: require("./assets/fonts/SpoqaHanSansNeo-Regular.otf"),
         Thin: require("./assets/fonts/SpoqaHanSansNeo-Thin.otf"),
-      });
-      setTimeout(() => {
+      }).then(() => {
         setLoaded(true);
-      }, 2000);
+      });
+      // setTimeout(() => {
+      //   setLoaded(true);
+      // }, 2000);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const bootstrapAsync = async () => {
+  const getStorageToken = async () => {
     let userToken;
     try {
       userToken = await AsyncStorage.getItem(TOKEN_KEY);
     } catch (e) {
-      console.log("토큰을 가져오지 못했어유bn");
+      console.log("토큰을 가져오지 못했어요");
     }
     dispatch(restoreToken(userToken));
   };
 
   useEffect(() => {
     preLoad();
-    bootstrapAsync();
+    getStorageToken();
   }, []);
 
   const tokentoken = useSelector((state) => state.userToken);
@@ -88,6 +93,8 @@ const App = () => {
             <Stack.Screen name="EmailLogin" component={EmailLogin} />
             <Stack.Screen name="SignUpID" component={SignUpID} />
             <Stack.Screen name="SignUpPW" component={SignUpPW} />
+            <Stack.Screen name="KakaoLogin" component={KakaoLogin} />
+            <Stack.Screen name="NaverLogin" component={NaverLogin} />
           </>
         ) : (
           <>
@@ -99,6 +106,7 @@ const App = () => {
             <Stack.Screen name="StorePage" component={StorePage} />
             <Stack.Screen name="Map" component={Map} />
             <Stack.Screen name="MyPage" component={MyPage} />
+            <Stack.Screen name="KakaoLogout" component={KakaoLogout} />
           </>
         )}
       </Stack.Navigator>

@@ -17,7 +17,7 @@ const MiddleCatBtnWrap = (props) => {
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
       {category.map((item, index) => {
-        return <MiddleCatBtn key={index} name={item.name}></MiddleCatBtn>;
+        return <MiddleCatBtn key={index} name={item}></MiddleCatBtn>;
       })}
     </ScrollView>
   );

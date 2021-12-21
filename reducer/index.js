@@ -7,7 +7,7 @@ const initState = {
   midCatList: null,
   curLargeCat: null,
   curMidCat: null,
-  curStore: null
+  curStore: null,
 };
 
 const RESTORE_TOKEN = "RESTORE_TOKEN";
@@ -27,6 +27,11 @@ export const restoreLargeCatList = (catList) => ({
   catList,
 });
 
+export const restoreMiddleCatList = (catList) => ({
+  type: RESTORE_MIDDLECATLIST,
+  catList,
+});
+
 export const restoreCurLargeCat = (cat) => ({
   type: RESTORE_CUR_LARGECAT,
   cat,
@@ -37,7 +42,6 @@ export const restoreMidCatList = (catList) => ({
   catList,
 });
 
-
 export const restoreCurMidCat = (cat) => ({
   type: RESTORE_CUR_MIDCAT,
   cat,
@@ -45,8 +49,8 @@ export const restoreCurMidCat = (cat) => ({
 
 export const restoreCurStore = (store) => ({
   type: RESTORE_CUR_STORE,
-  store
-})
+  store,
+});
 
 const reducer = (state = initState, action) => {
   switch (action.type) {

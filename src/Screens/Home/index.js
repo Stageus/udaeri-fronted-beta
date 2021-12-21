@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-// import 'react-native-gesture-handler';
 import {
   TouchableOpacity,
   ScrollView,
@@ -113,23 +112,24 @@ const Home = ({ navigation }) => {
       .then((res) => {
         console.log("대분류 - 중분류 리스트 받음");
         dispatch(restoreMidCatList(res.data));
-      }).catch((err) => {
+      })
+      .catch((err) => {
         console.log("중분류카테고리 못 받음");
         console.log(err);
       });
 
-    axios
-      .get("/users/favorites", {
-        headers: {
-          authorization: tokentoken,
-        },
-      })
-      .then(function (res) {
-        console.log(res.data.list);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    //   axios
+    //     .get("/users/favorites", {
+    //       headers: {
+    //         authorization: tokentoken,
+    //       },
+    //     })
+    //     .then(function (res) {
+    //       console.log(res.data.list);
+    //     })
+    //     .catch(function (error) {
+    //       console.log(error);
+    //     });
   }, []);
   const myJjim = [
     {
@@ -183,16 +183,17 @@ const Home = ({ navigation }) => {
         <ScrollView showsHorizontalScrollIndicator={false}>
           <SC.Middle>
             <SC.CategoryWrap>
-              {categoryList && categoryList.map((item, index) => {
-                return (
-                  <LargeCatEle
-                    key={index}
-                    name={item.name}
-                    page="MiddleCat"
-                    navi={navigation}
-                  ></LargeCatEle>
-                );
-              })}
+              {categoryList &&
+                categoryList.map((item, index) => {
+                  return (
+                    <LargeCatEle
+                      key={index}
+                      name={item.name}
+                      page="MiddleCat"
+                      navi={navigation}
+                    ></LargeCatEle>
+                  );
+                })}
             </SC.CategoryWrap>
             <View style={{ alignItems: "center" }}>
               <LongBarBtn
@@ -226,5 +227,4 @@ const Home = ({ navigation }) => {
     </SafeAreaView>
   );
 };
-
 export default Home;
