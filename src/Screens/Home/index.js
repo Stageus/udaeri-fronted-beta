@@ -24,8 +24,11 @@ import JjimEle from "../../Components/JjimEle/index";
 import LargeCatEle from "../../Components/LargeCatEle";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { restoreLargeCatList } from "../../../reducer/index";
-import { restoreMidCatList } from "../../../reducer/index";
+import {
+  restoreLargeCatList,
+  restoreMidCatList,
+  restoreJjimStore,
+} from "../../../reducer/index";
 
 const StatusBarHeight = StatusBar.currentHeight;
 const { width, height } = Dimensions.get("window");
@@ -118,18 +121,19 @@ const Home = ({ navigation }) => {
         console.log(err);
       });
 
-    //   axios
-    //     .get("/users/favorites", {
-    //       headers: {
-    //         authorization: tokentoken,
-    //       },
-    //     })
-    //     .then(function (res) {
-    //       console.log(res.data.list);
-    //     })
-    //     .catch(function (error) {
-    //       console.log(error);
-    //     });
+    axios
+      .get("/users/favorites", {
+        headers: {
+          authorization: tokentoken,
+        },
+      })
+      .then((res) => {
+        console.log("찜 목록: " + res.data.list);
+        dispatch(restoreJjimStore(res.data.list));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, []);
   const myJjim = [
     {

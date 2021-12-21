@@ -82,7 +82,7 @@ const MyPage = ({ navigation }) => {
 
   const TOKEN_KEY = "@userKey";
 
-  const logOut = () => {
+  const tokenExpire = () => {
     AsyncStorage.removeItem(TOKEN_KEY);
     dispatch(restoreToken());
   };
@@ -127,23 +127,12 @@ const MyPage = ({ navigation }) => {
             {/* <SC.MyPageListText onPress={() => logOut()}>
               로그아웃
             </SC.MyPageListText> */}
-            <SC.MyPageListText
-              onPress={() => navigation.navigate("KakaoLogout")}
-            >
+            <SC.MyPageListText onPress={() => tokenExpire()}>
               로그아웃
             </SC.MyPageListText>
           </SC.MyPageListEle>
           <SC.MyPageListEle>
             <SC.MyPageListText>후원하기</SC.MyPageListText>
-          </SC.MyPageListEle>
-          <SC.MyPageListEle>
-            <SC.MyPageListText
-              onPress={() => {
-                navigation.navigate("KakaoLogin");
-              }}
-            >
-              카카오 로그인
-            </SC.MyPageListText>
           </SC.MyPageListEle>
         </SC.MyPageList>
       </SC.Container>

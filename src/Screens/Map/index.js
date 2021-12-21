@@ -11,12 +11,11 @@ import {
 import styled, { css } from "styled-components/native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
-
-import HeaderBar from "../../Components/HeaderBar";
-import MiddleCatBtnWrap from "./MiddleCatBtnWrap/index";
-
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
+import HeaderBar from "../../Components/HeaderBar";
+import MiddleCatBtnWrap from "./MiddleCatBtnWrap/index";
+import { restoreCurMidCat } from "../../../reducer/index";
 
 const StatusBarHeight = StatusBar.currentHeight;
 const SC = {
@@ -44,19 +43,13 @@ const SC = {
 };
 
 const Map = ({ navigation, route }) => {
+  const dispatch = useDispatch();
   const url = useSelector((state) => state.url);
   axios.defaults.baseURL = url;
-
-  const [location, setLocation] = useState(null); //사용자 현재위치
-  const [errorMsg, setErrorMsg] = useState(null); //사용자 현재위치 받아올 때 출력할 에러메시지
-
-  const [clickedCat, setClickedCat] = useState("");
 
   const clickedMiddle = useSelector((state) => state.curMidCat);
   const largeCat = useSelector((state) => state.largeCatList);
   const middleCat = useSelector((state) => state.midCatList);
-
-  useEffect(() => {}, [clickedCat]);
 
   const [initialRegion, setInitialRegion] = useState({
     latitude: 37.4513546060566,
@@ -65,8 +58,15 @@ const Map = ({ navigation, route }) => {
     longitudeDelta: 0.01,
   });
 
+  const [clickedCat, setClickedCat] = useState("");
   const [midCatList, setMidCatList] = useState({});
   const [middleCatLocation, setMiddleCatLocation] = useState([]);
+
+  useEffect(() => {
+    if (clickedCat === "술집") {
+      dispatch(restoreCurMidCat("술집"));
+    }
+  }, [clickedCat]);
 
   const MiddleCatListAPI = (largeCat) => {
     setClickedCat(largeCat);
@@ -102,7 +102,7 @@ const Map = ({ navigation, route }) => {
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {largeCat.map((item, index) => {
               return (
-                <SC.Category>
+                <SC.Category key={index}>
                   <Text onPress={() => MiddleCatListAPI(item.name)}>
                     {item.name}
                   </Text>
@@ -117,7 +117,7 @@ const Map = ({ navigation, route }) => {
               먹거리: <MiddleCatBtnWrap cat={midCatList}></MiddleCatBtnWrap>,
               카페: <MiddleCatBtnWrap cat={midCatList}></MiddleCatBtnWrap>,
               놀거리: <MiddleCatBtnWrap cat={midCatList}></MiddleCatBtnWrap>,
-              술집: <MiddleCatBtnWrap cat={midCatList}></MiddleCatBtnWrap>,
+              술집: <></>,
               서비스: <MiddleCatBtnWrap cat={midCatList}></MiddleCatBtnWrap>,
               상점: <MiddleCatBtnWrap cat={midCatList}></MiddleCatBtnWrap>,
             }[clickedCat]
@@ -135,17 +135,12 @@ const Map = ({ navigation, route }) => {
             return (
               <>
                 <MapView.Marker
+                  key={index}
                   coordinate={{
                     latitude: item.latitude,
                     longitude: item.longitude,
                   }}
                   title={item.store_name}
-                />
-                <MapView.Marker
-                  coordinate={{
-                    latitude: 37.4219983,
-                    longitude: -122.084 + 360,
-                  }}
                 />
               </>
             );

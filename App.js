@@ -57,9 +57,6 @@ const App = () => {
       }).then(() => {
         setLoaded(true);
       });
-      // setTimeout(() => {
-      //   setLoaded(true);
-      // }, 2000);
     } catch (error) {
       console.log(error);
     }
