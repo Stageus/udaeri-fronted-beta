@@ -1,15 +1,22 @@
 import React from "react";
-import { SafeAreaView, Text, View } from 'react-native';
+import { SafeAreaView, StatusBar, Platform, } from 'react-native';
 
-import styled from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
 
 
 import StoreTapNavigator from '../../Components/Navigation/StoreTabNavi';
 import HeaderBar from '../../Components/HeaderBar';
 
+const StatusBarHeight = StatusBar.currentHeight;
+
 const SC = {
     Container: styled.View`
         background-Color: #fff;
+        ${Platform.OS === "android"
+            ? css`
+                padding-top: ${StatusBarHeight + 15}px;
+            `
+            : undefined}
     `,
     Content: styled.View`
         height: 100%;

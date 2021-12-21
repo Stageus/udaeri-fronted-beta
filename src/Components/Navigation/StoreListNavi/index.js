@@ -15,22 +15,10 @@ const StoreListNavi = (props) => {
   const url = useSelector((state) => state.url);
   axios.defaults.baseURL = url;
 
-  const getStore = async () => {
-    await axios
-      .get("/l-categories/" + curLargeCat + "/m-categories/all/stores")
-      .then((res) => {
-        setStoreList(res.data);
-      })
-      .catch((err) => {
-        console.log("error");
-        console.log(err);
-      });
-  };
-
   useEffect(() => {
     const getStore = async () => {
       await axios
-        .get("/l-categories/" + curLargeCat + "/m-categories/all/stores")
+        .get("/l-categories/" + curLargeCat + "/m-categories/all/stores/")
         .then((res) => {
           setStoreList(res.data);
         })
