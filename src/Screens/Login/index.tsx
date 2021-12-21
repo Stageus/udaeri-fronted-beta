@@ -69,7 +69,11 @@ const Login = ({ navigation }: any) => {
             navigation={navigation}
             moveScreen={"KakaoLogin"}
           />
-          <SNSLoginBar id={"naver"} navigation={navigation} />
+          <SNSLoginBar
+            id={"naver"}
+            navigation={navigation}
+            moveScreen={"NaverLogin"}
+          />
           <SNSLoginBar id={"fb"} navigation={navigation} />
           <SC.barContainer>
             <SC.bar />

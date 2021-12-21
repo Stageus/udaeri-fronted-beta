@@ -124,7 +124,12 @@ const MyPage = ({ navigation }) => {
             </Text>
           </SC.MyPageListEle>
           <SC.MyPageListEle>
-            <SC.MyPageListText onPress={() => logOut()}>
+            {/* <SC.MyPageListText onPress={() => logOut()}>
+              로그아웃
+            </SC.MyPageListText> */}
+            <SC.MyPageListText
+              onPress={() => navigation.navigate("KakaoLogout")}
+            >
               로그아웃
             </SC.MyPageListText>
           </SC.MyPageListEle>

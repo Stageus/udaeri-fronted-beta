@@ -54,7 +54,7 @@ const Map = ({ navigation, route }) => {
 
   const clickedMiddle = useSelector((state) => state.curMidCat);
   const largeCat = useSelector((state) => state.largeCatList);
-  const middleCat = useSelector((state) => state.middleCatList);
+  const middleCat = useSelector((state) => state.midCatList);
 
   useEffect(() => {}, [clickedCat]);
 

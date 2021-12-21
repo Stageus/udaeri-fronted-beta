@@ -5,51 +5,48 @@ import styled, { css } from "styled-components/native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSelector, useDispatch } from "react-redux";
-import { restoreToken } from "../../../../reducer/index";
+import { restoreToken } from "../../../../../reducer/index";
 
-const KakaoLogin = ({ navigation }) => {
+const KakaoLogin = () => {
+  const dispatch = useDispatch();
+
   const url = useSelector((state) => state.url);
   axios.defaults.baseURL = url;
 
   const runFirst = `window.ReactNativeWebView.postMessage("this is message from web");`;
 
-  console.log("카카오 로그인 1");
-
   // access code를 substring해서 server에 post요청하는 함수 실행
   const LoginProgress = (data) => {
     const exp = "code=";
     let condition = data.indexOf(exp);
-    console.log("카카오 로그인 2");
     if (condition != -1) {
-      let request_code = data.substring(condition + exp.length);
-      console.log("access code: " + request_code);
-      PostAccessCode(request_code);
+      let access_code = data.substring(condition + exp.length);
+      PostAccessCode(access_code);
     }
   };
 
+  // asyncStorage에 token저장하는 함수
   const TOKEN_KEY = "@userKey";
-  const dispatch = useDispatch();
-
   const saveToken = async (token) => {
     await AsyncStorage.setItem(TOKEN_KEY, JSON.stringify(token));
   };
 
-  // server에 access code post하고 token받아서 asyncStorage랑 redux에 token저장
-  const PostAccessCode = async (request_code) => {
+  // server에 access code를 post하고 token받아서 asyncStorage랑 redux에 token저장
+  const PostAccessCode = async (access_code) => {
     axios
       .post("/oauth/", {
-        code: request_code,
+        code: access_code,
         platform: "kakao",
       })
       .then((res) => {
         console.log("access token post 성공");
-        console.log(res.data);
         saveToken(res.data);
         dispatch(restoreToken(res.data));
         console.log("로그인 성공");
       })
       .catch((err) => {
         console.log("server로 access code post 실패");
+        console.log(err);
       });
   };
 
