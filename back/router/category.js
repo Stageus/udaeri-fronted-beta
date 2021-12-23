@@ -38,18 +38,57 @@ exports.getRandom = async(req,res) =>{
         }
 }
 
+exports.getStoreAll = async(req,res) =>{
+    // 가게목록 가져오기
+    const result = { 
+        "success" : false,
+        "list" : null
+    }    
+    const all = { }
+    const l_category = req.params.l;
+    const m_category = req.params.m;
+
+    const client = new Client(config);
+        try{
+            await client.connect();
+
+            if(m_category == 'all'){
+                const query = await client.query('WITH CT AS( SELECT *, RANK() OVER (PARTITION BY s.m_category_index ORDER BY s.store_info_index ASC) AS RN FROM service.store_information AS s) SELECT B.name AS m_name, A.store_name, A.image_url, A.main_menu, A.inha_location, A.favorited_count FROM CT A LEFT JOIN service.m_category B ON A.m_category_index = B.m_category_index LEFT JOIN service.l_category C ON B.l_category_index = C.l_category_index WHERE C.name = $1 AND A.RN <=10;',[l_category]);
+                const cateogoryQuery = await client.query('SELECT A.name FROM service.m_category A INNER JOIN service.l_category B ON A.l_category_index = B.l_category_index WHERE B.name = $1;', [l_category]);
+
+                client.end();
+                
+                for(i=0; i<cateogoryQuery.rowCount; i++){
+                    all[cateogoryQuery.rows[i].name] = [];
+                }
+
+                for(i=0; i<query.rowCount; i++){
+                    all[query.rows[i].m_name].push(query.rows[i]);
+                }
+                return res.send(all);
+            }
+        }
+        catch(err){
+            console.log(err);
+            return res.send(result);
+        }
+}
+
+
 exports.getStoreList = async(req,res) =>{
     // 가게목록 가져오기
     const result = { 
         "success" : false,
         "list" : null
-    }
+    }    
+    const m_category = req.params.m;
+    const count = req.params.count * 10;
+
 
     const client = new Client(config);
-    const category = req.params.m;
         try{
             await client.connect();
-            const query = await client.query('SELECT store_information.store_name, store_information.image_url  FROM service.store_information INNER JOIN service.m_category ON m_category.name =$1 AND m_category.m_category_index = store_information.m_category_index;',[category]);
+            const query = await client.query('SELECT A.store_name, A.image_url, A.main_menu, A.inha_location, A.favorited_count FROM service.store_information A INNER JOIN service.m_category ON m_category.name =$1 AND m_category.m_category_index = A.m_category_index ORDER BY A.store_info_index LIMIT 10 OFFSET $2;',[m_category,count]);
             // 찜한 개수 넣기, 후문 정문 여부, 간략한 소개
             client.end();
             result.success= true;
@@ -96,10 +135,10 @@ exports.getStoreLocation = async(req,res) =>{
     const result ={
         "success" : false,
         "list" : null
-    }
+    }   
         try{
             await client.connect();
-            const query = await client.query('SELECT store_name, latitude, longitude FROM service.store_information INNER JOIN service.m_category ON m_category.name = $1 AND m_category.m_category_index = store_information.m_category_index',[category]);
+            const query = await client.query('SELECT store_name, latitude, longitude FROM service.store_information INNER JOIN service.m_category ON m_category.name = $1 AND m_category.m_category_index = store_information.m_category_index;',[category]);
             client.end();
             result.success = true;
             result.list = query.rows;
@@ -110,6 +149,7 @@ exports.getStoreLocation = async(req,res) =>{
             return res.send(result);
         }
 }
+
 
 exports.getLargeCategory = async(req,res) =>{
     // 대분류 가져오기
@@ -234,7 +274,6 @@ exports.getReview = async(req,res) =>{
             const review = await client.query("SELECT nickname, star_rating, review, writed_at FROM service.store_review INNER JOIN service.store_information ON store_information.store_name = $1 AND store_information.store_info_index = store_review.store_info_index ORDER BY " + order +" DESC;",[store]);
             client.end();
             result.success = true;
-            console.log(review);
             result.list = review.rows;
             return res.send(result);
     }

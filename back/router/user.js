@@ -31,7 +31,7 @@ exports.CreateUser = async(req,res) => {
     try{
         await client.connect();
         const encodedPassword = await bcrypt.hash(password, saltRounds);
-        await client.query('INSERT INTO service.user_information(id,nickname, password, phone_number,sponsor,created_at) VALUES($1, $2, $3, $4, $5, $6 );',[id, nickname, encodedPassword, phone_number,sponsor,new Date()])
+        client.query('INSERT INTO service.user_information(id,nickname, password, phone_number,sponsor,created_at) VALUES($1, $2, $3, $4, $5, $6 );',[id, nickname, encodedPassword, phone_number,sponsor,new Date()])
         client.end();
     }
     catch(err){
@@ -121,9 +121,8 @@ exports.CreateUserFavorite = async(req,res) =>{
 
         try{
             await client.connect();
-            const userIndex = await client.query("SELECT user_index FROM service.user_information WHERE id = $1;", [id]);
-            const storeIndex = await client.query("SELECT store_info_index FROM service.store_information WHERE store_name = $1;", [store]);
-            await client.query("INSERT INTO service.user_favorite (user_index, store_info_index) VALUES ($1, $2);",[userIndex.rows[0].user_index, storeIndex.rows[0].store_info_index]);
+            await client.query("INSERT INTO service.user_favorite (user_index, store_info_index) VALUES ((SELECT user_index FROM service.user_information WHERE id = $1), (SELECT store_info_index FROM service.store_information WHERE store_name = $2));",[id, store]);
+            await client.query("UPDATE service.store_information SET favorited_count = favorited_count + 1 WHERE store_name = $1",[store]);
             client.end();
             result.success = true;
             return res.status(200).send(result);
@@ -141,9 +140,8 @@ exports.DeleteUserFavorite = async(req,res) =>{
     const client = new Client(config);
     try{
         await client.connect();
-        const userIndex = await client.query("SELECT user_index FROM service.user_information WHERE id = $1;", [id]);
-        const storeIndex = await client.query("SELECT store_info_index FROM service.store_information WHERE store_name = $1;", [store]);
-        await client.query("DELETE FROM service.user_favorite WHERE user_index = $1 AND store_info_index = $2",[userIndex.rows[0].user_index, storeIndex.rows[0].store_info_index]);
+        await client.query("DELETE FROM service.user_favorite WHERE user_index = (SELECT user_index FROM service.user_information WHERE id = $1) AND store_info_index = (SELECT store_info_index FROM service.store_information WHERE store_name = $2);",[id,store]);
+        await client.query("UPDATE service.store_information SET favorited_count = favorited_count - 1 WHERE store_name = $1",[store]);
         client.end();
         result.success = true;
         return res.status(200).send(result);
@@ -163,8 +161,7 @@ exports.ReadUserFavorite = async(req,res) =>{
     const client = new Client(config);
         try{
             await client.connect();
-            const userIndex = await client.query("SELECT user_index FROM service.user_information WHERE id = $1;", [id]);
-            const favorite = await client.query("SELECT store_information.store_name, store_information.image_url FROM service.store_information WHERE store_info_index IN (SELECT store_info_index FROM service.user_favorite WHERE user_index =$1);",[userIndex.rows[0].user_index]);
+            const favorite = await client.query("SELECT C.name AS l_category, A.store_name, A.image_url FROM service.store_information A LEFT JOIN service.m_category B ON B.m_category_index = A.m_category_index LEFT JOIN service.l_category C ON B.l_category_index = C.l_category_index WHERE store_info_index IN (SELECT store_info_index FROM service.user_favorite WHERE user_index = (SELECT user_index FROM service.user_information WHERE id = $1)) ;",[id]);
             client.end();
             result.success = true;
             result.list = favorite.rows;

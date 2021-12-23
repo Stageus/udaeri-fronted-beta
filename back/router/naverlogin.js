@@ -47,11 +47,15 @@ app.get('/naverlogin', function (req, res) {
   })
 
   app.get('/callback', async(req,res)=>{
-    const accessToken = await getAccessToken(req.query.code);
-    const kakaotoken = await getKakaoToken(accessToken);
-    const JwtToken = await getJwtToken(kakaotoken);
-    console.log(jwt.verify(JwtToken, secretKey)); // 지워야 함
-    res.send(JwtToken);
+    res.send("로그인 하는 중입니다.");
+  })
+
+  app.get('/naver/callback', async(req,res)=>{
+    res.send("로그인 하는 중입니다.");
+  })
+
+  app.get('/kakao/logout', (req,res)=>{
+      return res.send("로그아웃아 돼라~");
   })
 
   const getAccessToken = async (code) => {

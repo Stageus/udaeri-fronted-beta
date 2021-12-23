@@ -20,7 +20,8 @@ const corsOptions = {
 app.options('*', cors(corsOptions));
 app.use(cors(corsOptions)); 
 
-/*const Ports = process.env.SERVER_PORT;
+/*
+const Ports = process.env.SERVER_PORT;
 const options = {
     key: fs.readFileSync(path.join(__dirname, 'private.pem')),
     cert: fs.readFileSync(path.join(__dirname, 'public.pem')),
@@ -30,8 +31,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 
-
-/*app.get('*', (req,res, next)=>{
+/*
+app.get('*', (req,res, next)=>{
     const protocol = req.protocol; // req.protocol 사용자가 접속 할 때 쓴 주소의 맨 앞 프로토콜을 가져옴 
     if(protocol == 'https'){
         next();   // 그냥 넘어가겠다(패스)
