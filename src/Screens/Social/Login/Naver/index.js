@@ -66,9 +66,9 @@ const NaverLogin = () => {
       })
       .then((res) => {
         console.log("access token post 성공");
-        saveToken(res.data);
-        dispatch(restoreToken(res.data));
-        console.log("로그인 성공");
+        console.log(JSON.stringify(res.data));
+        saveToken(res.data.token);
+        dispatch(restoreToken(res.data.token));
       })
       .catch((err) => {
         console.log("server로 access code post 실패");

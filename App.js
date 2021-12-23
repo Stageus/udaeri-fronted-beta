@@ -66,10 +66,10 @@ const App = () => {
     let userToken;
     try {
       userToken = await AsyncStorage.getItem(TOKEN_KEY);
+      dispatch(restoreToken(userToken));
     } catch (e) {
       console.log("토큰을 가져오지 못했어요");
     }
-    dispatch(restoreToken(userToken));
   };
 
   useEffect(() => {
