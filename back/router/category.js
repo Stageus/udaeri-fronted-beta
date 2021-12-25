@@ -295,8 +295,10 @@ exports.createReview = async(req,res) =>{
 
         try{
             await client.connect();
+            const date = new Date();
+            date.setHours(date.getHours()+9);
             const index = await client.query("SELECT store_info_index FROM service.store_information WHERE store_name = $1",[store]);
-            await client.query("INSERT INTO service.store_review (store_info_index, nickname, star_rating, review, writed_at) VALUES($1, $2, $3, $4, $5);",[index.rows[0].store_info_index, nickname, star_rating, review, new Date()]);
+            await client.query("INSERT INTO service.store_review (store_info_index, nickname, star_rating, review, writed_at) VALUES($1, $2, $3, $4, $5);",[index.rows[0].store_info_index, nickname, star_rating, review, date]);
             client.end();
             result.success = true;
             return res.send(result);

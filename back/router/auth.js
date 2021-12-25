@@ -3,10 +3,10 @@ const dotenv = require('dotenv');
 const path = require('path');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const jwtSimple = require('jwt-simple');
 const fetch = require('node-fetch');
 const qs = require('qs');
 const redis = require('redis');
+const redisClient = redis.createClient();
 
 
 dotenv.config({path : path.join(__dirname, "../../.env")});
@@ -54,33 +54,31 @@ exports.OauthLogin = async(req,res) =>{
 
     const accessToken = await getAccessToken(code, platform, state);
     const userInfo = await getUserInfo(accessToken, platform);
-    const jwtToken = await getJwtToken(userInfo, platform);
-    const refreshToken = await getRefreshToken();
-    /*
-    const red = redis.createClient();
-    red.on("error", (err) => {
-        console.log(err);
-    })
-
-    const refreshKey = await (jwtSimple.decoded(jwtToken, secretKey)).id;
-    red.set(refreshKey, refreshToken);
-*/
-    return res.send({
-        "success" : true,
-        "token" : jwtToken,
-        "refreshToken" : refreshToken
-    });
-    /*
-    if(isDuplicate(userInfo, platform)){
-            const result = {
-        success : false,
-        message : "duplicatied user"
-    }
-        return res.send(result);
+    if(await isDuplicated(userInfo,platform)){     // 이미 다른 플랫폼으로 가입한 적이 있다면
+        return res.send({
+            success : false,
+            message : "duplicatied user"
+        })
     }
     else{
-    }*/
+        const jwtToken = await getJwtToken(userInfo, platform);
+        const refreshToken = await getRefreshToken();
+        const refreshKey = await ((jwt.decode(jwtToken, secretKey)).id);
 
+
+        await redisClient.on("error", (err) => {
+        console.log(err);
+        })
+        await redisClient.connect();        
+        await redisClient.set(refreshKey, refreshToken);
+        await redisClient.expire(refreshKey,60*60*24*365);
+        return res.send({
+            "success" : true,
+            "token" : jwtToken,
+            "refreshToken" : refreshToken,
+            "expires_in" : 21600
+        });
+    }
 }
 
 const getAccessToken = async(code, platform, state) =>{    
@@ -150,7 +148,7 @@ const getUserInfo = async(accessToken, platform) =>{
 
 }
 
-const isDuplicate = async(userInfo, platform) =>{ // 다른 플랫폼으로 가입한 적이 있는지 체크
+const isDuplicated = async(userInfo, platform) =>{ // 다른 플랫폼으로 가입한 적이 있는지 체크
     let phone_number;
 
     switch(platform){
@@ -167,7 +165,7 @@ const isDuplicate = async(userInfo, platform) =>{ // 다른 플랫폼으로 가�
     try{
         client.connect();
         const query = await client.query('SELECT platform FROM service.user_information WHERE phone_number = $1;',[phone_number]);
-        if(query.rows[0].platform != platform && query.rows[0].platform != undefined) 
+        if(query.rows[0].platform != platform && query.rowCount != 0) 
             return true;
         else
             return false;
@@ -175,7 +173,6 @@ const isDuplicate = async(userInfo, platform) =>{ // 다른 플랫폼으로 가�
         catch(err){
             console.log(err);
         }
-
 }
 
 const getJwtToken = async(userInfo,platform) =>{
@@ -203,8 +200,10 @@ const getJwtToken = async(userInfo,platform) =>{
             sponsor = query.rows[0].sponsor;
         }
         else{
-            const query = await client.query('INSERT INTO service.user_information (id, nickname, phone_number, sponsor, platform, created_at) VALUES($1,$2,$3,$4,$5,$6);',[id, "뭐로할까닉네임..",phone_number,"N", platform, new Date()]);
-            nickname = "뭐로할까 닉네임..";
+            const date = new Date();
+            date.setHours(date.getHours()+9);
+            nickname = await getUserNickname();
+            await client.query('INSERT INTO service.user_information (id, nickname, phone_number, sponsor, platform, created_at) VALUES($1,$2,$3,$4,$5,$6);',[id, nickname,phone_number,"N", platform, date]);
             sponsor = "N";
         }
 
@@ -217,7 +216,7 @@ const getJwtToken = async(userInfo,platform) =>{
     },
     secretKey,
     {
-        expiresIn : "360m",
+        expiresIn : "2m",
         issuer : "UDR"
     })
 
@@ -259,8 +258,8 @@ exports.CreateToken = async(req,res) =>{
                 },
                 secretKey,
                 {
-                    expiresIn : "360m",
-                    issuer : "UDR"
+                    expiresIn : "1m",
+                    issuer : "UD"
                 })  
                 result.success = true;
                 result.token = udrToken;
@@ -317,66 +316,25 @@ exports.userIdentification = async(req,res,next) =>{
 }
 
 exports.tokenVerify = async(req,res,next) => {
-    console.log("token : " +req.headers.authorization);
-    console.log("\n");
-    try{  
-        req.decoded = await jwt.verify(req.headers.authorization, secretKey);
-        req.id = req.decoded.id;
-        req.nickname = req.decoded.nickname;
+    try{                                                                            //정상적으로 token verify 됐을 때
+        const userinfo = await jwt.verify(req.headers.authorization, secretKey);
+        req.id = userinfo.id;
+        req.nickname = userinfo.nickname;
 
         return next();
     }
     catch(err){ 
+        console.log(err);
         if(err.message == "jwt expired"){
-            const id = await (jwtSimple.decode(req.headers.authorization, secretKey)).id;
-            const red = redis.createClient();
-            red.on("error", (err) => {
-                console.log(err);
+            return res.send({
+                success : false,
+                message : "토큰을 새로 발급해주세요."
             })
-            if(red.exists(id)){
-                red.geta(id, async(err, token)=>{
-                    try{
-                        jwt.verify(token,secretKey);
-                        const client = new Client(config);
-                        client.connect();
-
-                        const query = await client.query('SELECT nickname, sponsor, platform FROM service.user_information WHERE id = $1;'[id]);
-
-                        const jwtToken = jwt.sign({
-                            "id" : id,
-                            "nickname" : query.rows[0].nickname,
-                            "sponsor" : query.rows[0].sponsor,
-                            "platform" : query.rows[0].platform
-                        },
-                        secretKey,
-                        {
-                            expiresIn : "360m",
-                            issuer : "UDR"
-                        })
-
-                        return res.send({
-                            success : false,
-                            message : "새로운 토큰이 발급되었습니다.",
-                            token : jwtToken
-                        })
-                        
-                    }
-                    catch(e){   // refresh token도 만료됐을 경우
-                        if(e.message == "jwt expired"){
-                            return res.send({
-                                success : false,
-                                message : "로그인이 필요합니다."
-                        })
-                        }
-                    }
-                })
-            }
         }
 
-        console.log(err);
-        return res.send({
+        return res.send({                                                              // invalid한 token일 경우
             success : false,
-            message : "로그인에 실패하였습니다."
+            message : "로그인이 필요합니다."
         });
     }
 }
@@ -386,3 +344,89 @@ exports.creatState = async(req,res) =>{
     return res.send(result);
 }
 
+exports.getNewToken = async(req,res)=>{
+    try{                                                                            //정상적으로 token verify 됐을 때
+        await jwt.verify(req.headers.authorization, secretKey);
+        res.send({
+            success : false,
+            message : "사용가능한 token"
+        })
+    }
+    catch(err){ 
+        if(err.message == "jwt expired"){  
+            try{
+                if(req.headers.refreshtoken == undefined){
+                    return res.send({
+                        success : false,
+                        message : "refresh 토큰이 필요합니다"
+                    })
+                }
+                const userinfo = await jwt.decode(req.headers.authorization,secretKey);
+                const id = userinfo.id;
+                const redisClient = await redis.createClient();
+                await redisClient.on("error", (err) => {
+                    console.log(err);
+                })
+                await redisClient.connect();
+                if(await redisClient.exists(id)){                                                      // refresh 토큰이 있으면
+                    const refreshToken = await redisClient.get(id);                                  
+                    if(req.headers.refreshtoken == refreshToken){                       // 프론트에서 보낸 토큰과 redis에 저장된 토큰을 비교해서 일치한다면
+                        jwt.verify(refreshToken,secretKey);                             // refresh token verify
+
+                        const jwtToken = jwt.sign({
+                            "id" : id,
+                            "nickname" : userinfo.nickname,
+                            "sponsor" : userinfo.sponsor,
+                            "platform" : userinfo.plaWWtform
+                        },
+                        secretKey,
+                        {
+                            expiresIn : "360m",
+                            issuer : "UDR"
+                        })
+
+                        return res.send({
+                            success : true,
+                            message : "새로운 토큰이 발급되었습니다.",
+                            token : jwtToken,
+                            expires_in : 21600
+                        })
+                    }
+                    else{                                                        //프론트 보낸 토큰과 redis에 저장된 토큰이 다를 때
+                        return res.send({                                               
+                            success : false,
+                            message : "로그인이 필요합니다."
+                        })
+                    }
+                }
+                else{                                                           //redis에 해당 refresh token이 없을 경우
+                    return res.send({
+                        success : false,
+                        message : "로그인이 필요합니다."
+                    })
+                }
+            }
+            catch(e){                                                        // refresh token도 만료됐을 경우
+                if(e.message == "jwt expired"){
+                    return res.send({
+                        success : false,
+                        message : "로그인이 필요합니다."
+                })
+                }
+            }
+        }
+
+        console.log(err);
+        return res.send({                                                              // invalid한 token일 경우
+            success : false,
+            message : "유효하지 않은 token"
+        });
+    }
+
+}
+
+const getUserNickname = async()=>{
+    const list = ['아싸인척 하는','과제하기 싫은', '과제가 많은', '연애가 하고 싶은', '알바가기 싫은', '학고 받은', '대학원생', '밤샘 중인', 'CC 중인', '종강하고 싶은'];
+    const rand = Math.floor(Math.random() * list.length);
+    return list[rand] + ' 우대리';
+}

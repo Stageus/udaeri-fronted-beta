@@ -26,6 +26,7 @@ Route.post('/auth/login', auth.login, auth.CreateToken);
 Route.post('/oauth/logout', auth.OauthLogout);
 Route.post('/oauth', auth.OauthLogin);
 Route.get('/state', auth.creatState);
+Route.get('/newtoken',auth.getNewToken);
 
 
 // category.js 
@@ -40,7 +41,6 @@ Route.get('/l-categories/:l/m-categories/:m/stores', category.getStoreAll);
 Route.get('/l-categories/:l/m-categories', category.getMiddleCategory);
 Route.get('/l-categories', category.getLargeCategory);
 Route.get('/categories/:food_category/random', category.getRandom);
-
 
 
 
