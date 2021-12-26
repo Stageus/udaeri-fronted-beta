@@ -17,10 +17,10 @@ const KakaoLogin = () => {
 
   // access code를 substring해서 server에 post요청하는 함수 실행
   const LoginProgress = (data) => {
-    const exp = "code=";
-    let condition = data.indexOf(exp);
-    if (condition != -1) {
-      let access_code = data.substring(condition + exp.length);
+    const startStr = "code=";
+    let startIdx = data.indexOf(startStr);
+    if (startIdx != -1) {
+      let access_code = data.substring(startIdx + startStr.length);
       PostAccessCode(access_code);
     }
   };
@@ -40,9 +40,8 @@ const KakaoLogin = () => {
       })
       .then((res) => {
         console.log("access token post 성공");
-        saveToken(res.data);
-        dispatch(restoreToken(res.data));
-        console.log("로그인 성공");
+        saveToken(res.data.token);
+        dispatch(restoreToken(res.data.token));
       })
       .catch((err) => {
         console.log("server로 access code post 실패");

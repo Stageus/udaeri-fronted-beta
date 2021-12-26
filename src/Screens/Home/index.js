@@ -7,14 +7,9 @@ import {
   Platform,
   Dimensions,
   View,
+  Text,
 } from "react-native";
-import {
-  AntDesign,
-  Ionicons,
-  FontAwesome,
-  Entypo,
-  Fontisto,
-} from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import styled, { css } from "styled-components/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -24,8 +19,12 @@ import JjimEle from "../../Components/JjimEle/index";
 import LargeCatEle from "../../Components/LargeCatEle";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { restoreLargeCatList } from "../../../reducer/index";
-import { restoreMidCatList } from "../../../reducer/index";
+import {
+  restoreLargeCatList,
+  restoreMidCatList,
+  restoreJjimStore,
+  restoreCurStore,
+} from "../../../reducer/index";
 
 const StatusBarHeight = StatusBar.currentHeight;
 const { width, height } = Dimensions.get("window");
@@ -83,6 +82,15 @@ const SC = {
     font-family: Medium;
     color: #797d7f;
   `,
+  JjimEleWrap: styled.View`
+    width: ${width * 0.35}px;
+    height: ${width * 0.35}px;
+    background-color: #ebedef;
+    border-radius: 20px;
+    padding: 10px;
+    justify-content: center;
+    align-items: center;
+  `,
 };
 
 const Home = ({ navigation }) => {
@@ -92,72 +100,44 @@ const Home = ({ navigation }) => {
   axios.defaults.baseURL = url;
   const [categoryList, setCategoryList] = useState([]);
 
-  const tokentoken = useSelector((state) => state.userToken);
+  const token = useSelector((state) => state.userToken);
+  const jjimList = useSelector((state) => state.jjimStore); // 유저가 찜한 가게 목록들
 
   useEffect(() => {
+    console.log("토큰" + token);
     axios
-      .get("/l-categories/")
-      .then((res) => {
-        console.log("대분류 리스트 받음");
-        setCategoryList(res.data.list);
-        dispatch(restoreLargeCatList(res.data.list));
-      })
-      .catch((err) => {
-        console.log("대분류 카테고리 못 받음");
-        console.log(err);
-      });
+      .all([
+        axios.get("/l-categories/"),
+        axios.get("/l-categories/all/m-categories/"),
+      ])
+      .then(
+        axios.spread((res1, res2) => {
+          console.log("대분류, 중분류 잘 받아옴");
+          const largeCategoryList = res1.data.list;
+          setCategoryList(largeCategoryList);
+          dispatch(restoreLargeCatList(largeCategoryList));
+          const middleCategoryList = res2.data;
+          dispatch(restoreMidCatList(middleCategoryList));
+        })
+      )
+      .catch((err) => console.log("대분류, 중분류 하나 못 받아옴~~~" + err));
 
     axios
-      .get("/l-categories/all/m-categories/")
-      .then((res) => {
-        console.log("대분류 - 중분류 리스트 받음");
-        dispatch(restoreMidCatList(res.data));
+      .get("/users/favorites/", {
+        headers: {
+          authorization: token,
+        },
       })
-      .catch((err) => {
-        console.log("중분류카테고리 못 받음");
-        console.log(err);
+      .then((res) => {
+        console.log("찜 목록: " + res.data.list);
+        dispatch(restoreJjimStore(res.data.list));
+      })
+      .catch((error) => {
+        console.log(error);
       });
-
-    //   axios
-    //     .get("/users/favorites", {
-    //       headers: {
-    //         authorization: tokentoken,
-    //       },
-    //     })
-    //     .then(function (res) {
-    //       console.log(res.data.list);
-    //     })
-    //     .catch(function (error) {
-    //       console.log(error);
-    //     });
   }, []);
-  const myJjim = [
-    {
-      category: "먹거리",
-      name: "맛사랑2",
-      icon: <Ionicons name="fast-food" size={22} color="white" />,
-    },
-    {
-      category: "상점",
-      name: "다이소",
-      icon: <Fontisto name="shopping-basket" size={22} color="white" />,
-    },
-    {
-      category: "카페",
-      name: "스타벅스",
-      icon: <FontAwesome name="coffee" size={22} color="white" />,
-    },
-    {
-      category: "놀거리",
-      name: "코인노래방방방방",
-      icon: <Entypo name="game-controller" size={22} color="white" />,
-    },
-    {
-      category: "편의시설/서비스",
-      name: "미용미용실",
-      icon: <Entypo name="game-controller" size={22} color="white" />,
-    },
-  ];
+
+  const jjimFilter = jjimList.slice(0, 5);
 
   return (
     <SafeAreaView
@@ -210,16 +190,24 @@ const Home = ({ navigation }) => {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{ marginTop: 15, flexDirection: "row" }}
             >
-              {myJjim.map((item, index) => {
-                return (
-                  <JjimEle
-                    key={index}
-                    category={item.category}
-                    icon={item.icon}
-                    name={item.name}
-                  ></JjimEle>
-                );
-              })}
+              {jjimList === null ? (
+                <></>
+              ) : (
+                jjimFilter.map((item, index) => {
+                  return (
+                    <JjimEle
+                      key={index}
+                      l_category={item.l_category}
+                      // icon={item.icon}
+                      name={item.store_name}
+                      navigation={navigation}
+                    ></JjimEle>
+                  );
+                })
+              )}
+              <SC.JjimEleWrap>
+                <Text>더보기 ^^</Text>
+              </SC.JjimEleWrap>
             </ScrollView>
           </SC.Bottom>
         </ScrollView>

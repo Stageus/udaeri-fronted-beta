@@ -24,7 +24,6 @@ const SC = {
 
 const MiddleCatBtn = (props) => {
   const dispatch = useDispatch();
-  // const clickedBtn = useSelector((state) => state.mapMiddleCatBtn);
 
   return (
     <SC.Wrap>

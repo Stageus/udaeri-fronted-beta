@@ -1,15 +1,5 @@
 import React, { useState } from "react";
-import {
-  TouchableOpacity,
-  ScrollView,
-  SafeAreaView,
-  StatusBar,
-  Platform,
-  Dimensions,
-  Text,
-  View,
-} from "react-native";
-import styled, { css } from "styled-components/native";
+import { ScrollView } from "react-native";
 import MiddleCatBtn from "../MiddleCatBtn/index";
 
 const MiddleCatBtnWrap = (props) => {
