@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, StatusBar, Platform } from "react-native";
-
 import styled, { css } from "styled-components/native";
-
-import StoreTapNavigator from "../../Components/Navigation/StoreTabNavi";
-import HeaderBar from "../../Components/HeaderBar";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
+import StoreTapNavigator from "../../Components/Navigation/StoreTabNavi";
+import HeaderBar from "../../Components/HeaderBar";
 import { jjimCheck, restoreJjimStore, addJjim } from "../../../reducer/index";
 const StatusBarHeight = StatusBar.currentHeight;
 
@@ -36,25 +34,10 @@ const StorePage = ({ navigation, route }) => {
   const storeName = route.params.key;
 
   useEffect(() => {
-    // axios
-    //   .get("/users/favorites/", {
-    //     headers: {
-    //       authorization: token,
-    //     },
-    //   })
-    //   .then((res) => {
-    //     console.log("찜 목록: " + res.data.list);
-    //     dispatch(restoreJjimStore(res.data.list));
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-    console.log("찜 목록: " + JSON.stringify(jjimList));
     if (jjimList === undefined) dispatch(jjimCheck(false));
     else {
       for (let value of jjimList) {
         if (value["store_name"] === storeName) {
-          console.log("찜 목록에 해당 가게 존재함");
           dispatch(jjimCheck(true));
           break;
         } else {

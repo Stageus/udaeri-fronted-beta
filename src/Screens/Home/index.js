@@ -82,7 +82,7 @@ const SC = {
     font-family: Medium;
     color: #797d7f;
   `,
-  JjimEleWrap: styled.View`
+  JjimEleWrap: styled.TouchableOpacity`
     width: ${width * 0.35}px;
     height: ${width * 0.35}px;
     background-color: #ebedef;
@@ -98,13 +98,12 @@ const Home = ({ navigation }) => {
 
   const url = useSelector((state) => state.url);
   axios.defaults.baseURL = url;
-  const [categoryList, setCategoryList] = useState([]);
 
+  const [categoryList, setCategoryList] = useState([]);
+  const [jjimList, setJjimList] = useState([]);
   const token = useSelector((state) => state.userToken);
-  const jjimList = useSelector((state) => state.jjimStore); // 유저가 찜한 가게 목록들
 
   useEffect(() => {
-    console.log("토큰" + token);
     axios
       .all([
         axios.get("/l-categories/"),
@@ -130,14 +129,13 @@ const Home = ({ navigation }) => {
       })
       .then((res) => {
         console.log("찜 목록: " + res.data.list);
+        setJjimList(res.data.list.slice(0, 5));
         dispatch(restoreJjimStore(res.data.list));
       })
       .catch((error) => {
         console.log(error);
       });
   }, []);
-
-  const jjimFilter = jjimList.slice(0, 5);
 
   return (
     <SafeAreaView
@@ -190,10 +188,10 @@ const Home = ({ navigation }) => {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{ marginTop: 15, flexDirection: "row" }}
             >
-              {jjimList === null ? (
+              {jjimList === undefined ? (
                 <></>
               ) : (
-                jjimFilter.map((item, index) => {
+                jjimList.map((item, index) => {
                   return (
                     <JjimEle
                       key={index}
@@ -205,8 +203,11 @@ const Home = ({ navigation }) => {
                   );
                 })
               )}
-              <SC.JjimEleWrap>
-                <Text>더보기 ^^</Text>
+              <SC.JjimEleWrap
+                activeOpacity={0.8}
+                onPress={() => navigation.navigate("JjimPage")}
+              >
+                <Text>더보기 ^0^</Text>
               </SC.JjimEleWrap>
             </ScrollView>
           </SC.Bottom>

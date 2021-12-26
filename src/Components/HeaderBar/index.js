@@ -29,7 +29,6 @@ const HeaderBar = (props) => {
 
   const token = useSelector((state) => state.userToken);
   const jjimState = useSelector((state) => state.jjimState);
-
   const jjimList = useSelector((state) => state.jjimStore); // 유저가 찜한 가게 목록들
 
   const jjimToggle = (storeName) => {
@@ -95,7 +94,12 @@ const HeaderBar = (props) => {
       )}
       <SC.storeName>{props.title}</SC.storeName>
       {props.right === "magni" ? (
-        <Entypo name="magnifying-glass" size={24} color="gray" />
+        <Entypo
+          name="magnifying-glass"
+          size={24}
+          color="gray"
+          onPress={() => props.navigation.navigate("Search")}
+        />
       ) : props.right === "heart" ? (
         <Ionicons
           name="heart-circle-sharp"

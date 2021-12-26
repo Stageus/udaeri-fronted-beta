@@ -60,7 +60,6 @@ const JjimEle = (props) => {
     <SC.JjimEleWrap
       activeOpacity={0.8}
       onPress={() => {
-        console.log("힁");
         props.navigation.navigate("StorePage", { key: props.name });
         dispatch(restoreCurStore(props.name));
       }}
