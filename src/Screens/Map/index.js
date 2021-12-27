@@ -9,13 +9,14 @@ import {
   View,
 } from "react-native";
 import styled, { css } from "styled-components/native";
+import { FontAwesome } from "@expo/vector-icons";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import HeaderBar from "../../Components/HeaderBar";
 import MiddleCatBtnWrap from "./MiddleCatBtnWrap/index";
-import { restoreCurMidCat } from "../../../reducer/index";
+import { restoreCurMidCat, restoreCurStore } from "../../../reducer/index";
 
 const StatusBarHeight = StatusBar.currentHeight;
 const SC = {
@@ -141,18 +142,24 @@ const Map = ({ navigation, route }) => {
                     longitude: item.longitude,
                   }}
                   title={item.store_name}
-                />
+                >
+                  <MapView.Callout
+                    onPress={() => {
+                      navigation.navigate("StorePage", {
+                        key: item.store_name,
+                      });
+                      dispatch(restoreCurStore(item.store_name));
+                    }}
+                  >
+                    <TouchableOpacity>
+                      <Text>{item.store_name}</Text>
+                    </TouchableOpacity>
+                  </MapView.Callout>
+                  {/* <FontAwesome name="map-marker" size={40} color="#B12A5B" /> */}
+                </MapView.Marker>
               </>
             );
           })}
-          {/* <MapView.Marker
-            coordinate={{
-              latitude: 37.451789,
-              longitude: 126.654988,
-            }}
-            title="스타벅스"
-            description="스타스타스타벅스"
-          /> */}
         </MapView>
       </SC.Container>
     </SafeAreaView>
