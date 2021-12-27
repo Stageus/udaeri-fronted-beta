@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import axios from "axios";
 
-import { SafeAreaView } from 'react-native';
-import { ScrollView, FlatList } from 'react-native-gesture-handler';
-import { Foundation, FontAwesome } from '@expo/vector-icons';
-import { Rating } from 'react-native-ratings';
+import { Dimensions } from 'react-native';
+import { ScrollView, FlatList, TouchableOpacity } from 'react-native-gesture-handler';
+const { width, height } = Dimensions.get('window');
 import styled from 'styled-components/native';
 import ReviewEle from '../../../Components/ReviewEle';
 import ScoreRating from '../../../Components/ScoreRating';
@@ -61,6 +60,7 @@ const StoreReviewTab = () => {
         `,
         reviewContainer: styled.View`
         `,
+
     };
 
     return (

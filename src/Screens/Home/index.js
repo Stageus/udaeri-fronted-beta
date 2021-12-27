@@ -137,7 +137,7 @@ const Home = ({ navigation }) => {
       });
   }, []);
 
-  const jjimFilter = jjimList.slice(0, 5);
+  // const jjimFilter = jjimList.slice(0, 5);
 
   return (
     <SafeAreaView
@@ -185,7 +185,7 @@ const Home = ({ navigation }) => {
           </SC.Middle>
           <SC.Bottom>
             <SC.MainTitle>내가 찜한 가게</SC.MainTitle>
-            <ScrollView
+            {/* <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{ marginTop: 15, flexDirection: "row" }}
@@ -208,7 +208,7 @@ const Home = ({ navigation }) => {
               <SC.JjimEleWrap>
                 <Text>더보기 ^^</Text>
               </SC.JjimEleWrap>
-            </ScrollView>
+            </ScrollView> */}
           </SC.Bottom>
         </ScrollView>
       </SC.Container>

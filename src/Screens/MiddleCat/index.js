@@ -35,8 +35,8 @@ const MiddleCat = ({ navigation }) => {
 
                 <SC.mainContainer>
                     <ScrollView>
-                        {midCatList && midCatList.map((item) => (
-                            <MidCatEle name={item} icon={<></>} page="StoreList" navi={navigation} />
+                        {midCatList && midCatList.map((item, index) => (
+                            <MidCatEle key={index} name={item} icon={<></>} page="StoreList" navi={navigation} />
                         ))}
                     </ScrollView>
                 </SC.mainContainer>

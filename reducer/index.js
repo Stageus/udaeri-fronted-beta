@@ -7,6 +7,9 @@ const initState = {
   midCatList: null,
   curLargeCat: null,
   curMidCat: null,
+
+  curMidCatList: null,
+
   curStore: null,
   jjimStore: null,
   jjimState: null,
@@ -15,6 +18,10 @@ const initState = {
 const RESTORE_TOKEN = "RESTORE_TOKEN";
 const RESTORE_CUR_LARGECAT = "RESTORE_CUR_LARGECAT";
 const RESTORE_CUR_MIDCAT = "RESTORE_CUR_MIDCAT";
+
+const RESTORE_CUR_MIDCATLIST = "RESTORE_CUR_MIDCATLIST";
+const ADD_CUR_MIDCATLIST = "ADD_CUR_MIDCATLIST";
+
 const RESTORE_LARGECATLIST = "RESTORE_LARGECATLIST";
 const RESTORE_MIDCATLIST = "RESTORE_MIDCATLIST";
 const RESTORE_CUR_STORE = "RESTORE_CUR_STORE";
@@ -34,7 +41,7 @@ export const restoreLargeCatList = (catList) => ({
 });
 
 export const restoreMiddleCatList = (catList) => ({
-  type: RESTORE_MIDDLECATLIST,
+  type: RESTORE_MIDCATLIST,
   catList,
 });
 
@@ -51,6 +58,17 @@ export const restoreMidCatList = (catList) => ({
 export const restoreCurMidCat = (cat) => ({
   type: RESTORE_CUR_MIDCAT,
   cat,
+});
+
+export const restoreCurMidCatList = (storeList) => ({
+  type: RESTORE_CUR_MIDCATLIST,
+  storeList,
+});
+
+export const addCurMidCatList = (curMidCat, addStoreList) => ({
+  type: ADD_CUR_MIDCATLIST,
+  curMidCat,
+  addStoreList,
 });
 
 export const restoreCurStore = (store) => ({
@@ -106,6 +124,17 @@ const reducer = (state = initState, action) => {
       return {
         ...state,
         curMidCat: action.cat,
+      };
+    case RESTORE_CUR_MIDCATLIST:
+      return {
+        ...state,
+        curMidCatList: action.storeList,
+      };
+    case ADD_CUR_MIDCATLIST:
+      state.curMidCatList[action.curMidCat] = state.curMidCatList[action.curMidCat].concat(action.addStoreList)
+      return {
+        ...state,
+        curMidCatList: state.curMidCatList
       };
     case RESTORE_CUR_STORE:
       return {

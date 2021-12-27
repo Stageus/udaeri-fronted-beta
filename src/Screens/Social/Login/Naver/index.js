@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StatusBar } from "react-native";
+import { View, StatusBar, Platform } from "react-native";
 import { WebView } from "react-native-webview";
 import styled, { css } from "styled-components/native";
 import axios from "axios";
