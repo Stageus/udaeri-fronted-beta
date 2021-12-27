@@ -3,7 +3,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { store } from "./store/index";
 import { Provider, useSelector, useDispatch } from "react-redux";
-import { restoreToken } from "./reducer/index";
+import { restoreToken, checkToken } from "./reducer/index";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import * as Font from "expo-font";
 
@@ -31,7 +32,6 @@ import Welcome from "./src/Screens/Welcome";
 import Search from "./src/Screens/Search";
 import Map from "./src/Screens/Map";
 import MyPage from "./src/Screens/MyPage";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import KakaoLogin from "./src/Screens/Social/Login/Kakao/index";
 import KakaoLogout from "./src/Screens/Social/Logout/Kakao/index";
 import NaverLogin from "./src/Screens/Social/Login/Naver/index";
@@ -64,7 +64,7 @@ const App = () => {
     let userToken;
     try {
       userToken = await getToken();
-      dispatch(restoreToken(userToken));
+      dispatch(checkToken(true));
     } catch (e) {
       console.log("토큰을 가져오지 못했어요");
     }
@@ -75,7 +75,8 @@ const App = () => {
     return await AsyncStorage.getItem(TOKEN_KEY);
   };
 
-  const token = useSelector((state) => state.userToken);
+  // const token = useSelector((state) => state.userToken);
+  const tokenCheck = useSelector((state) => state.tokenCheck);
 
   useEffect(() => {
     preLoad();
@@ -87,7 +88,7 @@ const App = () => {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {!loaded ? (
           <Stack.Screen name="Loading" component={Loading} />
-        ) : token == null ? (
+        ) : !tokenCheck ? (
           <>
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="EmailLogin" component={EmailLogin} />

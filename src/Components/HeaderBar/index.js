@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, SafeAreaView } from "react-native";
 import { Ionicons, Entypo } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jjimCheck, addJjim, deleteJjim } from "../../../reducer/index";
 
 const SC = {
@@ -27,7 +28,15 @@ const HeaderBar = (props) => {
   const url = useSelector((state) => state.url);
   axios.defaults.baseURL = url;
 
-  const token = useSelector((state) => state.userToken);
+  const [token, setToken] = useState();
+  const TOKEN_KEY = "@userKey";
+
+  useEffect(() => {
+    AsyncStorage.getItem(TOKEN_KEY, (err, token) => {
+      setToken(token);
+    });
+  }, []);
+
   const jjimState = useSelector((state) => state.jjimState);
   const jjimList = useSelector((state) => state.jjimStore); // 유저가 찜한 가게 목록들
 

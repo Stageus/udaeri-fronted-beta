@@ -9,6 +9,7 @@ import {
   restoreToken,
   restoreExpiredTime,
   restoreLoginTime,
+  checkToken,
 } from "../../../../../reducer/index";
 const StatusBarHeight = StatusBar.currentHeight;
 const SC = {
@@ -60,7 +61,7 @@ const NaverLogin = () => {
   // asyncStorage에 token저장하는 함수
   const TOKEN_KEY = "@userKey";
   const saveToken = async (token) => {
-    await AsyncStorage.setItem(TOKEN_KEY, token);
+    AsyncStorage.setItem(TOKEN_KEY, token);
   };
 
   // asyncStorage에 refresh token 저장하는 함수
@@ -81,7 +82,8 @@ const NaverLogin = () => {
         console.log("access token post 성공");
         saveToken(res.data.token);
         saveRefreshToken(res.data.refreshToken);
-        dispatch(restoreToken(res.data.token));
+        dispatch(checkToken(true));
+        // dispatch(restoreToken(res.data.token));
         dispatch(restoreExpiredTime(res.data.expires_in));
       })
       .catch((err) => {

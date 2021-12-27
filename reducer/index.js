@@ -1,5 +1,6 @@
 const initState = {
   userToken: null,
+  tokenCheck: false,
   loginTime: null,
   tokenExpiredTime: null,
   url: "http://3.35.67.117:8000/",
@@ -15,6 +16,7 @@ const initState = {
 };
 
 const RESTORE_TOKEN = "RESTORE_TOKEN";
+const CHECK_TOKEN = "CHECK_TOKEN";
 const RESTORE_LOGIN_TIME = "RESTORE_LOGIN_TIME";
 const RESTORE_TOKEN_EXPIRED_TIME = "RESTORE_TOKEN_EXPIRED_TIME";
 const RESTORE_CUR_LARGECAT = "RESTORE_CUR_LARGECAT";
@@ -29,6 +31,11 @@ const DELETE_JJIM = "DELETE_JJIM";
 
 export const restoreToken = (token) => ({
   type: RESTORE_TOKEN,
+  token,
+});
+
+export const checkToken = (token) => ({
+  type: CHECK_TOKEN,
   token,
 });
 
@@ -100,6 +107,11 @@ const reducer = (state = initState, action) => {
       return {
         ...state,
         userToken: action.token,
+      };
+    case CHECK_TOKEN:
+      return {
+        ...state,
+        tokenCheck: action.token,
       };
     case RESTORE_TOKEN_EXPIRED_TIME:
       return {

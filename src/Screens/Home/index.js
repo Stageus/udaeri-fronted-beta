@@ -91,6 +91,14 @@ const SC = {
     justify-content: center;
     align-items: center;
   `,
+  NoJjimWrap: styled.View`
+    width: ${width * 0.89}px;
+    height: ${width * 0.35}px;
+    background-color: #ebedef;
+    border-radius: 20px;
+    justify-content: center;
+    align-items: center;
+  `,
 };
 
 const Home = ({ navigation }) => {
@@ -100,10 +108,15 @@ const Home = ({ navigation }) => {
   axios.defaults.baseURL = url;
 
   const [categoryList, setCategoryList] = useState([]);
-  const [jjimList, setJjimList] = useState([]);
-  const token = useSelector((state) => state.userToken);
 
-  useEffect(() => {
+  const TOKEN_KEY = "@userKey";
+
+  useEffect(async () => {
+    let tokentoken;
+    await AsyncStorage.getItem(TOKEN_KEY, (err, result) => {
+      tokentoken = result;
+    });
+
     axios
       .all([
         axios.get("/l-categories/"),
@@ -124,18 +137,19 @@ const Home = ({ navigation }) => {
     axios
       .get("/users/favorites/", {
         headers: {
-          authorization: token,
+          authorization: tokentoken,
         },
       })
       .then((res) => {
         console.log("찜 목록: " + res.data.list);
-        setJjimList(res.data.list.slice(0, 5));
         dispatch(restoreJjimStore(res.data.list));
       })
       .catch((error) => {
         console.log(error);
       });
   }, []);
+
+  const jjimjjim = useSelector((state) => state.jjimStore);
 
   return (
     <SafeAreaView
@@ -188,10 +202,12 @@ const Home = ({ navigation }) => {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{ marginTop: 15, flexDirection: "row" }}
             >
-              {jjimList === undefined ? (
-                <></>
+              {jjimjjim[0] == undefined ? (
+                <SC.NoJjimWrap>
+                  <Text>찜한 가게가 없어요~</Text>
+                </SC.NoJjimWrap>
               ) : (
-                jjimList.map((item, index) => {
+                jjimjjim.slice(0, 5).map((item, index) => {
                   return (
                     <JjimEle
                       key={index}
@@ -203,12 +219,16 @@ const Home = ({ navigation }) => {
                   );
                 })
               )}
-              <SC.JjimEleWrap
-                activeOpacity={0.8}
-                onPress={() => navigation.navigate("JjimPage")}
-              >
-                <Text>더보기 ^0^</Text>
-              </SC.JjimEleWrap>
+              {jjimjjim.length > 5 ? (
+                <SC.JjimEleWrap
+                  activeOpacity={0.8}
+                  onPress={() => navigation.navigate("JjimPage")}
+                >
+                  <Text>더보기 ^0^</Text>
+                </SC.JjimEleWrap>
+              ) : (
+                <></>
+              )}
             </ScrollView>
           </SC.Bottom>
         </ScrollView>
