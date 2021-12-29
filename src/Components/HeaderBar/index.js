@@ -55,8 +55,8 @@ const HeaderBar = (props) => {
           .then((res) => {
             res.data.success
               ? (dispatch(jjimCheck(false)),
-                dispatch(deleteJjim(storeName, jjimList)),
-                console.log("삭제 성공"))
+                dispatch(deleteJjim(jjimList, storeName)),
+                console.log("찜 삭제 성공"))
               : console.log("찜 삭제 실패");
           })
           .catch((err) => {
@@ -78,7 +78,7 @@ const HeaderBar = (props) => {
           .then((res) => {
             res.data.success
               ? (dispatch(jjimCheck(true)),
-                dispatch(addJjim(storeName, jjimList)),
+                dispatch(addJjim(jjimList, storeName, res.data.l_category)),
                 console.log("찜추가 성공"))
               : console.log("찜 추가 실패");
           })

@@ -56,7 +56,7 @@ const App = () => {
         setLoaded(true);
       });
     } catch (error) {
-      console.log(error);
+      console.log("폰트 로딩 실패" + error);
     }
   };
 
