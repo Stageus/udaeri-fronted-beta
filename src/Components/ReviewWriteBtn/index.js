@@ -89,12 +89,16 @@ const ReviewWriteBtn = () => {
 
     const url = useSelector((state) => state.url);
     axios.defaults.baseURL = url;
-    const token = useSelector((state) => state.userToken).replace(/\"/gi, "");
+    const TOKEN_KEY = "@userKey";
     const curLargeCat = useSelector((state) => state.curLargeCat);
     const curMidCat = useSelector((state) => state.curMidCat);
     const curStore = useSelector((state) => state.curStore);
 
-    const onSubmit = () => {
+    const onSubmit = async () => {
+        let tokentoken;
+        await AsyncStorage.getItem(TOKEN_KEY, (err, result) => {
+            tokentoken = result;
+        });
         axios
             .post("/l-categories/" + curLargeCat + "/m-categories/" + curMidCat + "/stores/" + curStore + "/review",
                 {
@@ -102,7 +106,7 @@ const ReviewWriteBtn = () => {
                     star_rating: rating
                 }, {
                 headers: {
-                    authorization: token,
+                    authorization: tokentoken,
                     "Content-Type": "application/json",
                 },
             })

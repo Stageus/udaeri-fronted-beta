@@ -19,7 +19,7 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 import styled, { css } from "styled-components/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSelector, useDispatch } from "react-redux";
-import { restoreToken } from "../../../reducer/index";
+import { restoreToken, checkToken } from "../../../reducer/index";
 
 const StatusBarHeight = StatusBar.currentHeight;
 
@@ -84,7 +84,8 @@ const MyPage = ({ navigation }) => {
 
   const tokenExpire = () => {
     AsyncStorage.removeItem(TOKEN_KEY);
-    dispatch(restoreToken());
+    dispatch(checkToken(false));
+    // dispatch(restoreToken());
   };
 
   return (

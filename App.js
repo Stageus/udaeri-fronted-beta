@@ -3,10 +3,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { store } from "./store/index";
 import { Provider, useSelector, useDispatch } from "react-redux";
-
-import { StatusBar, Platform, View } from "react-native";
-import { restoreToken } from "./reducer/index";
-
+import { restoreToken, checkToken } from "./reducer/index";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import * as Font from "expo-font";
 
 Font.loadAsync({
@@ -33,17 +32,16 @@ import Welcome from "./src/Screens/Welcome";
 import Search from "./src/Screens/Search";
 import Map from "./src/Screens/Map";
 import MyPage from "./src/Screens/MyPage";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import KakaoLogin from "./src/Screens/Social/Login/Kakao/index";
 import KakaoLogout from "./src/Screens/Social/Logout/Kakao/index";
 import NaverLogin from "./src/Screens/Social/Login/Naver/index";
+import JjimPage from "./src/Screens/Jjim/index";
 
 const Stack = createStackNavigator();
 
 const App = () => {
   const [loaded, setLoaded] = useState(false);
 
-  const TOKEN_KEY = "@userKey";
   const dispatch = useDispatch();
 
   const preLoad = async () => {
@@ -65,26 +63,32 @@ const App = () => {
   const getStorageToken = async () => {
     let userToken;
     try {
-      userToken = await AsyncStorage.getItem(TOKEN_KEY);
-      dispatch(restoreToken(userToken));
+      userToken = await getToken();
+      dispatch(checkToken(true));
     } catch (e) {
       console.log("토큰을 가져오지 못했어요");
     }
   };
+
+  const TOKEN_KEY = "@userKey";
+  const getToken = async () => {
+    return await AsyncStorage.getItem(TOKEN_KEY);
+  };
+
+  // const token = useSelector((state) => state.userToken);
+  const tokenCheck = useSelector((state) => state.tokenCheck);
 
   useEffect(() => {
     preLoad();
     getStorageToken();
   }, []);
 
-  const tokentoken = useSelector((state) => state.userToken);
-
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {!loaded ? (
           <Stack.Screen name="Loading" component={Loading} />
-        ) : tokentoken == null ? (
+        ) : !tokenCheck ? (
           <>
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="EmailLogin" component={EmailLogin} />
@@ -98,12 +102,12 @@ const App = () => {
             <Stack.Screen name="BottomNavigator" component={BottomNavigator} />
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="Search" component={Search} />
+            <Stack.Screen name="JjimPage" component={JjimPage} />
             <Stack.Screen name="MiddleCat" component={MiddleCat} />
             <Stack.Screen name="StoreList" component={StoreList} />
             <Stack.Screen name="StorePage" component={StorePage} />
             <Stack.Screen name="Map" component={Map} />
             <Stack.Screen name="MyPage" component={MyPage} />
-            <Stack.Screen name="KakaoLogout" component={KakaoLogout} />
           </>
         )}
       </Stack.Navigator>
