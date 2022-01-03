@@ -3,7 +3,7 @@ const initState = {
   tokenCheck: false,
   loginTime: null,
   tokenExpiredTime: null,
-  url: "http://3.35.67.117:8000/",
+  url: "http://3.38.138.194:8000/",
   mainColor: "#ff9933",
   grayColor: "#999999",
   largeCatList: null,

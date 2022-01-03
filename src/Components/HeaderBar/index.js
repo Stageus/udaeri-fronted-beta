@@ -60,7 +60,7 @@ const HeaderBar = (props) => {
               : console.log("찜 삭제 실패");
           })
           .catch((err) => {
-            connsole.log("찜 삭제 실패 이유: " + err);
+            console.log("찜 삭제 실패 이유: " + err);
           })
       : axios
           .post(

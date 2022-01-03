@@ -151,6 +151,7 @@ const Home = ({ navigation }) => {
 
   const jjimjjim = useSelector((state) => state.jjimStore);
   useEffect(() => {
+    // console.log(jjimjjim);
     if (jjimjjim !== null) setJjimList(jjimjjim);
   }, [jjimjjim]);
 

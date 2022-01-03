@@ -34,12 +34,17 @@ const SC = {
       : undefined}
   `,
   Category: styled.View`
-    background-color: yellow;
     align-items: center;
     justify-content: space-between;
     margin-right: 5px;
     padding: 6px 10px;
     border-radius: 15px;
+
+    ${({ target, clickedCat, clickedColor }) => {
+      return target === clickedCat
+        ? `background-color: ${clickedColor}`
+        : "background-color: #fff";
+    }}
   `,
   LargeCatWrap: styled.View`
     position: absolute;
@@ -48,16 +53,35 @@ const SC = {
     flex-direction: row;
     justify-content: space-between;
   `,
-  ShopWrap: styled.TouchableOpacity`
+  StoreWrap: styled.TouchableOpacity`
     position: absolute;
     bottom: 0;
     z-index: 5;
     width: 100%;
     height: 100px;
-    background-color: pink;
+    background-color: #fff;
     // border-top-left-radius: 30px;
     // border-top-right-radius: 30px;
-    padding: 10px;
+    padding: 12px;
+  `,
+  StoreInfoTop: styled.View`
+    flex-direction: row;
+    align-items: center;
+    padding: 3px 0px;
+  `,
+  StoreName: styled.Text`
+    font-size: 16px;
+    font-family: Bold;
+    margin-right: 5px;
+  `,
+  StoreCategory: styled.Text`
+    font-size: 12px;
+    font-family: Regular;
+    color: #999999;
+  `,
+  StoreInfo: styled.Text`
+    font-size: 14px;
+    font-family: Regular;
   `,
 };
 
@@ -70,6 +94,7 @@ const Map = ({ navigation, route }) => {
   const largeCat = useSelector((state) => state.largeCatList);
   const middleCat = useSelector((state) => state.midCatList);
   const mainColor = useSelector((state) => state.mainColor);
+  const clickedStore = useSelector((state) => state.curStore);
 
   const [initialRegion, setInitialRegion] = useState({
     latitude: 37.4513546060566,
@@ -81,19 +106,13 @@ const Map = ({ navigation, route }) => {
   const [clickedCat, setClickedCat] = useState("");
   const [midCatList, setMidCatList] = useState({});
   const [middleCatLocation, setMiddleCatLocation] = useState([]);
-  const [clickShop, setClickShop] = useState(false);
-  const [clickedShopInfo, setClickedShopInfo] = useState();
+  const [storeInfo, setStoreInfo] = useState({});
 
   useEffect(() => {
     if (clickedCat === "술집") {
       dispatch(restoreCurMidCat("술집"));
     }
   }, [clickedCat]);
-
-  const MiddleCatListAPI = (largeCat) => {
-    setClickedCat(largeCat);
-    setMidCatList(middleCat[largeCat]);
-  };
 
   useEffect(() => {
     axios
@@ -111,6 +130,37 @@ const Map = ({ navigation, route }) => {
         console.log("클릭한 중분류를 찾을 수 없어요");
       });
   }, [clickedMiddle]);
+
+  const MiddleCatListAPI = (largeCat) => {
+    setClickedCat(largeCat);
+    setMidCatList(middleCat[largeCat]);
+  };
+
+  const getStoreInfo = (storeName) => {
+    axios
+      .get(
+        "/l-categories/" +
+          clickedCat +
+          "/m-categories/" +
+          clickedMiddle +
+          "/stores/" +
+          storeName +
+          "/information"
+      )
+      .then((res) => {
+        setStoreInfo(res.data);
+      })
+      .catch((err) => {
+        console.log("클릭한 가게 정보를 찾을 수 없어요" + err);
+      });
+  };
+
+  const [target, setTarget] = useState(null);
+  useEffect(() => {}, [storeInfo, clickedStore]);
+  useEffect(() => {
+    dispatch(restoreCurStore(null));
+    dispatch(restoreCurMidCat(null));
+  }, []);
 
   return (
     <SafeAreaView
@@ -130,8 +180,20 @@ const Map = ({ navigation, route }) => {
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {largeCat.map((item, index) => {
               return (
-                <SC.Category key={index} style={styles.shadow}>
-                  <Text onPress={() => MiddleCatListAPI(item.name)}>
+                <SC.Category
+                  key={index}
+                  style={styles.shadow}
+                  target={item.name}
+                  clickedCat={clickedCat}
+                  clickedColor={mainColor}
+                >
+                  <Text
+                    onPress={() => {
+                      MiddleCatListAPI(item.name);
+                      dispatch(restoreCurStore(null));
+                      dispatch(restoreCurMidCat(null));
+                    }}
+                  >
                     {item.name}
                   </Text>
                 </SC.Category>
@@ -155,8 +217,8 @@ const Map = ({ navigation, route }) => {
         <MapView
           initialRegion={initialRegion}
           provider={PROVIDER_GOOGLE}
-          showsUserLocation={true}
-          showsMyLocationButton={true}
+          // showsUserLocation={true}
+          // showsMyLocationButton={true}
           style={{ flex: 1, width: "100%" }}
         >
           {middleCatLocation.map((item, index) => {
@@ -170,7 +232,9 @@ const Map = ({ navigation, route }) => {
                   }}
                   // title={item.store_name}
                   onPress={() => {
-                    setClickShop(true), setClickedShopInfo(item.store_name);
+                    setTarget(item.store_name);
+                    getStoreInfo(item.store_name);
+                    dispatch(restoreCurStore(item.store_name));
                   }}
                 >
                   {/* <MapView.Callout
@@ -185,23 +249,40 @@ const Map = ({ navigation, route }) => {
                       <Text>{item.store_name}</Text>
                     </TouchableOpacity>
                   </MapView.Callout> */}
-                  <FontAwesome name="map-marker" size={30} color={mainColor} />
+                  {target === item.store_name ? (
+                    <FontAwesome
+                      name="map-marker"
+                      size={37}
+                      color={mainColor}
+                    />
+                  ) : (
+                    <FontAwesome
+                      name="map-marker"
+                      size={30}
+                      color={mainColor}
+                    />
+                  )}
                 </MapView.Marker>
               </>
             );
           })}
         </MapView>
-        {clickShop ? (
-          <SC.ShopWrap
+        {clickedStore ? (
+          <SC.StoreWrap
             onPress={() => {
               navigation.navigate("StorePage", {
-                key: clickedShopInfo,
+                key: target,
               });
-              dispatch(restoreCurStore(clickedShopInfo));
+              // dispatch(restoreCurStore(target));
             }}
           >
-            <Text>{clickedShopInfo}</Text>
-          </SC.ShopWrap>
+            <SC.StoreInfoTop>
+              <SC.StoreName>{storeInfo.store}</SC.StoreName>
+              <SC.StoreCategory>{clickedMiddle}</SC.StoreCategory>
+            </SC.StoreInfoTop>
+
+            <SC.StoreInfo>{storeInfo.location}</SC.StoreInfo>
+          </SC.StoreWrap>
         ) : (
           <></>
         )}
