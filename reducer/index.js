@@ -89,13 +89,14 @@ export const jjimCheck = (boolean) => ({
   boolean,
 });
 
-export const addJjim = (store, storeList) => ({
+export const addJjim = (storeList, store, category) => ({
   type: ADD_JJIM,
   storeList,
   store,
+  category,
 });
 
-export const deleteJjim = (store, storeList) => ({
+export const deleteJjim = (storeList, store) => ({
   type: DELETE_JJIM,
   storeList,
   store,
@@ -155,7 +156,7 @@ const reducer = (state = initState, action) => {
       };
     case ADD_JJIM:
       const jjimList = [...action.storeList];
-      jjimList.push({ store_name: action.store });
+      jjimList.push({ store_name: action.store, l_category: action.category });
       return {
         ...state,
         jjimStore: jjimList,

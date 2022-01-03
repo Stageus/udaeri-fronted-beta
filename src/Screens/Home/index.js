@@ -108,6 +108,7 @@ const Home = ({ navigation }) => {
   axios.defaults.baseURL = url;
 
   const [categoryList, setCategoryList] = useState([]);
+  const [jjimList, setJjimList] = useState([]);
 
   const TOKEN_KEY = "@userKey";
 
@@ -141,15 +142,17 @@ const Home = ({ navigation }) => {
         },
       })
       .then((res) => {
-        console.log("찜 목록: " + res.data.list);
+        console.log("찜 목록: " + JSON.stringify(res.data.list));
+        if (res.data.list !== undefined) setJjimList(res.data.list);
         dispatch(restoreJjimStore(res.data.list));
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((err) => console.log("찜 목록 못 받아옴~~ " + err));
   }, []);
 
   const jjimjjim = useSelector((state) => state.jjimStore);
+  useEffect(() => {
+    if (jjimjjim !== null) setJjimList(jjimjjim);
+  }, [jjimjjim]);
 
   return (
     <SafeAreaView
@@ -202,12 +205,12 @@ const Home = ({ navigation }) => {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{ marginTop: 15, flexDirection: "row" }}
             >
-              {jjimjjim[0] == undefined ? (
+              {jjimList.length === 0 ? (
                 <SC.NoJjimWrap>
                   <Text>찜한 가게가 없어요~</Text>
                 </SC.NoJjimWrap>
               ) : (
-                jjimjjim.slice(0, 5).map((item, index) => {
+                jjimList.slice(0, 5).map((item, index) => {
                   return (
                     <JjimEle
                       key={index}
@@ -219,7 +222,7 @@ const Home = ({ navigation }) => {
                   );
                 })
               )}
-              {jjimjjim.length > 5 ? (
+              {jjimList.length > 5 ? (
                 <SC.JjimEleWrap
                   activeOpacity={0.8}
                   onPress={() => navigation.navigate("JjimPage")}

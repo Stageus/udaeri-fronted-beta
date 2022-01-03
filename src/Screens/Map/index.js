@@ -7,6 +7,8 @@ import {
   Platform,
   Text,
   View,
+  Dimensions,
+  StyleSheet,
 } from "react-native";
 import styled, { css } from "styled-components/native";
 import { FontAwesome } from "@expo/vector-icons";
@@ -19,27 +21,43 @@ import MiddleCatBtnWrap from "./MiddleCatBtnWrap/index";
 import { restoreCurMidCat, restoreCurStore } from "../../../reducer/index";
 
 const StatusBarHeight = StatusBar.currentHeight;
+const { width, height } = Dimensions.get("window");
+
 const SC = {
   Container: styled.View`
     background-color: #fff;
     flex: 1;
     ${Platform.OS === "android"
       ? css`
-          padding-top: ${StatusBarHeight + 15}px;
+          padding-top: ${StatusBarHeight}px;
         `
       : undefined}
   `,
   Category: styled.View`
-    height: 25px;
     background-color: yellow;
     align-items: center;
     justify-content: space-between;
-    margin-right: 15px;
-    padding: 4px 10px;
+    margin-right: 5px;
+    padding: 6px 10px;
+    border-radius: 15px;
   `,
   LargeCatWrap: styled.View`
+    position: absolute;
+    top: ${StatusBarHeight + height * 0.06}px;
+    z-index: 5;
     flex-direction: row;
     justify-content: space-between;
+  `,
+  ShopWrap: styled.TouchableOpacity`
+    position: absolute;
+    bottom: 0;
+    z-index: 5;
+    width: 100%;
+    height: 100px;
+    background-color: pink;
+    // border-top-left-radius: 30px;
+    // border-top-right-radius: 30px;
+    padding: 10px;
   `,
 };
 
@@ -51,6 +69,7 @@ const Map = ({ navigation, route }) => {
   const clickedMiddle = useSelector((state) => state.curMidCat);
   const largeCat = useSelector((state) => state.largeCatList);
   const middleCat = useSelector((state) => state.midCatList);
+  const mainColor = useSelector((state) => state.mainColor);
 
   const [initialRegion, setInitialRegion] = useState({
     latitude: 37.4513546060566,
@@ -62,6 +81,8 @@ const Map = ({ navigation, route }) => {
   const [clickedCat, setClickedCat] = useState("");
   const [midCatList, setMidCatList] = useState({});
   const [middleCatLocation, setMiddleCatLocation] = useState([]);
+  const [clickShop, setClickShop] = useState(false);
+  const [clickedShopInfo, setClickedShopInfo] = useState();
 
   useEffect(() => {
     if (clickedCat === "술집") {
@@ -99,11 +120,17 @@ const Map = ({ navigation, route }) => {
       }}
     >
       <SC.Container>
+        <HeaderBar
+          left="arrow"
+          title="지도"
+          right="magni"
+          navigation={navigation}
+        ></HeaderBar>
         <SC.LargeCatWrap>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {largeCat.map((item, index) => {
               return (
-                <SC.Category key={index}>
+                <SC.Category key={index} style={styles.shadow}>
                   <Text onPress={() => MiddleCatListAPI(item.name)}>
                     {item.name}
                   </Text>
@@ -141,9 +168,12 @@ const Map = ({ navigation, route }) => {
                     latitude: item.latitude,
                     longitude: item.longitude,
                   }}
-                  title={item.store_name}
+                  // title={item.store_name}
+                  onPress={() => {
+                    setClickShop(true), setClickedShopInfo(item.store_name);
+                  }}
                 >
-                  <MapView.Callout
+                  {/* <MapView.Callout
                     onPress={() => {
                       navigation.navigate("StorePage", {
                         key: item.store_name,
@@ -154,16 +184,49 @@ const Map = ({ navigation, route }) => {
                     <TouchableOpacity>
                       <Text>{item.store_name}</Text>
                     </TouchableOpacity>
-                  </MapView.Callout>
-                  {/* <FontAwesome name="map-marker" size={40} color="#B12A5B" /> */}
+                  </MapView.Callout> */}
+                  <FontAwesome name="map-marker" size={30} color={mainColor} />
                 </MapView.Marker>
               </>
             );
           })}
         </MapView>
+        {clickShop ? (
+          <SC.ShopWrap
+            onPress={() => {
+              navigation.navigate("StorePage", {
+                key: clickedShopInfo,
+              });
+              dispatch(restoreCurStore(clickedShopInfo));
+            }}
+          >
+            <Text>{clickedShopInfo}</Text>
+          </SC.ShopWrap>
+        ) : (
+          <></>
+        )}
       </SC.Container>
     </SafeAreaView>
   );
 };
 
 export default Map;
+
+const styles = StyleSheet.create({
+  shadow: {
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
+  },
+});
