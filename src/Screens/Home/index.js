@@ -24,6 +24,8 @@ import {
   restoreMidCatList,
   restoreJjimStore,
   restoreCurStore,
+  restoreUserNickname,
+  checkSponsor,
 } from "../../../reducer/index";
 
 const StatusBarHeight = StatusBar.currentHeight;
@@ -113,9 +115,9 @@ const Home = ({ navigation }) => {
   const TOKEN_KEY = "@userKey";
 
   useEffect(async () => {
-    let tokentoken;
+    let token;
     await AsyncStorage.getItem(TOKEN_KEY, (err, result) => {
-      tokentoken = result;
+      token = result;
     });
 
     axios
@@ -138,7 +140,7 @@ const Home = ({ navigation }) => {
     axios
       .get("/users/favorites/", {
         headers: {
-          authorization: tokentoken,
+          authorization: token,
         },
       })
       .then((res) => {
@@ -147,12 +149,26 @@ const Home = ({ navigation }) => {
         dispatch(restoreJjimStore(res.data.list));
       })
       .catch((err) => console.log("찜 목록 못 받아옴~~ " + err));
+
+    axios
+      .get("/users", {
+        headers: {
+          authorization: token,
+        },
+      })
+      .then((res) => {
+        console.log("회원정보: " + JSON.stringify(res.data));
+        dispatch(restoreUserNickname(res.data.nickname));
+        dispatch(checkSponsor(res.data.sponsor));
+      })
+      .catch((err) => console.log("회원정보 못 받아옴~~ " + err));
   }, []);
 
   const jjimjjim = useSelector((state) => state.jjimStore);
   useEffect(() => {
-    // console.log(jjimjjim);
-    if (jjimjjim !== null) setJjimList(jjimjjim);
+    if (jjimjjim == false) {
+      setJjimList(jjimjjim);
+    }
   }, [jjimjjim]);
 
   return (
@@ -206,7 +222,7 @@ const Home = ({ navigation }) => {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{ marginTop: 15, flexDirection: "row" }}
             >
-              {jjimList.length === 0 ? (
+              {jjimList == false ? (
                 <SC.NoJjimWrap>
                   <Text>찜한 가게가 없어요~</Text>
                 </SC.NoJjimWrap>

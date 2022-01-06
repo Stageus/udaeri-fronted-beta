@@ -1,6 +1,8 @@
 const initState = {
-  userToken: null,
+  // userToken: null,
   tokenCheck: false,
+  userNickname: null,
+  sponsorCheck: null,
   loginTime: null,
   tokenExpiredTime: null,
   url: "http://3.38.138.194:8000/",
@@ -15,8 +17,10 @@ const initState = {
   jjimState: null,
 };
 
-const RESTORE_TOKEN = "RESTORE_TOKEN";
+// const RESTORE_TOKEN = "RESTORE_TOKEN";
 const CHECK_TOKEN = "CHECK_TOKEN";
+const RESOTRE_USER_NICKNAME = "RESOTRE_USER_NICKNAME";
+const CHECK_SPONSOR = "CHECK_SPONSOR";
 const RESTORE_LOGIN_TIME = "RESTORE_LOGIN_TIME";
 const RESTORE_TOKEN_EXPIRED_TIME = "RESTORE_TOKEN_EXPIRED_TIME";
 const RESTORE_CUR_LARGECAT = "RESTORE_CUR_LARGECAT";
@@ -29,14 +33,24 @@ const CHECK_JJIM = "CHECK_JJIM";
 const ADD_JJIM = "ADD_JJIM";
 const DELETE_JJIM = "DELETE_JJIM";
 
-export const restoreToken = (token) => ({
-  type: RESTORE_TOKEN,
-  token,
-});
+// export const restoreToken = (token) => ({
+//   type: RESTORE_TOKEN,
+//   token,
+// });
 
 export const checkToken = (token) => ({
   type: CHECK_TOKEN,
   token,
+});
+
+export const restoreUserNickname = (nickname) => ({
+  type: RESOTRE_USER_NICKNAME,
+  nickname,
+});
+
+export const checkSponsor = (value) => ({
+  type: CHECK_SPONSOR,
+  value,
 });
 
 export const restoreLoginTime = (time) => ({
@@ -104,15 +118,25 @@ export const deleteJjim = (storeList, store) => ({
 
 const reducer = (state = initState, action) => {
   switch (action.type) {
-    case RESTORE_TOKEN:
-      return {
-        ...state,
-        userToken: action.token,
-      };
+    // case RESTORE_TOKEN:
+    //   return {
+    //     ...state,
+    //     userToken: action.token,
+    //   };
     case CHECK_TOKEN:
       return {
         ...state,
         tokenCheck: action.token,
+      };
+    case RESOTRE_USER_NICKNAME:
+      return {
+        ...state,
+        userNickname: action.nickname,
+      };
+    case CHECK_SPONSOR:
+      return {
+        ...state,
+        sponsorCheck: action.value,
       };
     case RESTORE_TOKEN_EXPIRED_TIME:
       return {

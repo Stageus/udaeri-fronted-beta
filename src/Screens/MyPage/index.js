@@ -7,19 +7,15 @@ import {
   SafeAreaView,
   StatusBar,
 } from "react-native";
-import {
-  AntDesign,
-  Ionicons,
-  FontAwesome,
-  Entypo,
-  Fontisto,
-  FontAwesome5,
-} from "@expo/vector-icons";
+import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import styled, { css } from "styled-components/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSelector, useDispatch } from "react-redux";
 import { restoreToken, checkToken } from "../../../reducer/index";
+import HeaderBar from "../../Components/HeaderBar";
+import { MaterialIcons } from "@expo/vector-icons";
+import MyPageEle from "../../Components/MyPageEle";
 
 const StatusBarHeight = StatusBar.currentHeight;
 
@@ -35,22 +31,13 @@ const SC = {
         `
       : undefined}
   `,
-  HeaderNoLogin: styled.View`
-    padding: 0 20px;
+  HeaderBar: styled.View``,
+  Top: styled.View`
     flex-direction: row;
-    padding-bottom: 15px;
-    align-items: center;
-    border-bottom-width: 1px;
-    border-bottom-color: #797d7f;
-  `,
-  HeaderYesLogin: styled.View`
-    // padding: 0 20px;
-    flex-direction: row;
-    padding-bottom: 15px;
+    padding-bottom: 12px;
     align-items: center;
     justify-content: space-between;
-    border-bottom-width: 1px;
-    border-bottom-color: #797d7f;
+    margin-top: 10px;
   `,
   NickNameWrap: styled.View`
     flex-direction: row;
@@ -65,12 +52,15 @@ const SC = {
   MyPageList: styled.View`
     padding: 15px 5px 0 5px;
   `,
+  MyPageListWrap: styled.View`
+    border-bottom-width: 1px;
+    border-color: #d3d3d3;
+  `,
   MyPageListEle: styled.TouchableOpacity`
-    margin-bottom: 10px;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 5px 0;
+    padding: 15px 0;
   `,
   MyPageListText: styled.Text`
     font-size: 16px;
@@ -80,13 +70,23 @@ const SC = {
 const MyPage = ({ navigation }) => {
   const dispatch = useDispatch();
 
-  const TOKEN_KEY = "@userKey";
+  // const TOKEN_KEY = "@userKey";
+  // const tokenExpire = () => {
+  //   AsyncStorage.removeItem(TOKEN_KEY);
+  //   dispatch(checkToken(false));
+  // };
 
-  const tokenExpire = () => {
-    AsyncStorage.removeItem(TOKEN_KEY);
-    dispatch(checkToken(false));
-    // dispatch(restoreToken());
-  };
+  const nickname = useSelector((state) => state.userNickname);
+  const checkSponsor = useSelector((state) => state.sponsorCheck);
+
+  const listElement = [
+    { title: "문의하기" },
+    { title: "버전정보" },
+    { title: "후원하기" },
+    { title: "버그리포트" },
+    { title: "개발자정보" },
+    { title: "로그아웃" },
+  ];
 
   return (
     <SafeAreaView
@@ -96,15 +96,20 @@ const MyPage = ({ navigation }) => {
       }}
     >
       <SC.Container>
-        <SC.HeaderYesLogin>
+        <HeaderBar title="마이페이지" center="true"></HeaderBar>
+        <SC.Top>
           <SC.NickNameWrap>
-            <SC.NickName>유진진</SC.NickName>
-            <Text>
-              <FontAwesome5
-                name="crown"
-                style={{ fontSize: RFPercentage(2.5), color: "#ffec00" }}
-              />
-            </Text>
+            <SC.NickName>{nickname}</SC.NickName>
+            {checkSponsor === "Y" ? (
+              <Text>
+                <FontAwesome5
+                  name="crown"
+                  style={{ fontSize: RFPercentage(2.5), color: "#ffec00" }}
+                />
+              </Text>
+            ) : (
+              <></>
+            )}
           </SC.NickNameWrap>
           <TouchableOpacity onPress={() => {}}>
             <FontAwesome
@@ -112,12 +117,25 @@ const MyPage = ({ navigation }) => {
               style={{ fontSize: RFPercentage(2.5), color: "#797D7F" }}
             />
           </TouchableOpacity>
-        </SC.HeaderYesLogin>
+        </SC.Top>
 
         <SC.MyPageList>
-          <SC.MyPageListEle>
-            <SC.MyPageListText>문의하기</SC.MyPageListText>
-          </SC.MyPageListEle>
+          {listElement.map((item, index) => {
+            return (
+              <MyPageEle
+                key={index}
+                title={item.title}
+                navigation={navigation}
+              ></MyPageEle>
+            );
+          })}
+          {/* <SC.MyPageListWrap>
+            <SC.MyPageListEle>
+              <SC.MyPageListText>문의하기</SC.MyPageListText>
+              <MaterialIcons name="arrow-forward-ios" size={12} color="gray" />
+            </SC.MyPageListEle>
+          </SC.MyPageListWrap>
+
           <SC.MyPageListEle>
             <SC.MyPageListText>버전정보</SC.MyPageListText>
             <Text style={{ fontSize: RFPercentage(2.2), letterSpacing: 2 }}>
@@ -125,16 +143,13 @@ const MyPage = ({ navigation }) => {
             </Text>
           </SC.MyPageListEle>
           <SC.MyPageListEle>
-            {/* <SC.MyPageListText onPress={() => logOut()}>
-              로그아웃
-            </SC.MyPageListText> */}
             <SC.MyPageListText onPress={() => tokenExpire()}>
               로그아웃
             </SC.MyPageListText>
           </SC.MyPageListEle>
           <SC.MyPageListEle>
             <SC.MyPageListText>후원하기</SC.MyPageListText>
-          </SC.MyPageListEle>
+          </SC.MyPageListEle> */}
         </SC.MyPageList>
       </SC.Container>
     </SafeAreaView>

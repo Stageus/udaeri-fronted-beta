@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import {
-  TouchableOpacity,
   ScrollView,
   SafeAreaView,
   StatusBar,
@@ -22,68 +21,6 @@ import { restoreCurMidCat, restoreCurStore } from "../../../reducer/index";
 
 const StatusBarHeight = StatusBar.currentHeight;
 const { width, height } = Dimensions.get("window");
-
-const SC = {
-  Container: styled.View`
-    background-color: #fff;
-    flex: 1;
-    ${Platform.OS === "android"
-      ? css`
-          padding-top: ${StatusBarHeight}px;
-        `
-      : undefined}
-  `,
-  Category: styled.View`
-    align-items: center;
-    justify-content: space-between;
-    margin-right: 5px;
-    padding: 6px 10px;
-    border-radius: 15px;
-
-    ${({ target, clickedCat, clickedColor }) => {
-      return target === clickedCat
-        ? `background-color: ${clickedColor}`
-        : "background-color: #fff";
-    }}
-  `,
-  LargeCatWrap: styled.View`
-    position: absolute;
-    top: ${StatusBarHeight + height * 0.06}px;
-    z-index: 5;
-    flex-direction: row;
-    justify-content: space-between;
-  `,
-  StoreWrap: styled.TouchableOpacity`
-    position: absolute;
-    bottom: 0;
-    z-index: 5;
-    width: 100%;
-    height: 100px;
-    background-color: #fff;
-    // border-top-left-radius: 30px;
-    // border-top-right-radius: 30px;
-    padding: 12px;
-  `,
-  StoreInfoTop: styled.View`
-    flex-direction: row;
-    align-items: center;
-    padding: 3px 0px;
-  `,
-  StoreName: styled.Text`
-    font-size: 16px;
-    font-family: Bold;
-    margin-right: 5px;
-  `,
-  StoreCategory: styled.Text`
-    font-size: 12px;
-    font-family: Regular;
-    color: #999999;
-  `,
-  StoreInfo: styled.Text`
-    font-size: 14px;
-    font-family: Regular;
-  `,
-};
 
 const Map = ({ navigation, route }) => {
   const dispatch = useDispatch();
@@ -311,3 +248,65 @@ const styles = StyleSheet.create({
     }),
   },
 });
+
+const SC = {
+  Container: styled.View`
+    background-color: #fff;
+    flex: 1;
+    ${Platform.OS === "android"
+      ? css`
+          padding-top: ${StatusBarHeight}px;
+        `
+      : undefined}
+  `,
+  Category: styled.View`
+    align-items: center;
+    justify-content: space-between;
+    margin-right: 5px;
+    padding: 6px 10px;
+    border-radius: 15px;
+
+    ${({ target, clickedCat, clickedColor }) => {
+      return target === clickedCat
+        ? `background-color: ${clickedColor}`
+        : "background-color: #fff";
+    }}
+  `,
+  LargeCatWrap: styled.View`
+    position: absolute;
+    top: ${StatusBarHeight + height * 0.06}px;
+    z-index: 5;
+    flex-direction: row;
+    justify-content: space-between;
+  `,
+  StoreWrap: styled.TouchableOpacity`
+    position: absolute;
+    bottom: 0;
+    z-index: 5;
+    width: 100%;
+    height: 100px;
+    background-color: #fff;
+    // border-top-left-radius: 30px;
+    // border-top-right-radius: 30px;
+    padding: 12px;
+  `,
+  StoreInfoTop: styled.View`
+    flex-direction: row;
+    align-items: center;
+    padding: 3px 0px;
+  `,
+  StoreName: styled.Text`
+    font-size: 16px;
+    font-family: Bold;
+    margin-right: 5px;
+  `,
+  StoreCategory: styled.Text`
+    font-size: 12px;
+    font-family: Regular;
+    color: #999999;
+  `,
+  StoreInfo: styled.Text`
+    font-size: 14px;
+    font-family: Regular;
+  `,
+};
