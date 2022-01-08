@@ -1,89 +1,202 @@
-const router = require("express").Router();
 const elastic = require("elasticsearch");
+const fetch = require("node-fetch");
 
-// /elastic/status
-router.get("/status", (req, res) => {
-    const result = {
-        "connect": false
-    }
 
-    const client = new elastic.Client({
-        node: "http://127.0.0.1:9200" // 주소(클라우드면 클라우드 IP, 추가로 id, password 입력해야함)
+exports.getElasticsearchStatus = async(req,res)=>{
+    const elasticClient = new elastic.Client({
+        node : "http://127.0.0.1:9200"
     })
 
-    client.ping(
+    await elasticClient.ping(
         {
             requestTimeout: 1000, // ms
-        }, (err) => {
+        }, 
+        (err) => {
             if (err) {
                 console.log("elastic connection error")
+                return res.send({success : false})
             }
-            else {
-                result.connect = true
+            else{
+                console.log("elastic is connected!")
+                return res.send({success : true})
             }
-            res.send(result)
         })
-})
+}
 
-router.post("", (req, res) => {
-    const result = {
-        "success": false
-    }
-    const receiveName = req.body.name
-    console.log("value", receiveName);
+exports.pushElasticsearchStore = async(req,res)=>{   
 
-    const client = new elastic.Client({
-        node: "http://127.0.0.1:9200" // 주소(클라우드면 클라우드 IP, 추가로 id, password 입력해야함)
+    const store_name = req.body.store_name;
+    const image_url = req.body.image_url;
+    const main_menu = req.body.main_menu;
+    const inha_location = req.body.inha_location;
+    const favorited_count = 0;
+    const menu = req.body.menu;
+
+    const elasticClient = new elastic.Client({
+        node: "http://127.0.0.1:9200"
     })
 
-    client.index( // then 써도 되고, 이렇게 해도 됨
-        { // 삽입 명령어, 싱글노드 싱글클러스터니까 일단 클러스터랑 노드는 비움, 쓸 수도 있다.
-            index: "member", // 이 이름으로 
-            body: { // 이 밑의 내용을 넣음, json 넣을 수도 있다.
-                "name": receiveName,
+    await elasticClient.index( 
+        { 
+            "index": "stores",
+            "body": { 
+                "store_name": store_name,
+                "main_menu" : main_menu,
+                "inha_location" : inha_location,
+                "favorited_count" : favorited_count,
+                "menu" : menu,
+                "image_url" : image_url
             },
         }
     )
     .then(() => {
-        result.success = true
-        res.send(result)
-    })
-})
-
-router.post("/search", (req, res) => {
-    const result = {
-        "data": null
-    }
-    const receiveName = req.body.name
-    console.log("value", receiveName);
-
-    const client = new elastic.Client({
-        node: "http://127.0.0.1:9200" // 주소(클라우드면 클라우드 IP, 추가로 id, password 입력해야함)
+        res.send({success : true})
     })
 
-    client.search({
-            index: "member",
-            body: { // 알고리즘 검색 필요, 여러가지 존재
-                query: {
-                    match: { // 해당 글씨와 동일한것 찾음
-                        name: receiveName
-                    }
-                }
+}
+
+exports.setNoriTokenizer = async(req,res)=>{
+    const elasticClient = new elastic.Client({
+        node: "http://127.0.0.1:9200"
+    })
+
+    const setting = {
+        "analysis": {
+          "analyzer": {
+            "nori_discard": {
+              "tokenizer": "nori_t_discard",
+              "filter": "shingle"
             }
-        }, (data, err) => {
-            if (err) {
-                console.log("elastic search error")
+          },
+          "tokenizer": {
+            "nori_t_discard": {
+              "type": "nori_tokenizer",
+              "decompound_mode": "discard"
             }
-            else {
-                const names = []
-                data.hits.hits.array.forEach(item => {
-                    names.push(item._source)
-                });
-                result.data = names
-            }
-            res.send(result)
+          }
         }
-    )
-})
+      }
+      
+    const mapping = {
+        "properties": {
+            "store_name": {
+              "type": "text",
+              "fields": {
+                "nori_discard": {
+                  "type": "text",
+                  "analyzer": "nori_discard",
+                  "search_analyzer": "standard"
+                }
+              }
+            },
+            "menu": {
+              "type": "text",
+              "fields": {
+                "nori_discard": {
+                  "type": "text",
+                  "analyzer": "nori_discard",
+                  "search_analyzer": "standard"
+                }
+              }
+            }
+          }
+    }
 
-module.exports = router
+    const result = await elasticClient.indices.create({
+        index : 'stores',
+        body :{
+            settings : setting,
+            mappings : mapping
+        }
+    });
+
+   /* await elasticClient.indices.close({"index" : "stores"});
+    const result = await elasticClient.indices.putSettings( 
+        {   
+            "index" : "stores",
+            "body":{
+            "settings": {
+                "analysis": {
+                  "analyzer": {
+                    "nori_discard": {
+                      "tokenizer": "nori_t_discard",
+                      "filter": "shingle"
+                    }
+                  },
+                  "tokenizer": {
+                    "nori_t_discard": {
+                      "type": "nori_tokenizer",
+                      "decompound_mode": "discard"
+                    }
+                  }
+                }
+              },
+              "mappings": {
+                "properties": {
+                  "store_name": {
+                    "type": "text",
+                    "fields": {
+                      "nori_discard": {
+                        "type": "text",
+                        "analyzer": "nori_discard",
+                        "search_analyzer": "standard"
+                      }
+                    }
+                  },
+                  "menu": {
+                    "type": "text",
+                    "fields": {
+                      "nori_discard": {
+                        "type": "text",
+                        "analyzer": "nori_discard",
+                        "search_analyzer": "standard"
+                      }
+                    }
+                  }
+                }
+              }              
+        }
+    }
+    );
+    await elasticClient.indices.open({"index" : "stores"});*/
+    return res.send(result);
+
+}
+
+exports.deleteelastic = async (req,res)=>{
+    const e = new elastic.Client({
+        node: "http://127.0.0.1:9200"
+    })
+    const result = await e.indices.delete({
+        index : 'stores'
+    })
+    console.log(result);
+}
+
+exports.getElasticsearchStoreList = async(req,res)=>{
+    const searchText = req.body.text;
+    const startOffset = req.params.count;
+
+    if(searchText == undefined || startOffset == undefined)
+        return res.send({
+            "message" : "잘못된 요청입니다"
+        })
+
+    const elasticClient = new elastic.Client({
+        node: "http://127.0.0.1:9200"
+    })
+
+    const result = await elasticClient.search({
+        index : 'stores',
+        q : searchText,
+        _source : ["store_name", "main_menu", "inha_location", "favorited_count", "image_url"],
+        from : (startOffset-1) * 15,
+        size : 15
+    })
+
+    let storeList = new Array();
+    for(i=0; i<result.hits.total.value; i++){
+        storeList.push(result.hits.hits[i]._source);
+    }
+    return res.send(storeList);
+}

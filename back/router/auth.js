@@ -20,33 +20,6 @@ const config = {
     port : process.env.DB_PG_PORT,
 };
 
-
-exports.login = async(req,res,next) =>{
-    const id = req.body.id;
-    const password = req.body.password;
-    const result = {
-        "success" : false
-    }
-    const client = new Client(config);
-
-        try{
-            await client.connect();
-                const query = await client.query("SELECT id, password FROM service.user_information WHERE id = $1;",[id]);
-                client.end();
-                if(query.rowCount != 0){
-                    if(await bcrypt.compare(password, query.rows[0].password)) return next();
-                    else return res.send(result);
-                }
-                else{
-                    return res.send(result);
-                }
-        }
-        catch(err){
-            console.log(err);
-            res.send(result);
-        }
-}
-
 exports.OauthLogin = async(req,res) =>{
     const platform = req.body.platform;
     const code = req.body.code;
@@ -65,18 +38,18 @@ exports.OauthLogin = async(req,res) =>{
         const refreshToken = await getRefreshToken();
         const refreshKey = await ((jwt.decode(jwtToken, secretKey)).id);
 
-
         await redisClient.on("error", (err) => {
         console.log(err);
         })
         await redisClient.connect();        
         await redisClient.set(refreshKey, refreshToken);
         await redisClient.expire(refreshKey,60*60*24*365);
+        await redisClient.disconnect();
         return res.send({
             "success" : true,
             "token" : jwtToken,
             "refreshToken" : refreshToken,
-            "expires_in" : 21600
+            "expires_in" : 60000 //21540000
         });
     }
 }
@@ -216,7 +189,7 @@ const getJwtToken = async(userInfo,platform) =>{
     },
     secretKey,
     {
-        expiresIn : "2m",
+        expiresIn : "360m",
         issuer : "UDR"
     })
 
@@ -239,40 +212,6 @@ const getRefreshToken = async() =>{
     return refreshToken;
 }
 
-
-exports.CreateToken = async(req,res) =>{
-
-    const client = new Client(config);
-    const id = req.body.id;
-    const result = {
-        "success" : false,
-        "token" : null
-    }
-
-        try{
-            await client.connect();
-                const query = await client.query("SELECT nickname FROM service.user_information WHERE id = $1;",[id]);
-                const udrToken = jwt.sign({
-                    id : id,
-                    nickname : query.rows[0].nickname
-                },
-                secretKey,
-                {
-                    expiresIn : "1m",
-                    issuer : "UD"
-                })  
-                result.success = true;
-                result.token = udrToken;
-                client.end();
-                return res.send(result);
-            }                
-        catch(err){
-            console.log(err);
-            return res.send(result);
-        }
-
-}
-
 exports.OauthLogout = async(req,res) =>{
         const platform = req.params.platform;
         const result = {success : false }
@@ -287,36 +226,8 @@ exports.OauthLogout = async(req,res) =>{
         return res.send(result);
 }
 
-
-
-exports.userIdentification = async(req,res,next) =>{
-    const result = { "success" : false }
-        try{
-            const user_info = jwt.verify(req.headers.authorization , secretKey);
-            const id = user_info.id;
-            const password = req.body.password;
-            const client = new Client(config);
-            
-            await client.connect();
-            const query =  await client.query("SELECT password FROM service.user_information WHERE id = $1;",[id]);
-            client.end();
-            
-            if(await bcrypt.compare(password, query.rows[0].password)){
-                req.id = id;
-                return next();
-            }
-            else{
-                return res.send(result);
-            }
-        }
-        catch(err){
-            console.log(err);
-            return res.send(result);
-        }
-}
-
 exports.tokenVerify = async(req,res,next) => {
-    try{                                                                            //정상적으로 token verify 됐을 때
+    try{
         const userinfo = await jwt.verify(req.headers.authorization, secretKey);
         req.id = userinfo.id;
         req.nickname = userinfo.nickname;
@@ -345,22 +256,74 @@ exports.creatState = async(req,res) =>{
 }
 
 exports.getNewToken = async(req,res)=>{
-    try{                                                                            //정상적으로 token verify 됐을 때
-        await jwt.verify(req.headers.authorization, secretKey);
-        res.send({
-            success : false,
-            message : "사용가능한 token"
-        })
-    }
-    catch(err){ 
-        if(err.message == "jwt expired"){  
-            try{
-                if(req.headers.refreshtoken == undefined){
+    try{        
+        if(req.headers.refreshtoken == undefined || req.headers.authorization == undefined){
+            return res.send({
+                success : false,
+                message : "refresh이나 access token이 필요합니다"
+            })
+        }                                                                    
+        await jwt.verify(req.headers.authorization, secretKey);                     //access token이 아직 만료되지 않았을 경우
+        try{
+            const userinfo = await jwt.decode(req.headers.authorization,secretKey);
+            const id = userinfo.id;
+            const redisClient = await redis.createClient();
+            await redisClient.on("error", (err) => {
+                console.log(err);
+            })
+            await redisClient.connect();
+            if(await redisClient.exists(id)){                                                      // refresh 토큰이 있으면
+                const refreshToken = await redisClient.get(id);
+                await redisClient.disconnect();      
+                if(req.headers.refreshtoken == refreshToken){                       // 프론트에서 보낸 토큰과 redis에 저장된 토큰을 비교해서 일치한다면
+                    jwt.verify(refreshToken,secretKey);                             // refresh token verify
+
+                    const jwtToken = jwt.sign({
+                        "id" : id,
+                        "nickname" : userinfo.nickname,
+                        "sponsor" : userinfo.sponsor,
+                        "platform" : userinfo.plaWWtform
+                    },
+                    secretKey,
+                    {
+                        expiresIn : "360m",
+                        issuer : "UDR"
+                    })
+
                     return res.send({
-                        success : false,
-                        message : "refresh 토큰이 필요합니다"
+                        success : true,
+                        message : "새로운 토큰이 발급되었습니다.",
+                        token : jwtToken,
+                        expires_in : 21540000
                     })
                 }
+                else{                                                        //프론트 보낸 토큰과 redis에 저장된 토큰이 다를 때
+                    return res.send({                                               
+                        success : false,
+                        message : "로그인이 필요합니다."
+                    })
+                }
+            }
+            else{                                                           //redis에 해당 refresh token이 없을 경우
+                return res.send({
+                    success : false,
+                    message : "로그인이 필요합니다."
+                })
+            }
+
+        }
+        catch(error){                                                       // refresh token이 만료됐을 경우
+            if(error.message = "jwt expired"){
+                return res.send({
+                    success : false,
+                    message : "로그인이 필요합니다."
+                })
+            }
+        }
+    }
+    catch(err){ 
+        if(err.message == "jwt expired"){                                   // access token이 만료됐을 경우
+            try{
                 const userinfo = await jwt.decode(req.headers.authorization,secretKey);
                 const id = userinfo.id;
                 const redisClient = await redis.createClient();
@@ -369,7 +332,8 @@ exports.getNewToken = async(req,res)=>{
                 })
                 await redisClient.connect();
                 if(await redisClient.exists(id)){                                                      // refresh 토큰이 있으면
-                    const refreshToken = await redisClient.get(id);                                  
+                    const refreshToken = await redisClient.get(id);
+                    await redisClient.disconnect();      
                     if(req.headers.refreshtoken == refreshToken){                       // 프론트에서 보낸 토큰과 redis에 저장된 토큰을 비교해서 일치한다면
                         jwt.verify(refreshToken,secretKey);                             // refresh token verify
 
@@ -389,7 +353,7 @@ exports.getNewToken = async(req,res)=>{
                             success : true,
                             message : "새로운 토큰이 발급되었습니다.",
                             token : jwtToken,
-                            expires_in : 21600
+                            expires_in : 21540000
                         })
                     }
                     else{                                                        //프론트 보낸 토큰과 redis에 저장된 토큰이 다를 때

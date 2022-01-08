@@ -67,6 +67,10 @@ exports.getStoreAll = async(req,res) =>{
                 }
                 return res.send(all);
             }
+            else{
+                client.end();
+                return res.send(result);
+            }
         }
         catch(err){
             console.log(err);
@@ -91,8 +95,10 @@ exports.getStoreList = async(req,res) =>{
             const query = await client.query('SELECT A.store_name, A.image_url, A.main_menu, A.inha_location, A.favorited_count FROM service.store_information A INNER JOIN service.m_category ON m_category.name =$1 AND m_category.m_category_index = A.m_category_index ORDER BY A.store_info_index LIMIT 10 OFFSET $2;',[m_category,count]);
             // 찜한 개수 넣기, 후문 정문 여부, 간략한 소개
             client.end();
-            result.success= true;
-            result.list = query.rows;
+            if(query.rowCount != 0){
+                result.success= true;
+                result.list = query.rows;
+            }
             return res.send(result);
         }
         catch(err){
@@ -117,7 +123,9 @@ exports.getStoreInformation = async(req,res) =>{
                 "opening_hours" : query.rows[0].opening_hours,
                 "day_off " : query.rows[0].day_off,
                 "prices" : query.rows[0].prices,
-                "location" : query.rows[0].location
+                "location" : query.rows[0].location,
+                "latitude" : query.rows[0].latitude,
+                "longitude" : query.rows[0].longitude
             }
             return res.send(result);
     

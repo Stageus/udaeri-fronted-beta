@@ -92,17 +92,16 @@ exports.ReadUser = async(req,res)=>{
     }
     const result = { 
         "success" : false,
-        "id" : user_info.id ,
         "nickname" : user_info.nickname,
-        "phone_number" : "phone_number"
+        "sponsor" : null
     }
     try{
         await client.connect();      
-        const query = await client.query('SELECT phone_number FROM service.user_information WHERE id =$1',[result.id]);
+        const query = await client.query('SELECT sponsor FROM service.user_information WHERE id =$1',[user_info.id]);
         client.end();
 
         result.success = true;
-        result.phone_number = query.rows[0].phone_number;
+        result.sponsor = query.rows[0].sponsor;
         return res.send(result);
         
     }
@@ -114,7 +113,6 @@ exports.ReadUser = async(req,res)=>{
 }
 
 exports.CreateUserFavorite = async(req,res) =>{
-    const result = { "success" : false }
     const id = req.id;
     const store = req.body.store;
     const client = new Client(config);
@@ -122,14 +120,19 @@ exports.CreateUserFavorite = async(req,res) =>{
         try{
             await client.connect();
             await client.query("INSERT INTO service.user_favorite (user_index, store_info_index) VALUES ((SELECT user_index FROM service.user_information WHERE id = $1), (SELECT store_info_index FROM service.store_information WHERE store_name = $2));",[id, store]);
-            await client.query("UPDATE service.store_information SET favorited_count = favorited_count + 1 WHERE store_name = $1",[store]);
+            const l_categroy = await client.query("SELECT A.name FROM service.l_category A INNER JOIN service.m_category B ON A.l_category_index = B.l_category_index INNER JOIN service.store_information C ON B.m_category_index = C.m_category_index WHERE C.store_name = $1",[store]);
+            await client.query("UPDATE service.store_information SET favorited_count = favorited_count + 1 WHERE store_name = $1;",[store]);
             client.end();
-            result.success = true;
-            return res.status(200).send(result);
+            return res.status(200).send({
+                "success" : true,
+                "l_category" : l_categroy.rows[0].name
+            });
         }
         catch(err){
             console.log(err);
-            return res.send(result);
+            return res.send({
+                "success" : false
+            });
         }
 }
 
