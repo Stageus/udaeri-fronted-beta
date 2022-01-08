@@ -38,6 +38,8 @@ const MyPageEle = (props) => {
     dispatch(checkToken(false));
   };
 
+  const GrayColor = useSelector((state) => state.grayColor);
+
   return (
     <SC.MyPageListWrap>
       <SC.MyPageListEle
@@ -47,7 +49,7 @@ const MyPageEle = (props) => {
         }}
       >
         <SC.MyPageListText>{props.title}</SC.MyPageListText>
-        <MaterialIcons name="arrow-forward-ios" size={12} color="gray" />
+        <MaterialIcons name="arrow-forward-ios" size={13} color={GrayColor} />
       </SC.MyPageListEle>
     </SC.MyPageListWrap>
   );

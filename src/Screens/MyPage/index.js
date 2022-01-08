@@ -45,7 +45,7 @@ const SC = {
   `,
   NickName: styled.Text`
     color: #ff9933;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
     margin-right: 10px;
   `,

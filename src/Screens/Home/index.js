@@ -153,7 +153,7 @@ const Home = ({ navigation }) => {
 
   const jjimjjim = useSelector((state) => state.jjimStore);
   useEffect(() => {
-    if (jjimjjim == false) {
+    if (jjimjjim) {
       setJjimList(jjimjjim);
     }
   }, [jjimjjim]);

@@ -14,6 +14,7 @@ const StoreInfoTap = () => {
   const mainColor = useSelector((state) => state.mainColor);
   const [storeInfo, setStoreInfo] = useState({});
   const [initialRegion, setInitialRegion] = useState({});
+  const [coordinate, setCoordinate] = useState({ latitude: 0, longitude: 0 });
   useEffect(() => {
     axios
       .get(
@@ -26,7 +27,12 @@ const StoreInfoTap = () => {
           "/information"
       )
       .then((res) => {
+        console.log("가게정보: " + JSON.stringify(res.data));
         setStoreInfo(res.data);
+        setCoordinate({
+          latitude: res.data.latitude,
+          longitude: res.data.longitude,
+        });
         setInitialRegion({
           latitude: res.data.latitude + 0.001,
           longitude: res.data.longitude,
@@ -39,13 +45,6 @@ const StoreInfoTap = () => {
         console.log(err);
       });
   }, []);
-
-  //   const initialRegion = {
-  //     latitude: storeInfo.latitude + 0.001,
-  //     longitude: storeInfo.longitude,
-  //     latitudeDelta: 0.01,
-  //     longitudeDelta: 0.01,
-  //   };
 
   return (
     <SC.Container>
@@ -71,7 +70,23 @@ const StoreInfoTap = () => {
         provider={PROVIDER_GOOGLE}
         style={{ width: "100%", height: "25%" }}
       >
-        {/* rrrr */}
+        <MapView.Marker
+          coordinate={coordinate}
+          style={{ alignItems: "center" }}
+        >
+          <View
+            style={{
+              backgroundColor: "#fff",
+              padding: 7,
+              marginBottom: 5,
+              borderRadius: 5,
+            }}
+          >
+            <Text style={{ fontSize: 12 }}>{storeInfo.store}</Text>
+          </View>
+
+          <Fontisto name="map-marker-alt" size={30} color="#3366ff" />
+        </MapView.Marker>
       </MapView>
     </SC.Container>
   );
