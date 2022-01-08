@@ -226,7 +226,7 @@ const Home = ({ navigation }) => {
                   );
                 })
               )}
-              {jjimList.length > 5 ? (
+              {jjimList.length >= 5 ? (
                 <SC.JjimEleWrap
                   activeOpacity={0.8}
                   onPress={() => navigation.navigate("JjimPage")}

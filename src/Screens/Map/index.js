@@ -44,6 +44,7 @@ const Map = ({ navigation, route }) => {
   const [midCatList, setMidCatList] = useState({});
   const [middleCatLocation, setMiddleCatLocation] = useState([]);
   const [storeInfo, setStoreInfo] = useState({});
+  const [target, setTarget] = useState(null);
 
   useEffect(() => {
     if (clickedCat === "술집") {
@@ -67,6 +68,12 @@ const Map = ({ navigation, route }) => {
         console.log("클릭한 중분류를 찾을 수 없어요");
       });
   }, [clickedMiddle]);
+
+  useEffect(() => {}, [storeInfo, clickedStore]);
+  useEffect(() => {
+    dispatch(restoreCurStore(null));
+    dispatch(restoreCurMidCat(null));
+  }, []);
 
   const MiddleCatListAPI = (largeCat) => {
     setClickedCat(largeCat);
@@ -92,12 +99,17 @@ const Map = ({ navigation, route }) => {
       });
   };
 
-  const [target, setTarget] = useState(null);
-  useEffect(() => {}, [storeInfo, clickedStore]);
-  useEffect(() => {
+  const handleLargeCatClick = (largeCat) => {
+    MiddleCatListAPI(largeCat);
     dispatch(restoreCurStore(null));
     dispatch(restoreCurMidCat(null));
-  }, []);
+  };
+
+  const handleMidCatClick = (midCat) => {
+    setTarget(midCat);
+    getStoreInfo(midCat);
+    dispatch(restoreCurStore(midCat));
+  };
 
   return (
     <SafeAreaView
@@ -124,13 +136,7 @@ const Map = ({ navigation, route }) => {
                   clickedCat={clickedCat}
                   clickedColor={mainColor}
                 >
-                  <Text
-                    onPress={() => {
-                      MiddleCatListAPI(item.name);
-                      dispatch(restoreCurStore(null));
-                      dispatch(restoreCurMidCat(null));
-                    }}
-                  >
+                  <Text onPress={() => handleLargeCatClick(item.name)}>
                     {item.name}
                   </Text>
                 </SC.Category>
@@ -138,7 +144,7 @@ const Map = ({ navigation, route }) => {
             })}
           </ScrollView>
         </SC.LargeCatWrap>
-        <View>
+        <View style={{ marginLeft: 10 }}>
           {
             {
               먹거리: <MiddleCatBtnWrap cat={midCatList}></MiddleCatBtnWrap>,
@@ -168,11 +174,7 @@ const Map = ({ navigation, route }) => {
                     longitude: item.longitude,
                   }}
                   // title={item.store_name}
-                  onPress={() => {
-                    setTarget(item.store_name);
-                    getStoreInfo(item.store_name);
-                    dispatch(restoreCurStore(item.store_name));
-                  }}
+                  onPress={() => handleMidCatClick(item.store_name)}
                 >
                   {/* <MapView.Callout
                     onPress={() => {
@@ -278,6 +280,7 @@ const SC = {
     z-index: 5;
     flex-direction: row;
     justify-content: space-between;
+    margin-left: 10px;
   `,
   StoreWrap: styled.TouchableOpacity`
     position: absolute;
