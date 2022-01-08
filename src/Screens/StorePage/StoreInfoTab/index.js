@@ -15,26 +15,6 @@ const StoreInfoTap = () => {
   const [storeInfo, setStoreInfo] = useState({});
   const [initialRegion, setInitialRegion] = useState({});
   useEffect(() => {
-    // const getStore = async () => {
-    //   await axios
-    //     .get(
-    //       "/l-categories/" +
-    //         curLargeCat +
-    //         "/m-categories/" +
-    //         curMidCat +
-    //         "/stores/" +
-    //         curStore +
-    //         "/information"
-    //     )
-    //     .then((res) => {
-    //       setStoreInfo(res.data);
-    //     })
-    //     .catch((err) => {
-    //       console.log("error");
-    //       console.log(err);
-    //     });
-    // };
-    // getStore();
     axios
       .get(
         "/l-categories/" +
@@ -91,26 +71,7 @@ const StoreInfoTap = () => {
         provider={PROVIDER_GOOGLE}
         style={{ width: "100%", height: "25%" }}
       >
-        <MapView.Marker
-          coordinate={{
-            latitude: storeInfo.latitude,
-            longitude: storeInfo.longitude,
-          }}
-          style={{ alignItems: "center" }}
-        >
-          <View
-            style={{
-              backgroundColor: "#fff",
-              padding: 7,
-              marginBottom: 5,
-              borderRadius: 5,
-            }}
-          >
-            <Text style={{ fontSize: 12 }}>{storeInfo.store}</Text>
-          </View>
-
-          <Fontisto name="map-marker-alt" size={30} color="#3366ff" />
-        </MapView.Marker>
+        {/* rrrr */}
       </MapView>
     </SC.Container>
   );

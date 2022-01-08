@@ -63,7 +63,7 @@ const HeaderBar = (props) => {
               ? (dispatch(jjimCheck(false)),
                 dispatch(deleteJjim(jjimList, storeName)),
                 console.log("찜 삭제 성공"))
-              : console.log("찜 삭제 실패");
+              : console.log(JSON.stringify(res.data) + "찜 삭제 실패");
           })
           .catch((err) => {
             console.log("찜 삭제 실패 이유: " + err);

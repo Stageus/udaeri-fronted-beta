@@ -149,19 +149,6 @@ const Home = ({ navigation }) => {
         dispatch(restoreJjimStore(res.data.list));
       })
       .catch((err) => console.log("찜 목록 못 받아옴~~ " + err));
-
-    axios
-      .get("/users", {
-        headers: {
-          authorization: token,
-        },
-      })
-      .then((res) => {
-        console.log("회원정보: " + JSON.stringify(res.data));
-        dispatch(restoreUserNickname(res.data.nickname));
-        dispatch(checkSponsor(res.data.sponsor));
-      })
-      .catch((err) => console.log("회원정보 못 받아옴~~ " + err));
   }, []);
 
   const jjimjjim = useSelector((state) => state.jjimStore);
