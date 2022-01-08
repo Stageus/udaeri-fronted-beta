@@ -17,6 +17,8 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styled, { css } from "styled-components/native";
 import SearchEle from "../../Components/SearchEle/index";
+import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
 
 const StatusBarHeight = StatusBar.currentHeight;
 const { width, height } = Dimensions.get("window");
@@ -78,6 +80,9 @@ const SC = {
 const STORAGE_KEY = "@searchWords";
 
 const Search = ({ navigation }) => {
+  const url = useSelector((state) => state.url);
+  axios.defaults.baseURL = url;
+
   const [text, setText] = useState("");
   const [searchWords, setSearchWords] = useState({});
 
@@ -143,6 +148,20 @@ const Search = ({ navigation }) => {
     );
   };
 
+  const onChangeSearch = (word) => {
+    axios
+      .post("search/stores/1", {
+        text: word,
+      })
+      .then((res) => {
+        console.log(JSON.stringify(res.data));
+        console.log("검색단어: " + word);
+      })
+      .catch((err) => {
+        console.log("검색 에러: " + err);
+      });
+  };
+
   return (
     <SafeAreaView
       style={{
@@ -167,7 +186,9 @@ const Search = ({ navigation }) => {
             multiline={false}
             returnKeyType={"search"}
             value={text}
-            onChangeText={setText}
+            onChangeText={(val) => {
+              setText(val), onChangeSearch(val);
+            }}
             onSubmitEditing={addSearch}
             maxLength={20}
             placeholder="검색어를 입력하세요"
@@ -176,7 +197,7 @@ const Search = ({ navigation }) => {
             <Feather
               name="x-circle"
               size={20}
-              color={text ? "#999999" : "#fffd"}
+              color={text ? "#999999" : "#fff"}
             />
           </SC.ClearBtn>
         </SC.Top>
