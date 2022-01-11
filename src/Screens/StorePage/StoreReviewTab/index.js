@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import axios from "axios";
 
 import { Dimensions } from 'react-native';
 import { ScrollView, FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 const { width, height } = Dimensions.get('window');
 import styled from 'styled-components/native';
+import { restoreStoreReviews } from "../../../../reducer/index";
+
 import ReviewEle from '../../../Components/ReviewEle';
 import ScoreRating from '../../../Components/ScoreRating';
 import ScoreSummary from '../../../Components/ScoreSummary';
@@ -13,26 +15,29 @@ import ReviewOptionBar from '../../../Components/ReviewOptionBar';
 import ReviewWriteBtn from '../../../Components/ReviewWriteBtn';
 
 const StoreReviewTab = () => {
-
+    const dispatch = useDispatch();
     const curLargeCat = useSelector((state) => state.curLargeCat);
     const curMidCat = useSelector((state) => state.curMidCat);
     const curStore = useSelector((state) => state.curStore);
     const [storeReview, setStoreReview] = useState([]);
+    //const storeReviews = useSelector((state) => state.storeReviews)
+
+    const getStore = async () => {
+        await axios
+            .get("/l-categories/" + curLargeCat + "/m-categories/" + curMidCat + "/stores/" + curStore + "/review")
+            .then((res) => {
+                setStoreReview(res.data.list);
+                //dispatch(restoreStoreReviews(res.data.list));
+            })
+            .catch((err) => {
+                console.log("error");
+                console.log(err);
+            });
+    }
+
     useEffect(() => {
-        const getStore = async () => {
-            await axios
-                .get("/l-categories/" + curLargeCat + "/m-categories/" + curMidCat + "/stores/" + curStore + "/review")
-                .then((res) => {
-                    setStoreReview(res.data.list);
-                })
-                .catch((err) => {
-                    console.log("error");
-                    console.log(err);
-                });
-        }
         getStore();
     }, [])
-
 
     let scoreSum = 0
     const scoreDist = [0, 0, 0, 0, 0] // 별점 분포
@@ -62,7 +67,7 @@ const StoreReviewTab = () => {
         `,
 
     };
-
+    console.log(storeReview);
     return (
         <SC.Container>
 
@@ -83,7 +88,7 @@ const StoreReviewTab = () => {
                 </SC.reviewContainer>
             </ScrollView>
 
-            <ReviewWriteBtn />
+            <ReviewWriteBtn addReview={setStoreReview} reviews={storeReview} />
         </SC.Container>
     );
 }

@@ -17,11 +17,6 @@ const StatusBarHeight = StatusBar.currentHeight;
 const SC = {
   Container: styled.View`
     background-color: #fff;
-    ${Platform.OS === "android"
-      ? css`
-          padding-top: ${StatusBarHeight}px;
-        `
-      : undefined}
   `,
   JjimContainer: styled.View`
     height: 100%;
@@ -30,7 +25,7 @@ const SC = {
 };
 const JjimPage = ({ navigation }) => {
   const dispatch = useDispatch();
-  const JjimList = useSelector((state) => state.jjimStore);
+  const jjimList = useSelector((state) => state.jjimStore);
 
   return (
     <SafeAreaView
@@ -48,7 +43,7 @@ const JjimPage = ({ navigation }) => {
         />
         <SC.JjimContainer>
           <ScrollView>
-            {JjimList.map((item, index) => {
+            {jjimList.map((item, index) => {
               return (
                 <TouchableOpacity
                   key={index}

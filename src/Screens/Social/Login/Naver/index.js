@@ -30,7 +30,7 @@ const NaverLogin = () => {
   const runFirst = `window.ReactNativeWebView.postMessage("this is message from web");`;
 
   const client_id = "TtMZfjScaNLpNbVdlfRJ";
-  const callback_url = "http://3.35.67.117:8000/naver/callback";
+  const callback_url = "http://3.38.138.194:8000/naver/callback";
   const [randomState, setRandomState] = useState();
 
   useEffect(() => {

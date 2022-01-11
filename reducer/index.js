@@ -3,7 +3,7 @@ const initState = {
   tokenCheck: false,
   loginTime: null,
   tokenExpiredTime: null,
-  url: "http://3.35.67.117:8000/",
+  url: "http://3.38.138.194:8000/",
   mainColor: "#ff9933",
   grayColor: "#999999",
   largeCatList: null,
@@ -12,7 +12,7 @@ const initState = {
   curMidCat: null,
 
   curMidCatList: null,
-
+  storeReviews: null,
   curStore: null,
   jjimStore: null,
   jjimState: null,
@@ -32,6 +32,7 @@ const RESTORE_LARGECATLIST = "RESTORE_LARGECATLIST";
 const RESTORE_MIDCATLIST = "RESTORE_MIDCATLIST";
 const RESTORE_CUR_STORE = "RESTORE_CUR_STORE";
 const RESTORE_JJIM_STORE = "RESTORE_JJIM_STORE";
+const RESTORE_STORE_REVIEWS = "RESTORE_STORE_REVIEWS";
 const CHECK_JJIM = "CHECK_JJIM";
 const ADD_JJIM = "ADD_JJIM";
 const DELETE_JJIM = "DELETE_JJIM";
@@ -86,6 +87,11 @@ export const restoreCurMidCatList = (storeList) => ({
   storeList,
 });
 
+export const restoreStoreReviews = (storeReviews) => ({
+  type: RESTORE_STORE_REVIEWS,
+  storeReviews
+})
+
 export const addCurMidCatList = (curMidCat, addStoreList) => ({
   type: ADD_CUR_MIDCATLIST,
   curMidCat,
@@ -107,13 +113,14 @@ export const jjimCheck = (boolean) => ({
   boolean,
 });
 
-export const addJjim = (store, storeList) => ({
+export const addJjim = (storeList, store, category) => ({
   type: ADD_JJIM,
   storeList,
   store,
+  category,
 });
 
-export const deleteJjim = (store, storeList) => ({
+export const deleteJjim = (storeList, store) => ({
   type: DELETE_JJIM,
   storeList,
   store,
@@ -161,6 +168,11 @@ const reducer = (state = initState, action) => {
         ...state,
         curMidCatList: action.storeList,
       };
+    case RESTORE_STORE_REVIEWS:
+      return {
+        ...state,
+        storeReviews: action.storeReviews
+      }
     case ADD_CUR_MIDCATLIST:
       state.curMidCatList[action.curMidCat] = state.curMidCatList[action.curMidCat].concat(action.addStoreList)
       return {
@@ -184,7 +196,7 @@ const reducer = (state = initState, action) => {
       };
     case ADD_JJIM:
       const jjimList = [...action.storeList];
-      jjimList.push({ store_name: action.store });
+      jjimList.push({ store_name: action.store, l_category: action.category });
       return {
         ...state,
         jjimStore: jjimList,

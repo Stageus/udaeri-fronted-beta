@@ -33,22 +33,15 @@ const Store = (props) => {
   const url = useSelector((state) => state.url);
   axios.defaults.baseURL = url;
   const [cnt, setCnt] = useState(1);
-  const [, updateState] = useState(); // 상태 변수는 선언하지 않습니다
-  const forceUpdate = useCallback(() => updateState({}), []);
 
   if (curMidCatList != null) {
-
-
     const loadStoreList = () => {
       axios
         .get("/l-categories/" + curLargeCat + "/m-categories/" + curMidCat + "/stores/" + cnt)
         .then((res) => {
           if (res.data.list !== null) {
-            console.log("추가")
             dispatch(addCurMidCatList(curMidCat, res.data.list));
             setCnt(cnt + 1);
-            console.log(cnt);
-            forceUpdate();
           }
 
         })

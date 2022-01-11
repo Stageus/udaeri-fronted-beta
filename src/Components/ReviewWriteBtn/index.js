@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components/native';
 import { Dimensions } from 'react-native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Foundation } from '@expo/vector-icons';
 const { width, height } = Dimensions.get('window');
 import { Rating } from 'react-native-ratings';
-import { Animated } from 'react-native-maps';
 import axios from "axios";
 
 const SC = {
@@ -72,7 +72,7 @@ const SC = {
     `,
 }
 
-const ReviewWriteBtn = () => {
+const ReviewWriteBtn = (props) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [reviewText, setreviewText] = useState("");
     const [maxText, setMaxText] = useState(false);
@@ -111,10 +111,17 @@ const ReviewWriteBtn = () => {
                 },
             })
             .then(function (res) {
-                console.log(res.data)
+                console.log(res.data.success)
+                props.addReview(props.reviews.unshift({
+                    "nickname": "종강하고 싶은 우대리",
+                    "review": reviewText,
+                    "star_rating": 5,
+                    "writed_at": new Date(),
+                }))
             })
             .catch(function (error) {
                 console.log(error);
+
             });
     };
 

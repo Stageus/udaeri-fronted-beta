@@ -13,8 +13,6 @@ const StoreListNavi = (props) => {
   const MidCatList = useSelector((state) => state.midCatList[curLargeCat]);
   const dispatch = useDispatch();
 
-  const [storeList, setStoreList] = useState([])
-
   const url = useSelector((state) => state.url);
   axios.defaults.baseURL = url;
 
@@ -23,8 +21,6 @@ const StoreListNavi = (props) => {
       await axios
         .get("/l-categories/" + curLargeCat + "/m-categories/all/stores/")
         .then((res) => {
-          //setStoreList(res.data);
-          console.log("restoreCurMidCatList")
           dispatch(restoreCurMidCatList(res.data))
         })
         .catch((err) => {
@@ -57,8 +53,8 @@ const StoreListNavi = (props) => {
         focused: false,
       }}
     >
-      {MidCatList && MidCatList.map((item) => (
-        <Tab.Screen name={item} children={() => <Store midCat={item} navigation={props.navigation} />} />
+      {MidCatList && MidCatList.map((item, index) => (
+        <Tab.Screen name={item} children={() => <Store key={item} midCat={item} navigation={props.navigation} />} />
       ))}
     </Tab.Navigator>
   );
