@@ -1,18 +1,8 @@
 import React, { useState, useEffect } from "react";
-import {
-  TouchableOpacity,
-  ScrollView,
-  SafeAreaView,
-  StatusBar,
-  Platform,
-  Dimensions,
-  Text,
-  View,
-  StyleSheet,
-} from "react-native";
+import { Platform, Text, StyleSheet } from "react-native";
 import styled, { css } from "styled-components/native";
 import { useSelector, useDispatch } from "react-redux";
-import { restoreCurMidCat } from "../../../../reducer/index";
+import { restoreCurMidCat, restoreCurStore } from "../../../../reducer/index";
 
 const SC = {
   Wrap: styled.View`
@@ -21,17 +11,31 @@ const SC = {
     border-radius: 15px;
     margin-right: 5px;
     background-color: #fff;
+
+    ${({ target, clickedCat, clickedColor }) => {
+      return target === clickedCat
+        ? `background-color: ${clickedColor}`
+        : "background-color: #fff";
+    }}
   `,
 };
 
 const MiddleCatBtn = (props) => {
   const dispatch = useDispatch();
+  const clickedMiddle = useSelector((state) => state.curMidCat);
+  const mainColor = useSelector((state) => state.mainColor);
 
   return (
-    <SC.Wrap style={styles.shadow}>
+    <SC.Wrap
+      style={styles.shadow}
+      target={props.name}
+      clickedCat={clickedMiddle}
+      clickedColor={mainColor}
+    >
       <Text
         onPress={() => {
           dispatch(restoreCurMidCat(props.name));
+          dispatch(restoreCurStore(null));
         }}
       >
         {props.name}

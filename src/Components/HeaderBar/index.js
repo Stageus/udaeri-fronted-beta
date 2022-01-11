@@ -9,13 +9,19 @@ import { jjimCheck, addJjim, deleteJjim } from "../../../reducer/index";
 
 const SC = {
   headerBar: styled.View`
-    height: 5%;
+    // height: 5%;
     align-items: center;
     flex-direction: row;
-    justify-content: space-between;
     padding: 0 20px;
+    padding-bottom: 5px;
     border-bottom-width: 1px;
     border-color: #d3d3d3;
+
+    ${({ center }) => {
+      return center === "true"
+        ? `justify-content: center;`
+        : `justify-content: space-between;`;
+    }}
   `,
   storeName: styled.Text`
     font-family: Bold;
@@ -57,10 +63,10 @@ const HeaderBar = (props) => {
               ? (dispatch(jjimCheck(false)),
                 dispatch(deleteJjim(jjimList, storeName)),
                 console.log("찜 삭제 성공"))
-              : console.log("찜 삭제 실패");
+              : console.log(JSON.stringify(res.data) + "찜 삭제 실패");
           })
           .catch((err) => {
-            connsole.log("찜 삭제 실패 이유: " + err);
+            console.log("찜 삭제 실패 이유: " + err);
           })
       : axios
           .post(
@@ -88,7 +94,7 @@ const HeaderBar = (props) => {
   };
 
   return (
-    <SC.headerBar>
+    <SC.headerBar center={props.center}>
       {props.left === "arrow" ? (
         <Ionicons
           name="arrow-back"

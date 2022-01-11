@@ -24,6 +24,8 @@ import {
   restoreMidCatList,
   restoreJjimStore,
   restoreCurStore,
+  restoreUserNickname,
+  checkSponsor,
 } from "../../../reducer/index";
 
 const StatusBarHeight = StatusBar.currentHeight;
@@ -113,9 +115,9 @@ const Home = ({ navigation }) => {
   const TOKEN_KEY = "@userKey";
 
   useEffect(async () => {
-    let tokentoken;
+    let token;
     await AsyncStorage.getItem(TOKEN_KEY, (err, result) => {
-      tokentoken = result;
+      token = result;
     });
 
     axios
@@ -138,7 +140,7 @@ const Home = ({ navigation }) => {
     axios
       .get("/users/favorites/", {
         headers: {
-          authorization: tokentoken,
+          authorization: token,
         },
       })
       .then((res) => {
@@ -151,7 +153,9 @@ const Home = ({ navigation }) => {
 
   const jjimjjim = useSelector((state) => state.jjimStore);
   useEffect(() => {
-    if (jjimjjim !== null) setJjimList(jjimjjim);
+    if (jjimjjim) {
+      setJjimList(jjimjjim);
+    }
   }, [jjimjjim]);
 
   return (
@@ -205,7 +209,7 @@ const Home = ({ navigation }) => {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{ marginTop: 15, flexDirection: "row" }}
             >
-              {jjimList.length === 0 ? (
+              {jjimList == false ? (
                 <SC.NoJjimWrap>
                   <Text>찜한 가게가 없어요~</Text>
                 </SC.NoJjimWrap>
@@ -222,7 +226,7 @@ const Home = ({ navigation }) => {
                   );
                 })
               )}
-              {jjimList.length > 5 ? (
+              {jjimList.length >= 5 ? (
                 <SC.JjimEleWrap
                   activeOpacity={0.8}
                   onPress={() => navigation.navigate("JjimPage")}
