@@ -11,6 +11,7 @@ import styled, { css } from "styled-components/native";
 import HeaderBar from "../../Components/HeaderBar/index";
 import { useSelector, useDispatch } from "react-redux";
 import { restoreCurStore } from "../../../reducer/index";
+import StoreEle from "../../Components/StoreEle";
 
 const StatusBarHeight = StatusBar.currentHeight;
 
@@ -20,13 +21,12 @@ const SC = {
   `,
   JjimContainer: styled.View`
     height: 100%;
-    padding: 0 20px;
   `,
 };
 const JjimPage = ({ navigation }) => {
   const dispatch = useDispatch();
   const jjimList = useSelector((state) => state.jjimStore);
-
+  console.log(jjimList);
   return (
     <SafeAreaView
       style={{
@@ -45,20 +45,12 @@ const JjimPage = ({ navigation }) => {
           <ScrollView>
             {jjimList.map((item, index) => {
               return (
-                <TouchableOpacity
-                  key={index}
-                  style={{
-                    paddingVertical: 10,
-                  }}
-                  onPress={() => {
-                    navigation.navigate("StorePage", {
-                      key: item.store_name,
-                    });
-                    dispatch(restoreCurStore(item.store_name));
-                  }}
-                >
-                  <Text>{item.store_name}</Text>
-                </TouchableOpacity>
+                <StoreEle
+                  storeName={item.store_name}
+                  content={""}
+                  location={""}
+                  navigation={navigation}
+                />
               );
             })}
           </ScrollView>

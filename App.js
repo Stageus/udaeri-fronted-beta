@@ -3,7 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { store } from "./store/index";
 import { Provider, useSelector, useDispatch } from "react-redux";
-import { restoreToken, checkToken } from "./reducer/index";
+import { checkToken, restoreUserNickname, checkSponsor } from "./reducer/index";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import * as Font from "expo-font";
@@ -26,20 +26,19 @@ import Login from "./src/Screens/Login";
 import EmailLogin from "./src/Screens/EmailLogin";
 import SignUpID from "./src/Screens/SignUp/ID";
 import SignUpPW from "./src/Screens/SignUp/PW";
-import SignUpNickname from "./src/Screens/SignUp/Nickname";
-import SignUpPhone from "./src/Screens/SignUp/Phone";
-import Welcome from "./src/Screens/Welcome";
 import Search from "./src/Screens/Search";
 import Map from "./src/Screens/Map";
 import MyPage from "./src/Screens/MyPage";
 import KakaoLogin from "./src/Screens/Social/Login/Kakao/index";
-import KakaoLogout from "./src/Screens/Social/Logout/Kakao/index";
 import NaverLogin from "./src/Screens/Social/Login/Naver/index";
 import JjimPage from "./src/Screens/Jjim/index";
-
+import Inquiry from "./src/Screens/Inquiry"
 const Stack = createStackNavigator();
 
 const App = () => {
+  const url = useSelector((state) => state.url);
+  axios.defaults.baseURL = url;
+
   const [loaded, setLoaded] = useState(false);
 
   const dispatch = useDispatch();
@@ -60,27 +59,33 @@ const App = () => {
     }
   };
 
-  const getStorageToken = async () => {
-    let userToken;
-    try {
-      userToken = await getToken();
-      dispatch(checkToken(true));
-    } catch (e) {
-      console.log("토큰을 가져오지 못했어요");
-    }
-  };
-
   const TOKEN_KEY = "@userKey";
-  const getToken = async () => {
-    return await AsyncStorage.getItem(TOKEN_KEY);
-  };
-
-  // const token = useSelector((state) => state.userToken);
   const tokenCheck = useSelector((state) => state.tokenCheck);
 
-  useEffect(() => {
+  useEffect(async () => {
     preLoad();
-    getStorageToken();
+
+    let token;
+    await AsyncStorage.getItem(TOKEN_KEY, (err, result) => {
+      token = result;
+    });
+
+    axios
+      .get("/users", {
+        headers: {
+          authorization: token,
+        },
+      })
+      .then((res) => {
+        res.data.success
+          ? (dispatch(checkToken(true)),
+            dispatch(restoreUserNickname(res.data.nickname)),
+            dispatch(checkSponsor(res.data.sponsor)),
+            console.log("회원정보: " + JSON.stringify(res.data)))
+          : (setTokenCheck(false),
+            console.log("로그인 실패: " + res.data.message));
+      })
+      .catch((err) => console.log("회원정보 못 받아옴~" + err));
   }, []);
 
   return (
@@ -108,6 +113,7 @@ const App = () => {
             <Stack.Screen name="StorePage" component={StorePage} />
             <Stack.Screen name="Map" component={Map} />
             <Stack.Screen name="MyPage" component={MyPage} />
+            <Stack.Screen name="Inquiry" component={Inquiry} />
           </>
         )}
       </Stack.Navigator>

@@ -9,13 +9,19 @@ import { jjimCheck, addJjim, deleteJjim } from "../../../reducer/index";
 
 const SC = {
   headerBar: styled.View`
-    height: 5%;
+    // height: 5%;
     align-items: center;
     flex-direction: row;
-    justify-content: space-between;
-    padding: 0 20px;
+    padding: 10px 20px;
+    padding-bottom: 15px;
     border-bottom-width: 1px;
     border-color: #d3d3d3;
+
+    ${({ center }) => {
+      return center === "true"
+        ? `justify-content: center;`
+        : `justify-content: space-between;`;
+    }}
   `,
   storeName: styled.Text`
     font-family: Bold;
@@ -43,52 +49,52 @@ const HeaderBar = (props) => {
   const jjimToggle = (storeName) => {
     jjimState
       ? axios
-          .delete("/users/favorites/", {
+        .delete("/users/favorites/", {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: token,
+          },
+          data: {
+            store: storeName,
+          },
+        })
+        .then((res) => {
+          res.data.success
+            ? (dispatch(jjimCheck(false)),
+              dispatch(deleteJjim(jjimList, storeName)),
+              console.log("찜 삭제 성공"))
+            : console.log(JSON.stringify(res.data) + "찜 삭제 실패");
+        })
+        .catch((err) => {
+          console.log("찜 삭제 실패 이유: " + err);
+        })
+      : axios
+        .post(
+          "/users/favorites/",
+          {
+            store: storeName,
+          },
+          {
             headers: {
               "Content-Type": "application/json",
               authorization: token,
             },
-            data: {
-              store: storeName,
-            },
-          })
-          .then((res) => {
-            res.data.success
-              ? (dispatch(jjimCheck(false)),
-                dispatch(deleteJjim(jjimList, storeName)),
-                console.log("찜 삭제 성공"))
-              : console.log("찜 삭제 실패");
-          })
-          .catch((err) => {
-            connsole.log("찜 삭제 실패 이유: " + err);
-          })
-      : axios
-          .post(
-            "/users/favorites/",
-            {
-              store: storeName,
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-                authorization: token,
-              },
-            }
-          )
-          .then((res) => {
-            res.data.success
-              ? (dispatch(jjimCheck(true)),
-                dispatch(addJjim(jjimList, storeName, res.data.l_category)),
-                console.log("찜추가 성공"))
-              : console.log("찜 추가 실패");
-          })
-          .catch((err) => {
-            console.log("찜 추가 실패 이유: " + err);
-          });
+          }
+        )
+        .then((res) => {
+          res.data.success
+            ? (dispatch(jjimCheck(true)),
+              dispatch(addJjim(jjimList, storeName, res.data.l_category)),
+              console.log("찜추가 성공"))
+            : console.log("찜 추가 실패");
+        })
+        .catch((err) => {
+          console.log("찜 추가 실패 이유: " + err);
+        });
   };
 
   return (
-    <SC.headerBar>
+    <SC.headerBar center={props.center}>
       {props.left === "arrow" ? (
         <Ionicons
           name="arrow-back"
@@ -117,7 +123,7 @@ const HeaderBar = (props) => {
           onPress={() => jjimToggle(props.title)}
         />
       ) : (
-        <></>
+        <View></View>
       )}
     </SC.headerBar>
   );

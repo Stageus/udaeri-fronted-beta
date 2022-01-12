@@ -12,11 +12,13 @@ import {
   SafeAreaView,
   Alert,
 } from "react-native";
-import { AntDesign, Ionicons, Feather } from "@expo/vector-icons";
+import { AntDesign, Feather } from "@expo/vector-icons";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styled, { css } from "styled-components/native";
 import SearchEle from "../../Components/SearchEle/index";
+import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
 
 const StatusBarHeight = StatusBar.currentHeight;
 const { width, height } = Dimensions.get("window");
@@ -24,32 +26,46 @@ const { width, height } = Dimensions.get("window");
 const SC = {
   Container: styled.View`
     background-color: #fff;
-    padding: 0 20px;
-    // height: 100%;
 
     ${Platform.OS === "android"
       ? css`
-          padding-top: ${StatusBarHeight + 15}px;
+          padding-top: ${StatusBarHeight + 5}px;
         `
       : undefined}
   `,
   Top: styled.View`
     height: ${height * 0.07}px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    padding: 0 10px 10px 10px;
+    border-bottom-width: 1px;
+    border-bottom-color: #999999;
+    position: relative;
+    // background-color: yellow;
+  `,
+  SearchInput: styled.TextInput`
+    // background-color: #ebedef;
+    background-color: #fff;
+    border-radius: 5px;
+    width: 85%;
+    padding: 5px 30px 5px 15px;
+  `,
+  ClearBtn: styled.TouchableOpacity`
+    // position: absolute;
+    // right: 15px;
+    // top: 30%;
   `,
   Middle: styled.View`
     height: ${height * 0.8}px;
   `,
   MiddleHeader: styled.View`
+    padding: 0 20px;
     padding-bottom: 3px;
     flex-direction: row;
     align-items: baseline;
     justify-content: space-between;
-    border-bottom-width: 1px;
-    border-bottom-color: #797d7f;
   `,
   RecentSearch: styled.Text`
     font-size: 20px;
@@ -59,19 +75,14 @@ const SC = {
     font-size: 10px;
     color: #797d7f;
   `,
-  NoRecentSearchWrap: styled.View`
-    height: 200px;
-    width: 200px;
-    background-color: yellow;
-  `,
-  NoRecentSearchText: styled.Text`
-    font-size: 50px;
-  `,
 };
 
 const STORAGE_KEY = "@searchWords";
 
 const Search = ({ navigation }) => {
+  const url = useSelector((state) => state.url);
+  axios.defaults.baseURL = url;
+
   const [text, setText] = useState("");
   const [searchWords, setSearchWords] = useState({});
 
@@ -137,6 +148,20 @@ const Search = ({ navigation }) => {
     );
   };
 
+  const onChangeSearch = (word) => {
+    axios
+      .post("search/stores/1", {
+        text: word,
+      })
+      .then((res) => {
+        console.log(JSON.stringify(res.data));
+        console.log("검색단어: " + word);
+      })
+      .catch((err) => {
+        console.log("검색 에러: " + err);
+      });
+  };
+
   return (
     <SafeAreaView
       style={{
@@ -157,32 +182,31 @@ const Search = ({ navigation }) => {
               color="#797D7F"
             />
           </TouchableOpacity>
-          <TextInput
+          <SC.SearchInput
             multiline={false}
             returnKeyType={"search"}
             value={text}
-            onChangeText={setText}
+            onChangeText={(val) => {
+              setText(val), onChangeSearch(val);
+            }}
             onSubmitEditing={addSearch}
-            style={styles.searchInput}
-            maxLength={10}
+            maxLength={20}
             placeholder="검색어를 입력하세요"
-          />
-          <TouchableOpacity>
-            <Ionicons
-              name="ios-search-outline"
-              style={styles.topIcon}
-              color="#797D7F"
+          ></SC.SearchInput>
+          <SC.ClearBtn onPress={() => setText("")}>
+            <Feather
+              name="x-circle"
+              size={20}
+              color={text ? "#999999" : "#fff"}
             />
-          </TouchableOpacity>
+          </SC.ClearBtn>
         </SC.Top>
 
         <SC.Middle>
           <SC.MiddleHeader>
-            <SC.RecentSearch>최근 검색어</SC.RecentSearch>
-            <TouchableOpacity>
-              <SC.AllDeleteBtn onPress={() => allDeleteSearch()}>
-                전체삭제
-              </SC.AllDeleteBtn>
+            <SC.RecentSearch>최근 검색</SC.RecentSearch>
+            <TouchableOpacity onPress={() => allDeleteSearch()}>
+              <SC.AllDeleteBtn>전체삭제</SC.AllDeleteBtn>
             </TouchableOpacity>
           </SC.MiddleHeader>
 
@@ -195,12 +219,12 @@ const Search = ({ navigation }) => {
                 height: "100%",
               }}
             >
-              <Text style={{ fontSize: 16 }}>최근 검색어가 없습니다.</Text>
+              <Text>최근 검색어가 없습니다.</Text>
             </View>
           ) : (
             <ScrollView
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingVertical: 15 }}
+              contentContainerStyle={{ marginTop: 5 }}
             >
               {Object.keys(searchWords).map((key) => {
                 return (
@@ -224,12 +248,5 @@ export default Search;
 const styles = StyleSheet.create({
   topIcon: {
     fontSize: RFPercentage(3.5),
-  },
-  searchInput: {
-    backgroundColor: "#EBEDEF",
-    borderRadius: 20,
-    width: "70%",
-    height: "80%",
-    paddingHorizontal: 15,
   },
 });

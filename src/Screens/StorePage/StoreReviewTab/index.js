@@ -20,13 +20,14 @@ const StoreReviewTab = () => {
     const curMidCat = useSelector((state) => state.curMidCat);
     const curStore = useSelector((state) => state.curStore);
     const [storeReview, setStoreReview] = useState([]);
-    //const storeReviews = useSelector((state) => state.storeReviews)
+    const [reload, setReload] = useState(true); // 새로고침 state
 
     const getStore = async () => {
         await axios
             .get("/l-categories/" + curLargeCat + "/m-categories/" + curMidCat + "/stores/" + curStore + "/review")
             .then((res) => {
                 setStoreReview(res.data.list);
+                setReload(false);
                 //dispatch(restoreStoreReviews(res.data.list));
             })
             .catch((err) => {
@@ -36,8 +37,10 @@ const StoreReviewTab = () => {
     }
 
     useEffect(() => {
-        getStore();
-    }, [])
+        if (reload) {
+            getStore();
+        }
+    }, [reload])
 
     let scoreSum = 0
     const scoreDist = [0, 0, 0, 0, 0] // 별점 분포
@@ -45,10 +48,8 @@ const StoreReviewTab = () => {
         scoreSum += item.star_rating
         scoreDist[5 - item.star_rating] += 1
     })
-
     const scoreAvg = (scoreSum / storeReview.length).toFixed(1); // 평균 별점
     const totalScore = scoreDist.reduce((a, b) => a + b);
-
     const SC = {
         Container: styled.View`
             background-color: #fff;
@@ -64,10 +65,13 @@ const StoreReviewTab = () => {
         scoresSummaryWrap: styled.View`
         `,
         reviewContainer: styled.View`
+            height: auto;
         `,
-
+        scrollView: styled.ScrollView`
+            height: 600px;
+        `
     };
-    console.log(storeReview);
+
     return (
         <SC.Container>
 
@@ -80,15 +84,15 @@ const StoreReviewTab = () => {
                 </SC.scoresSummaryWrap>
             </SC.scoreContainer>
             <ReviewOptionBar reviewNums={storeReview.length} />
-            <ScrollView>
+            <SC.scrollView>
                 <SC.reviewContainer>
                     {storeReview && storeReview.map((item) => (
                         <ReviewEle nickname={item.nickname} score={item.star_rating} content={item.review} date={item.writed_at} />
                     ))}
                 </SC.reviewContainer>
-            </ScrollView>
+            </SC.scrollView>
 
-            <ReviewWriteBtn addReview={setStoreReview} reviews={storeReview} />
+            <ReviewWriteBtn setReload={setReload} />
         </SC.Container>
     );
 }
