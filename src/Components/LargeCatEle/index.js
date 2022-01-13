@@ -16,17 +16,8 @@ const SC = {
         flex-Direction: row;
         align-Items: center;
     `,
-    iconWrap: styled.View`
-        background-color: #ff9933;
-        width : 20px;
-        height : 20px;
-        align-items: center;
-        justify-content: center;
-        border-radius: 17px;
-        margin-right: 15px;
-    `,
     thumbnail: styled.View`
-        background-Color: #ff9933;
+        background-Color: ${props => props.color === "main" ? "#ff9933" : "#1876FB"};
         width: 32px;
         height: 32px;
         align-Items: center;
@@ -50,7 +41,7 @@ const LargeCatEle = (props) => {
             dispatch(restoreCurLargeCat(props.name))
         }}>
             <SC.left>
-                <SC.thumbnail>{props.icon}</SC.thumbnail>
+                <SC.thumbnail color={props.color}>{props.icon}</SC.thumbnail>
                 <SC.catTitle>{props.name}</SC.catTitle>
             </SC.left>
             <MaterialIcons name="arrow-forward-ios" size={12} color="gray" />

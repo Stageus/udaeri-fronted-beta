@@ -4,10 +4,11 @@ import styled from 'styled-components/native';
 import { Dimensions, TouchableWithoutFeedback, Keyboard, Platform } from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Foundation, FontAwesome } from '@expo/vector-icons';
-const { width, height } = Dimensions.get('window');
 import { Rating } from 'react-native-ratings';
 
 import axios from "axios";
+
+const { width, height } = Dimensions.get('window');
 
 const SC = {
     Container: styled.View`
@@ -47,6 +48,7 @@ const SC = {
     inputText: styled.TextInput`
         width: 100%;
         height: 70%;
+        flex-Shrink : 1;
     `,
     submitBtn: styled.TouchableOpacity`
         width: ${width / 1.5}px;
@@ -131,9 +133,7 @@ const ReviewWriteBtn = (props) => {
     const ratingCompleted = (rating) => {
         setRarting(rating);
     }
-    const closeModal = () => {
 
-    }
     return (
 
         <SC.Container>
@@ -163,6 +163,7 @@ const ReviewWriteBtn = (props) => {
                                     placeholder={"리뷰를 입력해주세요."}
                                     placeholderTextColor={'#C0C0C0'}
                                     maxLength={20}
+                                    multiline={true}
                                 >
                                 </SC.inputText>
                                 <SC.limitText color={maxText}>

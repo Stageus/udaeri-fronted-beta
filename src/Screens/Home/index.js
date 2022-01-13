@@ -190,9 +190,18 @@ const Home = ({ navigation }) => {
                       name={item.name}
                       page="MiddleCat"
                       navi={navigation}
+                      color="main"
                     ></LargeCatEle>
                   );
                 })}
+              <LargeCatEle
+                name={"랜덤 뽑기"}
+                page="RandomMenu"
+                navi={navigation}
+                color="random"
+              >
+
+              </LargeCatEle>
             </SC.CategoryWrap>
             <View style={{ alignItems: "center" }}>
               <LongBarBtn

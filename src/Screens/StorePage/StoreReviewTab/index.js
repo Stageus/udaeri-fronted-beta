@@ -7,7 +7,7 @@ import { ScrollView, FlatList, TouchableOpacity } from 'react-native-gesture-han
 const { width, height } = Dimensions.get('window');
 import styled from 'styled-components/native';
 import { restoreStoreReviews } from "../../../../reducer/index";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import ReviewEle from '../../../Components/ReviewEle';
 import ScoreRating from '../../../Components/ScoreRating';
 import ScoreSummary from '../../../Components/ScoreSummary';
@@ -15,20 +15,34 @@ import ReviewOptionBar from '../../../Components/ReviewOptionBar';
 import ReviewWriteBtn from '../../../Components/ReviewWriteBtn';
 
 const StoreReviewTab = () => {
-    const dispatch = useDispatch();
+    const TOKEN_KEY = "@userKey";
     const curLargeCat = useSelector((state) => state.curLargeCat);
     const curMidCat = useSelector((state) => state.curMidCat);
     const curStore = useSelector((state) => state.curStore);
     const [storeReview, setStoreReview] = useState([]);
-    const [reload, setReload] = useState(true); // 새로고침 state
 
+    const [reload, setReload] = useState(true); // 새로고침 state
+    console.log("reload :", reload);
     const getStore = async () => {
-        await axios
-            .get("/l-categories/" + curLargeCat + "/m-categories/" + curMidCat + "/stores/" + curStore + "/review")
+        let token;
+        await AsyncStorage.getItem(TOKEN_KEY, (err, result) => {
+            token = result;
+        });
+        axios
+            .get("/l-categories/" + curLargeCat + "/m-categories/" + curMidCat + "/stores/" + curStore + "/review",
+                {
+                    headers: {
+                        Authorization: token,
+                    },
+                    body: { "order_type": "최신순" }
+                }
+            )
             .then((res) => {
-                setStoreReview(res.data.list);
-                setReload(false);
-                //dispatch(restoreStoreReviews(res.data.list));
+                //console.log("이미 썼는가? :", res.data.isWrited);
+                if (res.data.success) {
+                    setStoreReview(res.data.list);
+                    setReload(false);
+                }
             })
             .catch((err) => {
                 console.log("error");
@@ -52,6 +66,7 @@ const StoreReviewTab = () => {
     const totalScore = scoreDist.reduce((a, b) => a + b);
     const SC = {
         Container: styled.View`
+            flex: 1;
             background-color: #fff;
         `,
         scoreContainer: styled.View`
@@ -65,10 +80,10 @@ const StoreReviewTab = () => {
         scoresSummaryWrap: styled.View`
         `,
         reviewContainer: styled.View`
-            height: auto;
+            flex: 1;
         `,
         scrollView: styled.ScrollView`
-            height: 600px;
+            
         `
     };
 
@@ -84,14 +99,15 @@ const StoreReviewTab = () => {
                 </SC.scoresSummaryWrap>
             </SC.scoreContainer>
             <ReviewOptionBar reviewNums={storeReview.length} />
-            <SC.scrollView>
-                <SC.reviewContainer>
+            <SC.reviewContainer>
+                <SC.scrollView>
+
                     {storeReview && storeReview.map((item) => (
                         <ReviewEle nickname={item.nickname} score={item.star_rating} content={item.review} date={item.writed_at} />
                     ))}
-                </SC.reviewContainer>
-            </SC.scrollView>
 
+                </SC.scrollView>
+            </SC.reviewContainer>
             <ReviewWriteBtn setReload={setReload} />
         </SC.Container>
     );

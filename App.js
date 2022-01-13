@@ -33,6 +33,7 @@ import KakaoLogin from "./src/Screens/Social/Login/Kakao/index";
 import NaverLogin from "./src/Screens/Social/Login/Naver/index";
 import JjimPage from "./src/Screens/Jjim/index";
 import Inquiry from "./src/Screens/Inquiry"
+import RandomMenu from './src/Screens/RandomMenu';
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -114,6 +115,7 @@ const App = () => {
             <Stack.Screen name="Map" component={Map} />
             <Stack.Screen name="MyPage" component={MyPage} />
             <Stack.Screen name="Inquiry" component={Inquiry} />
+            <Stack.Screen name="RandomMenu" component={RandomMenu} />
           </>
         )}
       </Stack.Navigator>
