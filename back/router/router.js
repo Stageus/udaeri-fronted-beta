@@ -33,13 +33,13 @@ Route.get('/l-categories/:l/m-categories/:m/stores/:name/information', category.
 Route.get('/l-categories/:l/m-categories/:m/stores/:name/menu', category.getStoreMenu);
 Route.route('/l-categories/:l/m-categories/:m/stores/:name/review')
     .post(auth.tokenVerify, category.createReview)
-    .get(category.getReview)
+    .get(auth.tokenVerify, category.getReview)
 Route.get('/l-categories/:l/m-categories/:m/stores/location', category.getStoreLocation);
 Route.get('/l-categories/:l/m-categories/:m/stores/:count', category.getStoreList);
 Route.get('/l-categories/:l/m-categories/:m/stores', category.getStoreAll);
 Route.get('/l-categories/:l/m-categories', category.getMiddleCategory);
 Route.get('/l-categories', category.getLargeCategory);
-Route.get('/categories/:food_category/random', category.getRandom);
+Route.post('/categories/random', category.getRandom);
 
 Route.get('/elastic/status', elastic.getElasticsearchStatus);
 Route.route('/search/stores/:count')

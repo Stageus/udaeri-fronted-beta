@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const dotenv = require('dotenv');
 const path = require('path');
+const jwt = require('jsonwebtoken');
 
 
 
@@ -15,33 +16,6 @@ const config = {
     port : process.env.DB_PG_PORT,
 };
 
-
-
-exports.CreateUser = async(req,res) => {
-    // 회원 생성 
-    const id = req.body.id;
-    const nickname = req.body.nickname;
-    const phone_number = req.body.phone_number;
-    const password = req.body.password;
-    const sponsor = "N";
-    const result = {
-        "success" : false
-    }    
-    const client = new Client(config);    
-    try{
-        await client.connect();
-        const encodedPassword = await bcrypt.hash(password, saltRounds);
-        client.query('INSERT INTO service.user_information(id,nickname, password, phone_number,sponsor,created_at) VALUES($1, $2, $3, $4, $5, $6 );',[id, nickname, encodedPassword, phone_number,sponsor,new Date()])
-        client.end();
-    }
-    catch(err){
-        console.log(err);
-        return res.send(result);
-    }
-    result.success = true;
-    return res.send(result);
-
-}
 
 exports.DeleteUser = async(req,res)=>{
     //회원 삭제
@@ -67,15 +41,33 @@ exports.DeleteUser = async(req,res)=>{
 exports.UpdateUser = async(req,res)=>{
     //회원정보 업데이트
     const client = new Client(config);
-    const result = { "success" : false }
+    const result = { 
+        "success" : false,
+        "token" : null
+    }
     const id = req.id;
+    const nickname = req.body.nickname;
     try{
         await client.connect();
-        await client.query('UPDATE service.user_information SET WHERE id = $1',[id]);
+        await client.query('UPDATE service.user_information SET nickname = $1 WHERE id = $2',[nickname,id]);
         client.end();
-        result.success = true;
-        return res.send(result);
 
+        const oldToken = await jwt.decode(req.headers.authorization, process.env.TOKEN_SCRETKEY);
+        const newToken = jwt.sign({
+            "id" : id,
+            "nickname" : nickname,
+            "sponsor" : oldToken.sponsor,
+            "platform" : oldToken.platform
+        },
+        process.env.TOKEN_SCRETKEY,
+        {
+            expiresIn : "360m",
+            issuer : "UDR"
+        })
+
+        result.success = true;
+        result.token = newToken;
+        return res.send(result);
     }
     catch(err){
         console.log(err);

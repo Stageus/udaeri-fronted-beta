@@ -1,6 +1,7 @@
 const {Client} = require('pg');
 const dotenv = require('dotenv');
 const path = require('path');
+const jwt = require('jsonwebtoken');
 
 dotenv.config({path : path.join(__dirname, "../../.env")});
 
@@ -14,17 +15,38 @@ const config = {
 
 exports.getRandom = async(req,res) =>{
     // 랜덤메뉴 가져오기 
-    const category = req.params.food_category;
+    
+    let category = req.body.categoryList;
+    console.log(category);
+    let q = 'SELECT store_name, main_menu, m_category.name AS name FROM service.store_information INNER JOIN service.m_category ON m_category.m_category_index = store_information.m_category_index AND m_category.name IN (';
+    category.map((item, index) => {
+        q = q + '\'' + item + '\'';
+
+        index != category.length-1 ? 
+        q+=',' : null;
+    })
+
+    // for(i=0; i<category.length; i++){
+    //     q+='\'';
+    //     q+=category[i];
+    //     q+='\'';
+
+    //     if(i!=category.length-1)
+    //     q+=',';
+
+    // }
+    q+=');'
+    console.log(q);
     const client = new Client(config);
 
         try{
             await client.connect();
-            const query = await client.query('SELECT store_name FROM service.store_information INNER JOIN service.m_category ON m_category.m_category_index = store_information.m_category_index AND m_category.name =$1;',[category]);
+            const query = await client.query(q);
             client.end();
             const rand = Math.floor(Math.random() * query.rowCount);
             const result = {
                 "success" : true,
-                "category" : category,
+                "category" : query.rows[rand].name,
                 "store" : query.rows[rand].store_name,
                 "main_menu" : query.rows[rand].main_menu
             }
@@ -266,11 +288,14 @@ exports.getStoreMenu = async(req,res) =>{
 exports.getReview = async(req,res) =>{
     const result ={
         "success" : false,
-        "list" : null
+        "list" : null,
+        "isWrited" : false,
+        "myReview" : null
     }
     const store = req.params.name;
-    const client = new Client(config);
+    const id = req.id;
     let order;
+    const client = new Client(config);
     if(req.body.order_type == "최신순"){
         order = 'writed_at';
     }
@@ -279,7 +304,13 @@ exports.getReview = async(req,res) =>{
     }
     try{
         await client.connect();
-            const review = await client.query("SELECT nickname, star_rating, review, writed_at FROM service.store_review INNER JOIN service.store_information ON store_information.store_name = $1 AND store_information.store_info_index = store_review.store_info_index ORDER BY " + order +" DESC;",[store]);
+            const isWrited = await client.query("SELECT c.nickname,a.star_rating, a.review, a.writed_at FROM service.store_review a INNER JOIN service.store_information b ON a.store_info_index = b.store_info_index AND b.store_name = $1 INNER JOIN service.user_information c ON c.user_index = a.user_index AND c.id = $2",[store,id])
+            if(isWrited.rowCount != 0){
+                result.isWrited = true;
+                result.myReview = isWrited.rows[0];
+                console.log(result.myReview);
+            }
+            const review = await client.query("SELECT c.nickname, a.star_rating, a.review, a.writed_at FROM service.store_review a INNER JOIN service.store_information b ON b.store_name = $1 AND b.store_info_index = a.store_info_index INNER JOIN service.user_information c ON a.user_index = c.user_index ORDER BY " + order +" DESC;",[store]);
             client.end();
             result.success = true;
             result.list = review.rows;
@@ -292,11 +323,8 @@ exports.getReview = async(req,res) =>{
 }
 
 exports.createReview = async(req,res) =>{
-    const result ={
-        "success" : false,
-    }
     const store = req.params.name;
-    const nickname = req.nickname;
+    const id = req.id;
     const review = req.body.review;
     const star_rating = req.body.star_rating;
     const client = new Client(config);
@@ -305,14 +333,42 @@ exports.createReview = async(req,res) =>{
             await client.connect();
             const date = new Date();
             date.setHours(date.getHours()+9);
-            const index = await client.query("SELECT store_info_index FROM service.store_information WHERE store_name = $1",[store]);
-            await client.query("INSERT INTO service.store_review (store_info_index, nickname, star_rating, review, writed_at) VALUES($1, $2, $3, $4, $5);",[index.rows[0].store_info_index, nickname, star_rating, review, date]);
+            await client.query("INSERT INTO service.store_review (store_info_index, user_index, star_rating, review, writed_at) VALUES((SELECT store_info_index FROM service.store_information WHERE store_name = $1), (SELECT user_index FROM service.user_information WHERE id = $2), $3, $4, $5);",[store, id, star_rating, review, date]);
             client.end();
-            result.success = true;
-            return res.send(result);
+            return res.send({
+                "success" : true
+            })
         }
         catch(err){
             console.log(err);
-            return res.send(result);
+            return res.send({
+                "success" : false,
+                "message" : "이미 리뷰를 작성하였습니다."
+            });
         }
+}
+
+exports.deleteReview = async(req,res)=>{
+    const store = req.params.name;
+    const id = req.id;
+    const client = new Client(config);
+
+    try{
+        await client.connect();
+        await client.query("DELETE FROM service.store_review a USING service.store_information b, service.user_information c WHERE a.store_info_index = b.store_info_index AND b.store_name = $1 AND c.user_index = a.user_index AND c.id =$2;",[store,id]);
+        client.end();
+        return res.send({
+            "success" : true
+        })
+    }
+    catch(err){
+        console.log(err);
+        return res.send({
+            "success" : false
+        })
+    }
+}
+
+exports.putReview = async(req,res)=>{
+
 }

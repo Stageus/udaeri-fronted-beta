@@ -47,11 +47,11 @@ app.get('/naverlogin', function (req, res) {
   })
 
   app.get('/callback', async(req,res)=>{
-    res.send("로그인 하는 중입니다.");
+    res.send("");
   })
 
   app.get('/naver/callback', async(req,res)=>{
-    res.send("로그인 하는 중입니다.");
+    res.send("");
   })
 
   app.get('/kakao/logout', (req,res)=>{

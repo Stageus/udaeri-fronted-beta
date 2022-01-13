@@ -27,31 +27,29 @@ exports.OauthLogin = async(req,res) =>{
 
     const accessToken = await getAccessToken(code, platform, state);
     const userInfo = await getUserInfo(accessToken, platform);
-    if(await isDuplicated(userInfo,platform)){     // 이미 다른 플랫폼으로 가입한 적이 있다면
-        return res.send({
-            success : false,
-            message : "duplicatied user"
-        })
-    }
-    else{
-        const jwtToken = await getJwtToken(userInfo, platform);
-        const refreshToken = await getRefreshToken();
-        const refreshKey = await ((jwt.decode(jwtToken, secretKey)).id);
+    const jwtToken = await getJwtToken(userInfo, platform);
+    const refreshToken = await getRefreshToken();
+    let refreshKey = await ((jwt.decode(jwtToken, secretKey)).id);
 
-        await redisClient.on("error", (err) => {
-        console.log(err);
-        })
-        await redisClient.connect();        
-        await redisClient.set(refreshKey, refreshToken);
-        await redisClient.expire(refreshKey,60*60*24*365);
-        await redisClient.disconnect();
-        return res.send({
-            "success" : true,
-            "token" : jwtToken,
-            "refreshToken" : refreshToken,
-            "expires_in" : 60000 //21540000
-        });
+    if(platform == "kakao"){ // redis set을 위해 int to string으로 변환
+        refreshKey = String(refreshKey);
     }
+
+    await redisClient.on("error", (err) => {
+    console.log(err);
+    })
+
+    await redisClient.connect();        
+    await redisClient.set(refreshKey, refreshToken);
+    await redisClient.expire(refreshKey,60*60*24*365);
+    await redisClient.disconnect();
+    return res.send({
+        "success" : true,
+        "token" : jwtToken,
+        "refreshToken" : refreshToken,
+        "expires_in" : 21540000 //21540000
+    });
+    
 }
 
 const getAccessToken = async(code, platform, state) =>{    
@@ -83,7 +81,7 @@ const getAccessToken = async(code, platform, state) =>{
                 }
             }).then(res => res.json())
 
-        case "google":
+        case "apple":
             break;
     }
     }
@@ -113,7 +111,7 @@ const getUserInfo = async(accessToken, platform) =>{
                 }
             }).then(res => res.json());
 
-        case "google" :
+        case "apple" :
             break;
             
     }
@@ -121,46 +119,17 @@ const getUserInfo = async(accessToken, platform) =>{
 
 }
 
-const isDuplicated = async(userInfo, platform) =>{ // 다른 플랫폼으로 가입한 적이 있는지 체크
-    let phone_number;
-
-    switch(platform){
-        case "kakao":
-            phone_number = userInfo.phone_number;
-            break;
-        case "naver":
-            phone_number = userInfo.response.mobile;
-            break;
-        case "google":
-            break;
-    }
-    const client = new Client(config);
-    try{
-        client.connect();
-        const query = await client.query('SELECT platform FROM service.user_information WHERE phone_number = $1;',[phone_number]);
-        if(query.rows[0].platform != platform && query.rowCount != 0) 
-            return true;
-        else
-            return false;
-    }
-        catch(err){
-            console.log(err);
-        }
-}
-
 const getJwtToken = async(userInfo,platform) =>{
-    let id, nickname, sponsor, phone_number;
+    let id, nickname, sponsor;
 
     switch(platform){
         case "kakao":
             id = userInfo.id;
-            phone_number = userInfo.phone_number;
             break;
         case "naver":
             id = userInfo.response.id;
-            phone_number = userInfo.response.mobile;
             break;
-        case "google":
+        case "apple":
             break;
     }
     const client = new Client(config);
@@ -176,7 +145,7 @@ const getJwtToken = async(userInfo,platform) =>{
             const date = new Date();
             date.setHours(date.getHours()+9);
             nickname = await getUserNickname();
-            await client.query('INSERT INTO service.user_information (id, nickname, phone_number, sponsor, platform, created_at) VALUES($1,$2,$3,$4,$5,$6);',[id, nickname,phone_number,"N", platform, date]);
+            await client.query('INSERT INTO service.user_information (id, nickname, sponsor, platform, created_at) VALUES($1,$2,$3,$4,$5);',[id, nickname,"N", platform, date]);
             sponsor = "N";
         }
 
