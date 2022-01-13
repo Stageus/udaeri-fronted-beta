@@ -16,7 +16,8 @@ import { AntDesign, Feather } from "@expo/vector-icons";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styled, { css } from "styled-components/native";
-import SearchEle from "../../Components/SearchEle/index";
+import SaveSearchEle from "../../Components/Search/SaveSearchEle";
+import SearchResultEle from "../../Components/Search/SearchResultEle";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 
@@ -35,7 +36,6 @@ const SC = {
   `,
   Top: styled.View`
     height: ${height * 0.07}px;
-    margin-bottom: 20px;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
@@ -59,6 +59,11 @@ const SC = {
   `,
   Middle: styled.View`
     height: ${height * 0.8}px;
+    margin-top: 20px;
+  `,
+  SearchingMiddle: styled.View`
+    height: ${height * 0.8}px;
+    margin: 5px 15px 0px 15px;
   `,
   MiddleHeader: styled.View`
     padding: 0 20px;
@@ -85,9 +90,12 @@ const Search = ({ navigation }) => {
 
   const [text, setText] = useState("");
   const [searchWords, setSearchWords] = useState({});
+  const [searchStore, setSearchStore] = useState([]);
 
   useEffect(() => {
     loadSearch();
+    setText("");
+    setSearchStore([]);
   }, []);
 
   const saveSearch = async (toSave) => {
@@ -148,19 +156,23 @@ const Search = ({ navigation }) => {
     );
   };
 
-  const onChangeSearch = (word) => {
-    axios
-      .post("search/stores/1", {
-        text: word,
-      })
-      .then((res) => {
-        console.log(JSON.stringify(res.data));
-        console.log("검색단어: " + word);
-      })
-      .catch((err) => {
-        console.log("검색 에러: " + err);
-      });
-  };
+  useEffect(() => {
+    const onChangeSearch = (word) => {
+      axios
+        .post("search/stores/1", {
+          text: word,
+        })
+        .then((res) => {
+          console.log("받아온 값" + JSON.stringify(res.data));
+          setSearchStore(res.data);
+        })
+        .catch((err) => {
+          console.log("검색 에러: " + err);
+        });
+    };
+
+    onChangeSearch(text);
+  }, [text]);
 
   return (
     <SafeAreaView
@@ -187,7 +199,7 @@ const Search = ({ navigation }) => {
             returnKeyType={"search"}
             value={text}
             onChangeText={(val) => {
-              setText(val), onChangeSearch(val);
+              setText(val);
             }}
             onSubmitEditing={addSearch}
             maxLength={20}
@@ -202,42 +214,59 @@ const Search = ({ navigation }) => {
           </SC.ClearBtn>
         </SC.Top>
 
-        <SC.Middle>
-          <SC.MiddleHeader>
-            <SC.RecentSearch>최근 검색</SC.RecentSearch>
-            <TouchableOpacity onPress={() => allDeleteSearch()}>
-              <SC.AllDeleteBtn>전체삭제</SC.AllDeleteBtn>
-            </TouchableOpacity>
-          </SC.MiddleHeader>
+        {searchStore.length === 0 ? (
+          <SC.Middle>
+            <SC.MiddleHeader>
+              <SC.RecentSearch>최근 검색</SC.RecentSearch>
+              <TouchableOpacity onPress={() => allDeleteSearch()}>
+                <SC.AllDeleteBtn>전체삭제</SC.AllDeleteBtn>
+              </TouchableOpacity>
+            </SC.MiddleHeader>
 
-          {Object.keys(searchWords).length === 0 &&
-          searchWords.constructor === Object ? (
-            <View
-              style={{
-                alignItems: "center",
-                justifyContent: "center",
-                height: "100%",
-              }}
-            >
-              <Text>최근 검색어가 없습니다.</Text>
-            </View>
-          ) : (
-            <ScrollView
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ marginTop: 5 }}
-            >
-              {Object.keys(searchWords).map((key) => {
+            {Object.keys(searchWords).length === 0 &&
+            searchWords.constructor === Object ? (
+              <View
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: "100%",
+                }}
+              >
+                <Text>최근 검색어가 없습니다.</Text>
+              </View>
+            ) : (
+              <ScrollView
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ marginTop: 5 }}
+              >
+                {Object.keys(searchWords).map((key) => {
+                  return (
+                    <SaveSearchEle
+                      key={key}
+                      text={searchWords[key]}
+                      deleteBtn={() => deleteSearch(key)}
+                      navigation={navigation}
+                    ></SaveSearchEle>
+                  );
+                })}
+              </ScrollView>
+            )}
+          </SC.Middle>
+        ) : (
+          <>
+            <SC.SearchingMiddle>
+              {searchStore.map((value) => {
                 return (
-                  <SearchEle
-                    key={key}
-                    text={searchWords[key]}
-                    onPress={() => deleteSearch(key)}
-                  ></SearchEle>
+                  <SearchResultEle
+                    key={value.store_name}
+                    text={value.store_name}
+                    navigation={navigation}
+                  ></SearchResultEle>
                 );
               })}
-            </ScrollView>
-          )}
-        </SC.Middle>
+            </SC.SearchingMiddle>
+          </>
+        )}
       </SC.Container>
     </SafeAreaView>
   );

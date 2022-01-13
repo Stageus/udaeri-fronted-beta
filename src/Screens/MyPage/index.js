@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -78,6 +78,8 @@ const MyPage = ({ navigation }) => {
 
   const nickname = useSelector((state) => state.userNickname);
   const checkSponsor = useSelector((state) => state.sponsorCheck);
+
+  useEffect(() => {}, [nickname, checkSponsor]);
 
   const listElement = [
     { title: "문의하기" },

@@ -78,9 +78,9 @@ const App = () => {
       })
       .then((res) => {
         res.data.success
-          ? (dispatch(checkToken(true)),
-            dispatch(restoreUserNickname(res.data.nickname)),
+          ? (dispatch(restoreUserNickname(res.data.nickname)),
             dispatch(checkSponsor(res.data.sponsor)),
+            dispatch(checkToken(true)),
             console.log("회원정보: " + JSON.stringify(res.data)))
           : (setTokenCheck(false),
             console.log("로그인 실패: " + res.data.message));
