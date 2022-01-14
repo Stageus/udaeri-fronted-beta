@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { } from "react-native";
+import {} from "react-native";
 import styled, { css } from "styled-components/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSelector, useDispatch } from "react-redux";
@@ -15,7 +15,7 @@ const SC = {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 15px 0;
+    padding: 20px 0;
   `,
   MyPageListText: styled.Text`
     font-size: 16px;
@@ -41,7 +41,7 @@ const MyPageEle = (props) => {
           if (props.title === "로그아웃") {
             tokenExpire();
           } else if (props.title === "문의하기") {
-            props.navigation.navigate(props.page)
+            props.navigation.navigate(props.page);
           }
         }}
       >

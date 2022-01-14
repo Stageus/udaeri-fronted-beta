@@ -118,7 +118,6 @@ const RecentSearch = ({ navigation }) => {
   }, []);
 
   useEffect(() => {
-    console.log("과연: " + recentSearchList);
     saveSearch(recentSearchList);
   }, [recentSearchList]);
 

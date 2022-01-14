@@ -35,9 +35,8 @@ import KakaoLogin from "./src/Screens/Social/Login/Kakao/index";
 import NaverLogin from "./src/Screens/Social/Login/Naver/index";
 import JjimPage from "./src/Screens/Jjim/index";
 
-
-import Inquiry from "./src/Screens/Inquiry"
-import RandomMenu from './src/Screens/RandomMenu';
+import Inquiry from "./src/Screens/Inquiry";
+import RandomMenu from "./src/Screens/RandomMenu";
 
 const Stack = createStackNavigator();
 
@@ -67,6 +66,7 @@ const App = () => {
 
   const TOKEN_KEY = "@userKey";
   const tokenCheck = useSelector((state) => state.tokenCheck);
+  const nickname = useSelector((state) => state.userNickname);
 
   useEffect(async () => {
     preLoad();
@@ -84,10 +84,10 @@ const App = () => {
       })
       .then((res) => {
         res.data.success
-          ? (dispatch(restoreUserNickname(res.data.nickname)),
+          ? (console.log("회원정보: " + JSON.stringify(res.data)),
+            dispatch(restoreUserNickname(res.data.nickname)),
             dispatch(checkSponsor(res.data.sponsor)),
-            dispatch(checkToken(true)),
-            console.log("회원정보: " + JSON.stringify(res.data)))
+            dispatch(checkToken(true)))
           : (checkToken(false),
             console.log("로그인 실패: " + res.data.message));
       })
