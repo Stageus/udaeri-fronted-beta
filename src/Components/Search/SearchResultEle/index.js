@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import styled from "styled-components/native";
 import { useSelector, useDispatch } from "react-redux";
-import { restoreCurStore } from "../../../../reducer/index";
+import { addSearchWord } from "../../../../reducer/index";
 
 const SC = {
   Container: styled.View`
@@ -33,9 +33,11 @@ const SC = {
 };
 
 const SearchResultEle = (props) => {
-  const grayColor = useSelector((state) => state.grayColor);
   const dispatch = useDispatch();
-  const { text = "", navigation = {} } = props;
+  const grayColor = useSelector((state) => state.grayColor);
+  const recentSearchList = useSelector((state) => state.recentSearchList);
+
+  const { storeName = "", navigation = {} } = props;
 
   return (
     <SC.Container>
@@ -44,13 +46,15 @@ const SearchResultEle = (props) => {
       </Text>
       <SC.SearchWordWrap
         onPress={() => {
-          navigation.navigate("StorePage", {
-            key: text,
+          navigation.navigate("SearchResult", {
+            searchValue: storeName,
           });
-          dispatch(restoreCurStore(text));
+          dispatch(addSearchWord(recentSearchList, storeName));
+          // setText(storeName);
+          // addSearch();
         }}
       >
-        <SC.SearchWord numberOfLines={1}>{text}</SC.SearchWord>
+        <SC.SearchWord numberOfLines={1}>{storeName}</SC.SearchWord>
       </SC.SearchWordWrap>
     </SC.Container>
   );

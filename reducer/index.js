@@ -1,5 +1,4 @@
 const initState = {
-  // userToken: null,
   tokenCheck: false,
   userNickname: null,
   sponsorCheck: null,
@@ -12,12 +11,16 @@ const initState = {
   midCatList: null,
   curLargeCat: null,
   curMidCat: null,
+
+  curMidCatList: null,
+  storeReviews: null,
   curStore: null,
   jjimStore: null,
   jjimState: null,
+
+  recentSearchList: null,
 };
 
-// const RESTORE_TOKEN = "RESTORE_TOKEN";
 const CHECK_TOKEN = "CHECK_TOKEN";
 const RESOTRE_USER_NICKNAME = "RESOTRE_USER_NICKNAME";
 const CHECK_SPONSOR = "CHECK_SPONSOR";
@@ -25,18 +28,22 @@ const RESTORE_LOGIN_TIME = "RESTORE_LOGIN_TIME";
 const RESTORE_TOKEN_EXPIRED_TIME = "RESTORE_TOKEN_EXPIRED_TIME";
 const RESTORE_CUR_LARGECAT = "RESTORE_CUR_LARGECAT";
 const RESTORE_CUR_MIDCAT = "RESTORE_CUR_MIDCAT";
+
+const RESTORE_CUR_MIDCATLIST = "RESTORE_CUR_MIDCATLIST";
+const ADD_CUR_MIDCATLIST = "ADD_CUR_MIDCATLIST";
+
 const RESTORE_LARGECATLIST = "RESTORE_LARGECATLIST";
 const RESTORE_MIDCATLIST = "RESTORE_MIDCATLIST";
 const RESTORE_CUR_STORE = "RESTORE_CUR_STORE";
 const RESTORE_JJIM_STORE = "RESTORE_JJIM_STORE";
+const RESTORE_STORE_REVIEWS = "RESTORE_STORE_REVIEWS";
 const CHECK_JJIM = "CHECK_JJIM";
 const ADD_JJIM = "ADD_JJIM";
 const DELETE_JJIM = "DELETE_JJIM";
 
-// export const restoreToken = (token) => ({
-//   type: RESTORE_TOKEN,
-//   token,
-// });
+const RESTORE_RECENT_SEARCH = "RESTORE_RECENT_SEARCH";
+const ADD_RECENT_SEARCH = "ADD_RECENT_SEARCH";
+const DELETE_RECENT_SEARCH = "DELETE_RECENT_SEARCH";
 
 export const checkToken = (token) => ({
   type: CHECK_TOKEN,
@@ -69,7 +76,7 @@ export const restoreLargeCatList = (catList) => ({
 });
 
 export const restoreMiddleCatList = (catList) => ({
-  type: RESTORE_MIDDLECATLIST,
+  type: RESTORE_MIDCATLIST,
   catList,
 });
 
@@ -86,6 +93,22 @@ export const restoreMidCatList = (catList) => ({
 export const restoreCurMidCat = (cat) => ({
   type: RESTORE_CUR_MIDCAT,
   cat,
+});
+
+export const restoreCurMidCatList = (storeList) => ({
+  type: RESTORE_CUR_MIDCATLIST,
+  storeList,
+});
+
+export const restoreStoreReviews = (storeReviews) => ({
+  type: RESTORE_STORE_REVIEWS,
+  storeReviews,
+});
+
+export const addCurMidCatList = (curMidCat, addStoreList) => ({
+  type: ADD_CUR_MIDCATLIST,
+  curMidCat,
+  addStoreList,
 });
 
 export const restoreCurStore = (store) => ({
@@ -114,6 +137,23 @@ export const deleteJjim = (storeList, store) => ({
   type: DELETE_JJIM,
   storeList,
   store,
+});
+
+export const restoreSearchWord = (searchList) => ({
+  type: RESTORE_RECENT_SEARCH,
+  searchList,
+});
+
+export const addSearchWord = (searchWordList, word) => ({
+  type: ADD_RECENT_SEARCH,
+  searchWordList,
+  word,
+});
+
+export const deleteSearchWord = (searchWordList, word) => ({
+  type: DELETE_RECENT_SEARCH,
+  searchWordList,
+  word,
 });
 
 const reducer = (state = initState, action) => {
@@ -163,6 +203,24 @@ const reducer = (state = initState, action) => {
         ...state,
         curMidCat: action.cat,
       };
+    case RESTORE_CUR_MIDCATLIST:
+      return {
+        ...state,
+        curMidCatList: action.storeList,
+      };
+    case RESTORE_STORE_REVIEWS:
+      return {
+        ...state,
+        storeReviews: action.storeReviews,
+      };
+    case ADD_CUR_MIDCATLIST:
+      state.curMidCatList[action.curMidCat] = state.curMidCatList[
+        action.curMidCat
+      ].concat(action.addStoreList);
+      return {
+        ...state,
+        curMidCatList: state.curMidCatList,
+      };
     case RESTORE_CUR_STORE:
       return {
         ...state,
@@ -178,6 +236,7 @@ const reducer = (state = initState, action) => {
         ...state,
         jjimState: action.boolean,
       };
+
     case ADD_JJIM:
       const jjimList = [...action.storeList];
       jjimList.push({ store_name: action.store, l_category: action.category });
@@ -194,6 +253,39 @@ const reducer = (state = initState, action) => {
       return {
         ...state,
         jjimStore: jjimStoreList,
+      };
+    case RESTORE_RECENT_SEARCH:
+      return {
+        ...state,
+        recentSearchList: action.searchList,
+      };
+    case ADD_RECENT_SEARCH:
+      let searchList;
+      if (!action.searchWordList) {
+        searchList = [];
+        searchList.unshift(action.word);
+      } else {
+        searchList = [...action.searchWordList];
+        const idx2 = searchList.indexOf(action.word);
+        if (idx2 === -1) {
+          searchList.unshift(action.word);
+        } else {
+          searchList.splice(idx2, 1);
+          searchList.unshift(action.word);
+        }
+      }
+
+      return {
+        ...state,
+        recentSearchList: searchList,
+      };
+    case DELETE_RECENT_SEARCH:
+      const searchList2 = [...action.searchWordList];
+      const idx3 = searchList2.indexOf(action.word);
+      searchList2.splice(idx3, 1);
+      return {
+        ...state,
+        recentSearchList: searchList2,
       };
     default:
       return state;

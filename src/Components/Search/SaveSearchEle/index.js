@@ -33,7 +33,7 @@ const SC = {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 5px 12px 10px;
+    padding: 18px 5px 18px 10px;
   `,
   SearchWord: styled.Text`
     font-size: ${RFPercentage(2.2)};
@@ -55,10 +55,10 @@ const SaveSearchEle = (props) => {
         </Text>
         <SC.SearchWordWrap
           onPress={() => {
-            navigation.navigate("StorePage", {
-              key: text,
+            navigation.navigate("SearchResult", {
+              searchValue: text,
+              existValue: "Yes",
             });
-            dispatch(restoreCurStore(text));
           }}
         >
           <SC.SearchWord numberOfLines={1}>{text}</SC.SearchWord>

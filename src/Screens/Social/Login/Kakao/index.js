@@ -5,7 +5,7 @@ import styled, { css } from "styled-components/native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSelector, useDispatch } from "react-redux";
-import { restoreToken } from "../../../../../reducer/index";
+import { checkToken } from "../../../../../reducer/index";
 
 const KakaoLogin = () => {
   const dispatch = useDispatch();
@@ -28,7 +28,7 @@ const KakaoLogin = () => {
   // asyncStorage에 token저장하는 함수
   const TOKEN_KEY = "@userKey";
   const saveToken = async (token) => {
-    await AsyncStorage.setItem(TOKEN_KEY, JSON.stringify(token));
+    await AsyncStorage.setItem(TOKEN_KEY, token);
   };
 
   // server에 access code를 post하고 token받아서 asyncStorage랑 redux에 token저장
@@ -39,9 +39,9 @@ const KakaoLogin = () => {
         platform: "kakao",
       })
       .then((res) => {
-        console.log("access token post 성공");
+        console.log("access token post 성공" + res.data.token);
         saveToken(res.data.token);
-        dispatch(restoreToken(res.data.token));
+        dispatch(checkToken(true));
       })
       .catch((err) => {
         console.log("server로 access code post 실패");
@@ -56,7 +56,7 @@ const KakaoLogin = () => {
         scalesPageToFit={false}
         style={{ marginTop: 30 }}
         source={{
-          uri: "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=02be3f8588228d4a03f6f2b0c0cf2d7f&redirect_uri=http://3.35.67.117:8000/callback",
+          uri: `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=02be3f8588228d4a03f6f2b0c0cf2d7f&redirect_uri=${url}/callback`,
         }}
         injectedJavaScript={runFirst}
         javaScriptEnabled={true}

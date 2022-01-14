@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  Platform,
-  SafeAreaView,
-  StatusBar,
-} from "react-native";
+import { } from "react-native";
 import styled, { css } from "styled-components/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSelector, useDispatch } from "react-redux";
@@ -39,13 +32,17 @@ const MyPageEle = (props) => {
   };
 
   const GrayColor = useSelector((state) => state.grayColor);
-
+  console.log(props.page);
   return (
     <SC.MyPageListWrap>
       <SC.MyPageListEle
         // 스위치문으로 바꾸는게 좋을 듯
         onPress={() => {
-          if (props.title === "로그아웃") tokenExpire();
+          if (props.title === "로그아웃") {
+            tokenExpire();
+          } else if (props.title === "문의하기") {
+            props.navigation.navigate(props.page)
+          }
         }}
       >
         <SC.MyPageListText>{props.title}</SC.MyPageListText>

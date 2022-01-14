@@ -39,8 +39,6 @@ const SC = {
 }
 
 const ScoreSummary = (props) => {
-    console.log("props.nums : ", props.nums);
-    console.log("props.total : ", props.total);
     return (
         <SC.Container>
             <SC.scoreNumber>{5 - props.score}점</SC.scoreNumber>

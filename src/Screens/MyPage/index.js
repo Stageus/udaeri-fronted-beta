@@ -50,7 +50,7 @@ const SC = {
     margin-right: 10px;
   `,
   MyPageList: styled.View`
-    padding: 15px 5px 0 5px;
+    
   `,
   MyPageListWrap: styled.View`
     border-bottom-width: 1px;
@@ -60,7 +60,6 @@ const SC = {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 15px 0;
   `,
   MyPageListText: styled.Text`
     font-size: 16px;
@@ -82,14 +81,13 @@ const MyPage = ({ navigation }) => {
   useEffect(() => {}, [nickname, checkSponsor]);
 
   const listElement = [
-    { title: "문의하기" },
-    { title: "버전정보" },
-    { title: "후원하기" },
-    { title: "버그리포트" },
-    { title: "개발자정보" },
-    { title: "로그아웃" },
+    { title: "문의하기", page: "Inquiry" },
+    { title: "버전정보", page: null },
+    { title: "후원하기", page: null },
+    { title: "버그리포트", page: null },
+    { title: "개발자정보", page: null },
+    { title: "로그아웃", page: null },
   ];
-
   return (
     <SafeAreaView
       style={{
@@ -113,7 +111,7 @@ const MyPage = ({ navigation }) => {
               <></>
             )}
           </SC.NickNameWrap>
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity onPress={() => { }}>
             <FontAwesome
               name="gear"
               style={{ fontSize: RFPercentage(2.5), color: "#797D7F" }}
@@ -127,6 +125,7 @@ const MyPage = ({ navigation }) => {
               <MyPageEle
                 key={index}
                 title={item.title}
+                page={item.page}
                 navigation={navigation}
               ></MyPageEle>
             );

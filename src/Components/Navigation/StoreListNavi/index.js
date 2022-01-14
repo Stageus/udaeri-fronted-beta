@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { restoreCurMidCatList } from "../../../../reducer/index";
 
 import axios from "axios";
 import Store from "../../../Screens/StoreList/Store";
 const Tab = createMaterialTopTabNavigator();
 
+
 const StoreListNavi = (props) => {
   const curLargeCat = useSelector((state) => state.curLargeCat);
   const MidCatList = useSelector((state) => state.midCatList[curLargeCat]);
-
-  const [storeList, setStoreList] = useState({});
+  const dispatch = useDispatch();
 
   const url = useSelector((state) => state.url);
   axios.defaults.baseURL = url;
@@ -20,7 +21,7 @@ const StoreListNavi = (props) => {
       await axios
         .get("/l-categories/" + curLargeCat + "/m-categories/all/stores/")
         .then((res) => {
-          setStoreList(res.data);
+          dispatch(restoreCurMidCatList(res.data))
         })
         .catch((err) => {
           console.log("error");
@@ -52,8 +53,8 @@ const StoreListNavi = (props) => {
         focused: false,
       }}
     >
-      {MidCatList.map((item) => (
-        <Tab.Screen name={item} children={() => <Store selectedMidCatList={storeList[item]} navigation={props.navigation} />} />
+      {MidCatList && MidCatList.map((item, index) => (
+        <Tab.Screen name={item} children={() => <Store key={item} midCat={item} navigation={props.navigation} />} />
       ))}
     </Tab.Navigator>
   );

@@ -214,6 +214,7 @@ const Home = ({ navigation }) => {
                   <Text>찜한 가게가 없어요~</Text>
                 </SC.NoJjimWrap>
               ) : (
+                jjimList &&
                 jjimList.slice(0, 5).map((item, index) => {
                   return (
                     <JjimEle
@@ -226,7 +227,7 @@ const Home = ({ navigation }) => {
                   );
                 })
               )}
-              {jjimList.length >= 5 ? (
+              {jjimList && jjimList.length >= 5 ? (
                 <SC.JjimEleWrap
                   activeOpacity={0.8}
                   onPress={() => navigation.navigate("JjimPage")}

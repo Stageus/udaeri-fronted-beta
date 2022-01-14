@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, StatusBar } from "react-native";
+import { View, StatusBar, Platform } from "react-native";
 import { WebView } from "react-native-webview";
 import styled, { css } from "styled-components/native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  restoreToken,
-  restoreExpiredTime,
-  restoreLoginTime,
-  checkToken,
-} from "../../../../../reducer/index";
+import { restoreExpiredTime, checkToken } from "../../../../../reducer/index";
 const StatusBarHeight = StatusBar.currentHeight;
 const SC = {
   Container: styled.View`
@@ -31,7 +26,6 @@ const NaverLogin = () => {
 
   const client_id = "TtMZfjScaNLpNbVdlfRJ";
   const callback_url = "http://3.38.138.194:8000/naver/callback";
-
   const [randomState, setRandomState] = useState();
 
   useEffect(() => {
