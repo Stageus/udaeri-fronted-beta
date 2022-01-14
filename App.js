@@ -26,14 +26,19 @@ import Login from "./src/Screens/Login";
 import EmailLogin from "./src/Screens/EmailLogin";
 import SignUpID from "./src/Screens/SignUp/ID";
 import SignUpPW from "./src/Screens/SignUp/PW";
-import Search from "./src/Screens/Search";
+// import Search from "./src/Screens/Search";
+import SearchResult from "./src/Screens/Search2/SearchResult";
+import RecentSearch from "./src/Screens/Search2/RecentSearch";
 import Map from "./src/Screens/Map";
 import MyPage from "./src/Screens/MyPage";
 import KakaoLogin from "./src/Screens/Social/Login/Kakao/index";
 import NaverLogin from "./src/Screens/Social/Login/Naver/index";
 import JjimPage from "./src/Screens/Jjim/index";
+
+
 import Inquiry from "./src/Screens/Inquiry"
 import RandomMenu from './src/Screens/RandomMenu';
+
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -79,11 +84,11 @@ const App = () => {
       })
       .then((res) => {
         res.data.success
-          ? (dispatch(checkToken(true)),
-            dispatch(restoreUserNickname(res.data.nickname)),
+          ? (dispatch(restoreUserNickname(res.data.nickname)),
             dispatch(checkSponsor(res.data.sponsor)),
+            dispatch(checkToken(true)),
             console.log("회원정보: " + JSON.stringify(res.data)))
-          : (setTokenCheck(false),
+          : (checkToken(false),
             console.log("로그인 실패: " + res.data.message));
       })
       .catch((err) => console.log("회원정보 못 받아옴~" + err));
@@ -107,7 +112,9 @@ const App = () => {
           <>
             <Stack.Screen name="BottomNavigator" component={BottomNavigator} />
             <Stack.Screen name="Home" component={Home} />
-            <Stack.Screen name="Search" component={Search} />
+            {/* <Stack.Screen name="Search" component={Search} /> */}
+            <Stack.Screen name="SearchResult" component={SearchResult} />
+            <Stack.Screen name="RecentSearch" component={RecentSearch} />
             <Stack.Screen name="JjimPage" component={JjimPage} />
             <Stack.Screen name="MiddleCat" component={MiddleCat} />
             <Stack.Screen name="StoreList" component={StoreList} />

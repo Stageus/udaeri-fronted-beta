@@ -19,7 +19,8 @@ import {
 import { RFPercentage } from "react-native-responsive-fontsize";
 
 import Home from "../../../Screens/Home";
-import Search from "../../../Screens/Search";
+// import Search from "../../../Screens/Search";
+import RecentSearch from "../../../Screens/Search2/RecentSearch";
 import MyPage from "../../../Screens/MyPage";
 import JjimPage from "../../../Screens/Jjim";
 
@@ -45,7 +46,7 @@ const screenOptions = ({
               size={RFPercentage(3.5)}
             />
           );
-        case "Search":
+        case "RecentSearch":
           return (
             <Ionicons
               name="ios-search-outline"
@@ -85,8 +86,8 @@ const BottomNavigator = () => {
         options={{ tabBarShowLabel: false }}
       />
       <Tab.Screen
-        name="Search"
-        component={Search}
+        name="RecentSearch"
+        component={RecentSearch}
         options={{ tabBarShowLabel: false }}
       />
       <Tab.Screen

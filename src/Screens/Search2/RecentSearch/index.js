@@ -16,10 +16,15 @@ import { AntDesign, Feather } from "@expo/vector-icons";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styled, { css } from "styled-components/native";
-import SaveSearchEle from "../../Components/Search/SaveSearchEle";
-import SearchResultEle from "../../Components/Search/SearchResultEle";
+import SaveSearchEle from "../../../Components/Search/SaveSearchEle";
+import SearchResultEle from "../../../Components/Search/SearchResultEle";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
+import {
+  restoreSearchWord,
+  addSearchWord,
+  deleteSearchWord,
+} from "../../../../reducer/index";
 
 const StatusBarHeight = StatusBar.currentHeight;
 const { width, height } = Dimensions.get("window");
@@ -52,11 +57,6 @@ const SC = {
     width: 85%;
     padding: 5px 30px 5px 15px;
   `,
-  ClearBtn: styled.TouchableOpacity`
-    // position: absolute;
-    // right: 15px;
-    // top: 30%;
-  `,
   Middle: styled.View`
     height: ${height * 0.8}px;
     margin-top: 20px;
@@ -82,84 +82,45 @@ const SC = {
   `,
 };
 
-const STORAGE_KEY = "@searchWords";
+const RecentSearch = ({ navigation }) => {
+  const dispatch = useDispatch();
 
-const Search = ({ navigation }) => {
   const url = useSelector((state) => state.url);
   axios.defaults.baseURL = url;
 
   const [text, setText] = useState("");
-  const [searchWords, setSearchWords] = useState();
-  const [searchStore, setSearchStore] = useState([]);
+  const [searchingResult, setSearchingResult] = useState([]);
+  const recentSearchList = useSelector((state) => state.recentSearchList);
+
+  const STORAGE_KEY = "@searchWords";
+
+  // asyncstorage에 최근검색어를 배열로 넣음
+  const saveSearch = async (searchWordList) => {
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(searchWordList));
+  };
+
+  // 첫 렌더링 때 asyncstorage에 있는 최근검색어 가져옴
+  const loadSearch = async () => {
+    try {
+      const searchedList = await AsyncStorage.getItem(STORAGE_KEY);
+      console.log("asyncstorage에서 가져온 검색어들: " + searchedList);
+      if (recentSearchList.length !== 0) {
+        dispatch(restoreSearchWord(JSON.parse(searchedList)));
+      }
+    } catch (err) {
+      console.log("최근검색어 storage에서 불러오기 실패: " + err);
+    }
+  };
 
   useEffect(() => {
     loadSearch();
     setText("");
-    setSearchStore([]);
   }, []);
 
-  const saveSearch = async (toSave) => {
-    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
-  };
-  const loadSearch = async () => {
-    try {
-      const s = await AsyncStorage.getItem(STORAGE_KEY);
-      if (Object.keys(JSON.parse(s)).length !== 0)
-        setSearchWords(JSON.parse(s));
-    } catch (e) {
-      alert(e);
-    }
-  };
-
-  const deleteSearch = async (key) => {
-    const newSearch = { ...searchWords };
-    delete newSearch[key];
-    setSearchWords(newSearch);
-    await saveSearch(newSearch);
-  };
-
-  const addSearch = async () => {
-    if (text === "") return;
-
-    let wordKeyCheck;
-    if (!searchWords) {
-      wordKeyCheck = undefined;
-    } else {
-      wordKeyCheck = Object.keys(searchWords).find(
-        (key) => searchWords[key] === text
-      );
-    }
-    if (wordKeyCheck !== undefined) {
-      const copySearch = { ...searchWords };
-      delete copySearch[wordKeyCheck];
-      const newSearch = { [Date.now()]: text, ...copySearch };
-      await saveSearch(newSearch);
-      setSearchWords(newSearch);
-    } else {
-      const newSearch = { [Date.now()]: text, ...searchWords };
-      setSearchWords(newSearch);
-      await saveSearch(newSearch);
-    }
-    setText("");
-  };
-
-  const allDeleteSearch = () => {
-    Alert.alert(
-      "최근검색어를 모두 삭제하시겠습니까?",
-      "",
-      [
-        { text: "취소", style: "cancel" },
-        {
-          text: "확인",
-          onPress: async () => {
-            setSearchWords();
-            await saveSearch({});
-          },
-        },
-      ],
-      { cancelable: true }
-    );
-  };
+  useEffect(() => {
+    console.log("과연: " + recentSearchList);
+    saveSearch(recentSearchList);
+  }, [recentSearchList]);
 
   useEffect(() => {
     const onChangeSearch = (word) => {
@@ -169,7 +130,7 @@ const Search = ({ navigation }) => {
         })
         .then((res) => {
           console.log("받아온 값" + JSON.stringify(res.data));
-          setSearchStore(res.data);
+          setSearchingResult(res.data);
         })
         .catch((err) => {
           console.log("검색 에러: " + err);
@@ -179,21 +140,20 @@ const Search = ({ navigation }) => {
     onChangeSearch(text);
   }, [text]);
 
-  const searchSubmit = () => {
-    if (searchStore.length !== 0) {
-      addSearch();
-      navigation.navigate("SearchResult", {
-        searchValue: text,
-        existValue: "Yes",
-        addSearch: addSearch(),
-      });
+  // 검색어 입력 후 submit할 때 최근검색어 목록에 검색어가 추가되는 함수
+  const addSearchWordSubmit = () => {
+    if (searchingResult.length === 0) {
     } else {
+      dispatch(addSearchWord(recentSearchList, text));
+    }
+    setText("");
+  };
+
+  const searchSubmit = () => {
+    addSearchWordSubmit(),
       navigation.navigate("SearchResult", {
         searchValue: text,
-        existValue: "No",
-        addSearch: addSearch(),
       });
-    }
   };
 
   return (
@@ -227,16 +187,16 @@ const Search = ({ navigation }) => {
             maxLength={20}
             placeholder="검색어를 입력하세요"
           ></SC.SearchInput>
-          <SC.ClearBtn onPress={() => setText("")}>
+          <TouchableOpacity onPress={() => setText("")}>
             <Feather
               name="x-circle"
               size={20}
               color={text ? "#999999" : "#fff"}
             />
-          </SC.ClearBtn>
+          </TouchableOpacity>
         </SC.Top>
 
-        {searchStore.length === 0 ? (
+        {!text ? (
           <SC.Middle>
             <SC.MiddleHeader>
               <SC.RecentSearch>최근 검색</SC.RecentSearch>
@@ -245,7 +205,8 @@ const Search = ({ navigation }) => {
               </TouchableOpacity>
             </SC.MiddleHeader>
 
-            {!searchWords ? (
+            {/* 최근 검색어가 없을 때 */}
+            {!recentSearchList ? (
               <View
                 style={{
                   alignItems: "center",
@@ -256,16 +217,19 @@ const Search = ({ navigation }) => {
                 <Text>최근 검색어가 없습니다.</Text>
               </View>
             ) : (
+              // 최근 검색어가 있을 때
               <ScrollView
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{ marginTop: 5 }}
               >
-                {Object.keys(searchWords).map((key) => {
+                {recentSearchList.map((searchWord) => {
                   return (
                     <SaveSearchEle
-                      key={key}
-                      text={searchWords[key]}
-                      deleteBtn={() => deleteSearch(key)}
+                      key={searchWord}
+                      text={searchWord}
+                      deleteBtn={() =>
+                        dispatch(deleteSearchWord(recentSearchList, searchWord))
+                      }
                       navigation={navigation}
                     ></SaveSearchEle>
                   );
@@ -274,15 +238,14 @@ const Search = ({ navigation }) => {
             )}
           </SC.Middle>
         ) : (
+          // 연관 검색어 목록들
           <SC.SearchingMiddle>
-            {searchStore.map((value) => {
+            {searchingResult.map((value) => {
               return (
                 <SearchResultEle
                   key={value.store_name}
                   storeName={value.store_name}
                   navigation={navigation}
-                  setText={setText}
-                  addSearch={addSearch}
                 ></SearchResultEle>
               );
             })}
@@ -293,7 +256,7 @@ const Search = ({ navigation }) => {
   );
 };
 
-export default Search;
+export default RecentSearch;
 
 const styles = StyleSheet.create({
   topIcon: {

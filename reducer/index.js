@@ -1,5 +1,4 @@
 const initState = {
-  // userToken: null,
   tokenCheck: false,
   userNickname: null,
   sponsorCheck: null,
@@ -18,9 +17,10 @@ const initState = {
   curStore: null,
   jjimStore: null,
   jjimState: null,
+
+  recentSearchList: null,
 };
 
-// const RESTORE_TOKEN = "RESTORE_TOKEN";
 const CHECK_TOKEN = "CHECK_TOKEN";
 const RESOTRE_USER_NICKNAME = "RESOTRE_USER_NICKNAME";
 const CHECK_SPONSOR = "CHECK_SPONSOR";
@@ -41,10 +41,9 @@ const CHECK_JJIM = "CHECK_JJIM";
 const ADD_JJIM = "ADD_JJIM";
 const DELETE_JJIM = "DELETE_JJIM";
 
-// export const restoreToken = (token) => ({
-//   type: RESTORE_TOKEN,
-//   token,
-// });
+const RESTORE_RECENT_SEARCH = "RESTORE_RECENT_SEARCH";
+const ADD_RECENT_SEARCH = "ADD_RECENT_SEARCH";
+const DELETE_RECENT_SEARCH = "DELETE_RECENT_SEARCH";
 
 export const checkToken = (token) => ({
   type: CHECK_TOKEN,
@@ -103,8 +102,8 @@ export const restoreCurMidCatList = (storeList) => ({
 
 export const restoreStoreReviews = (storeReviews) => ({
   type: RESTORE_STORE_REVIEWS,
-  storeReviews
-})
+  storeReviews,
+});
 
 export const addCurMidCatList = (curMidCat, addStoreList) => ({
   type: ADD_CUR_MIDCATLIST,
@@ -138,6 +137,23 @@ export const deleteJjim = (storeList, store) => ({
   type: DELETE_JJIM,
   storeList,
   store,
+});
+
+export const restoreSearchWord = (searchList) => ({
+  type: RESTORE_RECENT_SEARCH,
+  searchList,
+});
+
+export const addSearchWord = (searchWordList, word) => ({
+  type: ADD_RECENT_SEARCH,
+  searchWordList,
+  word,
+});
+
+export const deleteSearchWord = (searchWordList, word) => ({
+  type: DELETE_RECENT_SEARCH,
+  searchWordList,
+  word,
 });
 
 const reducer = (state = initState, action) => {
@@ -195,13 +211,15 @@ const reducer = (state = initState, action) => {
     case RESTORE_STORE_REVIEWS:
       return {
         ...state,
-        storeReviews: action.storeReviews
-      }
+        storeReviews: action.storeReviews,
+      };
     case ADD_CUR_MIDCATLIST:
-      state.curMidCatList[action.curMidCat] = state.curMidCatList[action.curMidCat].concat(action.addStoreList)
+      state.curMidCatList[action.curMidCat] = state.curMidCatList[
+        action.curMidCat
+      ].concat(action.addStoreList);
       return {
         ...state,
-        curMidCatList: state.curMidCatList
+        curMidCatList: state.curMidCatList,
       };
     case RESTORE_CUR_STORE:
       return {
@@ -218,6 +236,7 @@ const reducer = (state = initState, action) => {
         ...state,
         jjimState: action.boolean,
       };
+
     case ADD_JJIM:
       const jjimList = [...action.storeList];
       jjimList.push({ store_name: action.store, l_category: action.category });
@@ -234,6 +253,39 @@ const reducer = (state = initState, action) => {
       return {
         ...state,
         jjimStore: jjimStoreList,
+      };
+    case RESTORE_RECENT_SEARCH:
+      return {
+        ...state,
+        recentSearchList: action.searchList,
+      };
+    case ADD_RECENT_SEARCH:
+      let searchList;
+      if (!action.searchWordList) {
+        searchList = [];
+        searchList.unshift(action.word);
+      } else {
+        searchList = [...action.searchWordList];
+        const idx2 = searchList.indexOf(action.word);
+        if (idx2 === -1) {
+          searchList.unshift(action.word);
+        } else {
+          searchList.splice(idx2, 1);
+          searchList.unshift(action.word);
+        }
+      }
+
+      return {
+        ...state,
+        recentSearchList: searchList,
+      };
+    case DELETE_RECENT_SEARCH:
+      const searchList2 = [...action.searchWordList];
+      const idx3 = searchList2.indexOf(action.word);
+      searchList2.splice(idx3, 1);
+      return {
+        ...state,
+        recentSearchList: searchList2,
       };
     default:
       return state;

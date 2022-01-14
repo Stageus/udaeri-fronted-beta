@@ -5,12 +5,7 @@ import styled, { css } from "styled-components/native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  restoreToken,
-  restoreExpiredTime,
-  restoreLoginTime,
-  checkToken,
-} from "../../../../../reducer/index";
+import { restoreExpiredTime, checkToken } from "../../../../../reducer/index";
 const StatusBarHeight = StatusBar.currentHeight;
 const SC = {
   Container: styled.View`

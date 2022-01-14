@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import styled from "styled-components/native";
 import { useSelector, useDispatch } from "react-redux";
+import { restoreCurStore } from "../../../../reducer/index";
 
 const { width, height } = Dimensions.get("window");
 
@@ -32,7 +33,7 @@ const SC = {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 5px 12px 10px;
+    padding: 18px 5px 18px 10px;
   `,
   SearchWord: styled.Text`
     font-size: ${RFPercentage(2.2)};
@@ -40,8 +41,11 @@ const SC = {
   `,
 };
 
-const SearchEle = (props) => {
+const SaveSearchEle = (props) => {
   const grayColor = useSelector((state) => state.grayColor);
+  const dispatch = useDispatch();
+
+  const { text = "", deleteBtn = {}, navigation = {} } = props;
 
   return (
     <SC.Container>
@@ -49,11 +53,18 @@ const SearchEle = (props) => {
         <Text>
           <Ionicons name="ios-search-outline" size={18} color={grayColor} />
         </Text>
-        <SC.SearchWordWrap>
-          <SC.SearchWord numberOfLines={1}>{props.text}</SC.SearchWord>
+        <SC.SearchWordWrap
+          onPress={() => {
+            navigation.navigate("SearchResult", {
+              searchValue: text,
+              existValue: "Yes",
+            });
+          }}
+        >
+          <SC.SearchWord numberOfLines={1}>{text}</SC.SearchWord>
         </SC.SearchWordWrap>
 
-        <TouchableOpacity onPress={props.onPress}>
+        <TouchableOpacity onPress={deleteBtn}>
           <Feather name="x" size={15} color={grayColor} />
         </TouchableOpacity>
       </SC.SearchEleWrap>
@@ -61,4 +72,4 @@ const SearchEle = (props) => {
   );
 };
 
-export default SearchEle;
+export default SaveSearchEle;
