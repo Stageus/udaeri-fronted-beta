@@ -50,13 +50,45 @@ const SC = {
         font-family: 'Regular';
         font-size: 16px;
     `,
+    Modal: styled.Modal`
+        background-color : rgba(0,0,0,0.2);
+    `,
+    modalView: styled.View`
+        flex: 1;
+        width : ${width}px;
+        height : ${height / 2}px;
+        justify-Content: center;
+        align-Items: center;
+        padding : 20px;
+        border-radius : 10px;
+        background-color : white;
+    `,
+    submitBtn: styled.TouchableOpacity`
+        width: ${width / 1.5}px;
+        height: 40px;
+        background-color: #ff9933;
+        border-radius: 10px;
+        justify-content: center;
+        align-items: center;
+    `,
+    submitText: styled.Text`
+        color : white;
+        font-family: 'Regular';
+        font-size: 16px;
+    `,
+    pickedStoreText: styled.Text`
+        font-family : 'Bold';
+        font-size : 20px;
+    `
 }
 
 const RandomMenu = ({ navigation }) => {
 
     const category = useSelector((state) => state.midCatList['먹거리'])
     const [catSelect, setCatSelect] = useState([]);
-
+    const [pickedStore, setPickedStore] = useState({});
+    const [modalVisible, setModalVisible] = useState(false);
+    console.log(pickedStore)
     const onSelected = (selected) => {
         catSelect.includes(selected) ?
             setCatSelect(catSelect.filter(item => item !== selected)) :
@@ -71,7 +103,7 @@ const RandomMenu = ({ navigation }) => {
             )
             .then((res) => {
                 if (res.data.success) {
-                    console.log(res.data.store)
+                    setPickedStore(res.data.store)
                 }
             })
             .catch((err) => {
@@ -79,7 +111,7 @@ const RandomMenu = ({ navigation }) => {
                 console.log(err);
             });
     }
-    console.log(catSelect)
+
     return (
         <SafeAreaView
             style={{
@@ -108,9 +140,34 @@ const RandomMenu = ({ navigation }) => {
                         ))
                     }
                 </SC.mainContainer>
-                <SC.submitBtn onPress={() => onSubmit()}>
+                <SC.submitBtn onPress={() => {
+                    onSubmit();
+                    setModalVisible(true);
+                }}>
                     <SC.submitText>문의 작성</SC.submitText>
                 </SC.submitBtn>
+                <SC.Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => {
+                        Alert.alert("Modal has been closed.");
+                        setModalVisible(!modalVisible);
+                    }}
+                >
+                    <SC.modalView>
+                        <SC.pickedStoreText>
+                            {pickedStore.store}
+                        </SC.pickedStoreText>
+                        <SC.submitBtn
+                            onPress={() => {
+                                setModalVisible(!modalVisible)
+                            }}
+                        >
+                            <SC.submitText>닫기</SC.submitText>
+                        </SC.submitBtn>
+                    </SC.modalView>
+                </SC.Modal>
             </SC.container>
         </SafeAreaView >
 
