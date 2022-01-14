@@ -18,7 +18,7 @@ const initState = {
   jjimStore: null,
   jjimState: null,
 
-  recentSearchList: null,
+  recentSearchList: [],
 };
 
 const CHECK_TOKEN = "CHECK_TOKEN";

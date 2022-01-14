@@ -49,9 +49,7 @@ const SC = {
     font-weight: bold;
     margin-right: 10px;
   `,
-  MyPageList: styled.View`
-    
-  `,
+  MyPageList: styled.View``,
   MyPageListWrap: styled.View`
     border-bottom-width: 1px;
     border-color: #d3d3d3;
@@ -77,8 +75,6 @@ const MyPage = ({ navigation }) => {
 
   const nickname = useSelector((state) => state.userNickname);
   const checkSponsor = useSelector((state) => state.sponsorCheck);
-
-  useEffect(() => {}, [nickname, checkSponsor]);
 
   const listElement = [
     { title: "문의하기", page: "Inquiry" },
@@ -111,7 +107,7 @@ const MyPage = ({ navigation }) => {
               <></>
             )}
           </SC.NickNameWrap>
-          <TouchableOpacity onPress={() => { }}>
+          <TouchableOpacity onPress={() => {}}>
             <FontAwesome
               name="gear"
               style={{ fontSize: RFPercentage(2.5), color: "#797D7F" }}
@@ -130,27 +126,6 @@ const MyPage = ({ navigation }) => {
               ></MyPageEle>
             );
           })}
-          {/* <SC.MyPageListWrap>
-            <SC.MyPageListEle>
-              <SC.MyPageListText>문의하기</SC.MyPageListText>
-              <MaterialIcons name="arrow-forward-ios" size={12} color="gray" />
-            </SC.MyPageListEle>
-          </SC.MyPageListWrap>
-
-          <SC.MyPageListEle>
-            <SC.MyPageListText>버전정보</SC.MyPageListText>
-            <Text style={{ fontSize: RFPercentage(2.2), letterSpacing: 2 }}>
-              v1.0.0
-            </Text>
-          </SC.MyPageListEle>
-          <SC.MyPageListEle>
-            <SC.MyPageListText onPress={() => tokenExpire()}>
-              로그아웃
-            </SC.MyPageListText>
-          </SC.MyPageListEle>
-          <SC.MyPageListEle>
-            <SC.MyPageListText>후원하기</SC.MyPageListText>
-          </SC.MyPageListEle> */}
         </SC.MyPageList>
       </SC.Container>
     </SafeAreaView>
