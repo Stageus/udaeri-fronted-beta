@@ -20,7 +20,7 @@ import { RFPercentage } from "react-native-responsive-fontsize";
 
 import Home from "../../../Screens/Home";
 // import Search from "../../../Screens/Search";
-import RecentSearch from "../../../Screens/Search2/RecentSearch";
+import RecentSearch from "../../../Screens/Search/RecentSearch";
 import MyPage from "../../../Screens/MyPage";
 import JjimPage from "../../../Screens/Jjim";
 

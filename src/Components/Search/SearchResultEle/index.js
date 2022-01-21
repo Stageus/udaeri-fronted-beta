@@ -50,8 +50,6 @@ const SearchResultEle = (props) => {
             searchValue: storeName,
           });
           dispatch(addSearchWord(recentSearchList, storeName));
-          // setText(storeName);
-          // addSearch();
         }}
       >
         <SC.SearchWord numberOfLines={1}>{storeName}</SC.SearchWord>

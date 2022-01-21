@@ -17,9 +17,9 @@ import styled, { css } from "styled-components/native";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 
-import SaveSearchEle from "../../Components/Search/SaveSearchEle";
-import SearchResultEle from "../../Components/Search/SearchResultEle";
-import StoreEle from "../../Components/StoreEle";
+import { addSearchWord } from "../../../../reducer/index";
+import SearchResultEle from "../../../Components/Search/SearchResultEle";
+import StoreEle from "../../../Components/StoreEle";
 
 const StatusBarHeight = StatusBar.currentHeight;
 const { width, height } = Dimensions.get("window");
@@ -43,19 +43,12 @@ const SC = {
     border-bottom-width: 1px;
     border-bottom-color: #999999;
     position: relative;
-    // background-color: yellow;
   `,
   SearchInput: styled.TextInput`
-    // background-color: #ebedef;
     background-color: #fff;
     border-radius: 5px;
     width: 85%;
     padding: 5px 30px 5px 15px;
-  `,
-  ClearBtn: styled.TouchableOpacity`
-    // position: absolute;
-    // right: 15px;
-    // top: 30%;
   `,
   SearchingMiddle: styled.View`
     height: ${height * 0.8}px;
@@ -64,41 +57,25 @@ const SC = {
 };
 
 const SearchResult = ({ navigation, route }) => {
+  const dispatch = useDispatch();
+
   const url = useSelector((state) => state.url);
   axios.defaults.baseURL = url;
 
   const searchValue = route.params.searchValue;
-  const existValue = route.params.existValue;
-  const addSearch = route.params.addSearch;
-
-  const [initialSearch, setInitialSearch] = useState();
-
+  const recentSearchList = useSelector((state) => state.recentSearchList);
   const [text, setText] = useState("");
-  const [searchStore, setSearchStore] = useState([]);
-  const [initialSearchStore, setInitialSearchStore] = useState([]);
+  const [searchResultList, setSearchResultList] = useState([]);
+  const [searchingResult, setSearchingResult] = useState([]);
 
-  const initialGetStore = (word) => {
+  const getSearchStore = (word) => {
     axios
       .post("search/stores/1", {
         text: word,
       })
       .then((res) => {
         console.log("받아온 값" + JSON.stringify(res.data));
-        setInitialSearchStore(res.data);
-      })
-      .catch((err) => {
-        console.log("검색 에러: " + err);
-      });
-  };
-
-  const onChangeSearch = (word) => {
-    axios
-      .post("search/stores/1", {
-        text: word,
-      })
-      .then((res) => {
-        console.log("받아온 값" + JSON.stringify(res.data));
-        setSearchStore(res.data);
+        setSearchResultList(res.data);
       })
       .catch((err) => {
         console.log("검색 에러: " + err);
@@ -107,12 +84,28 @@ const SearchResult = ({ navigation, route }) => {
 
   useEffect(() => {
     setText(searchValue);
-    initialGetStore(searchValue);
+    getSearchStore(searchValue);
   }, []);
 
-  useEffect(() => {
-    onChangeSearch(text);
-  }, [text]);
+  const getRelatedStore = (word) => {
+    axios
+      .post("search/stores/1", {
+        text: word,
+      })
+      .then((res) => {
+        console.log("받아온 값" + JSON.stringify(res.data));
+        setSearchingResult(res.data);
+      })
+      .catch((err) => {
+        console.log("검색 에러: " + err);
+      });
+  };
+
+  const searchSubmit = () => {
+    setSearchingResult([]);
+    getSearchStore(text);
+    dispatch(addSearchWord(recentSearchList, text));
+  };
 
   return (
     <SafeAreaView
@@ -140,51 +133,52 @@ const SearchResult = ({ navigation, route }) => {
             value={text}
             onChangeText={(val) => {
               setText(val);
+              getRelatedStore(val);
             }}
-            // onSubmitEditing={addSearch}
+            onSubmitEditing={() => searchSubmit(text)}
             maxLength={20}
             placeholder="검색어를 입력하세요"
           ></SC.SearchInput>
-          <SC.ClearBtn onPress={() => setText("")}>
+          <TouchableOpacity onPress={() => setText("")}>
             <Feather
               name="x-circle"
               size={20}
               color={text ? "#999999" : "#fff"}
             />
-          </SC.ClearBtn>
+          </TouchableOpacity>
         </SC.Top>
-        {existValue === "No" ? (
-          <View>
-            <Text>검색결과가 없습니다.</Text>
-          </View>
+
+        {searchingResult.length === 0 ? (
+          <ScrollView
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ marginTop: 5 }}
+          >
+            {searchResultList.map((value) => {
+              return (
+                <StoreEle
+                  storeName={value.store_name}
+                  content={""}
+                  location={""}
+                  navigation={navigation}
+                />
+              );
+            })}
+          </ScrollView>
         ) : (
-          initialSearchStore.map((value) => {
-            return (
-              <StoreEle
-                storeName={value.store_name}
-                content={""}
-                location={""}
-                navigation={navigation}
-              />
-            );
-          })
-        )}
-        {searchStore.length === 0 ? (
-          <></>
-        ) : (
-          <SC.SearchingMiddle>
-            {searchStore.map((value) => {
+          <ScrollView
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ marginTop: 5, paddingHorizontal: 15 }}
+          >
+            {searchingResult.map((value) => {
               return (
                 <SearchResultEle
                   key={value.store_name}
                   storeName={value.store_name}
                   navigation={navigation}
-                  setText={setText}
-                  addSearch={addSearch}
                 ></SearchResultEle>
               );
             })}
-          </SC.SearchingMiddle>
+          </ScrollView>
         )}
       </SC.Container>
     </SafeAreaView>
