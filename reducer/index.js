@@ -4,7 +4,7 @@ const initState = {
   sponsorCheck: null,
   loginTime: null,
   tokenExpiredTime: null,
-  url: "http://3.38.138.194:8000/",
+  url: "http://udaeri.com",
   mainColor: "#ff9933",
   grayColor: "#999999",
   largeCatList: null,

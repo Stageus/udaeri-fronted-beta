@@ -123,7 +123,7 @@ const SearchResult = ({ navigation, route }) => {
           >
             <AntDesign
               name="arrowleft"
-              style={styles.topIcon}
+              style={{ fontSize: RFPercentage(3.5) }}
               color="#797D7F"
             />
           </TouchableOpacity>
@@ -135,7 +135,7 @@ const SearchResult = ({ navigation, route }) => {
               setText(val);
               getRelatedStore(val);
             }}
-            onSubmitEditing={() => searchSubmit(text)}
+            onSubmitEditing={() => searchSubmit()}
             maxLength={20}
             placeholder="검색어를 입력하세요"
           ></SC.SearchInput>
@@ -191,9 +191,3 @@ const SearchResult = ({ navigation, route }) => {
 };
 
 export default SearchResult;
-
-const styles = StyleSheet.create({
-  topIcon: {
-    fontSize: RFPercentage(3.5),
-  },
-});
