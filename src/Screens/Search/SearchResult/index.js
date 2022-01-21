@@ -156,6 +156,7 @@ const SearchResult = ({ navigation, route }) => {
             {searchResultList.map((value) => {
               return (
                 <StoreEle
+                  key={value}
                   storeName={value.store_name}
                   content={""}
                   location={""}
@@ -173,8 +174,12 @@ const SearchResult = ({ navigation, route }) => {
               return (
                 <SearchResultEle
                   key={value.store_name}
+                  searchValue={text}
                   storeName={value.store_name}
                   navigation={navigation}
+                  searchingResultReset={setSearchingResult}
+                  searchText={getSearchStore}
+                  page="second"
                 ></SearchResultEle>
               );
             })}

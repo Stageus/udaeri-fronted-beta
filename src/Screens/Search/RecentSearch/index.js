@@ -139,10 +139,11 @@ const RecentSearch = ({ navigation }) => {
   };
 
   const searchSubmit = () => {
-    addSearchWordSubmit(),
-      navigation.navigate("SearchResult", {
-        searchValue: text,
-      });
+    addSearchWordSubmit();
+    setText("");
+    navigation.navigate("SearchResult", {
+      searchValue: text,
+    });
   };
 
   const allDeleteSearch = () => {
@@ -250,6 +251,7 @@ const RecentSearch = ({ navigation }) => {
                   key={value.store_name}
                   storeName={value.store_name}
                   navigation={navigation}
+                  page="first"
                 ></SearchResultEle>
               );
             })}

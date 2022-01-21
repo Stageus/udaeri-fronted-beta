@@ -37,7 +37,27 @@ const SearchResultEle = (props) => {
   const grayColor = useSelector((state) => state.grayColor);
   const recentSearchList = useSelector((state) => state.recentSearchList);
 
-  const { storeName = "", navigation = {} } = props;
+  const {
+    storeName = "",
+    navigation = {},
+    searchValue = "",
+    searchingResultReset = {},
+    searchText = {},
+    page = "",
+  } = props;
+
+  const firstPageOnclick = () => {
+    navigation.navigate("SearchResult", {
+      searchValue: storeName,
+    });
+    dispatch(addSearchWord(recentSearchList, storeName));
+  };
+
+  const secondPageOnclick = () => {
+    searchingResultReset([]);
+    searchText(searchValue);
+    dispatch(addSearchWord(recentSearchList, storeName));
+  };
 
   return (
     <SC.Container>
@@ -46,10 +66,7 @@ const SearchResultEle = (props) => {
       </Text>
       <SC.SearchWordWrap
         onPress={() => {
-          navigation.navigate("SearchResult", {
-            searchValue: storeName,
-          });
-          dispatch(addSearchWord(recentSearchList, storeName));
+          page === "first" ? firstPageOnclick() : secondPageOnclick();
         }}
       >
         <SC.SearchWord numberOfLines={1}>{storeName}</SC.SearchWord>
