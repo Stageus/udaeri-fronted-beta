@@ -15,7 +15,8 @@ const corsOptions = {
     origin: '*',
     credentials: true,
     methods: ['POST','GET', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    
 };
 app.options('*', cors(corsOptions));
 app.use(cors(corsOptions)); 
@@ -45,13 +46,11 @@ app.get('*', (req,res, next)=>{
 
 const html = require('./back/router/html');
 const router = require('./back/router/router');
-const naver = require('./back/router/naverlogin');
 //const elastic = require('./back/router/elastic.js');
 
 app.use(morgan('combined'));
 app.use('/', html);
 app.use('/',router);
-app.use('/', naver);
 //app.use('/elastic', elastic);
 
 app.use((req,res)=>{
