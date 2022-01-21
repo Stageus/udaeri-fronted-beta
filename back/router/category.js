@@ -15,9 +15,13 @@ const config = {
 
 exports.getRandom = async(req,res) =>{
     // 랜덤메뉴 가져오기 
-    
+
     let category = req.body.categoryList;
-    console.log(category);
+    if(category == undefined || category == [])
+        return res.send({
+            "success" : false
+        })
+
     let q = 'SELECT store_name, main_menu, m_category.name AS name FROM service.store_information INNER JOIN service.m_category ON m_category.m_category_index = store_information.m_category_index AND m_category.name IN (';
     category.map((item, index) => {
         q = q + '\'' + item + '\'';
@@ -25,18 +29,7 @@ exports.getRandom = async(req,res) =>{
         index != category.length-1 ? 
         q+=',' : null;
     })
-
-    // for(i=0; i<category.length; i++){
-    //     q+='\'';
-    //     q+=category[i];
-    //     q+='\'';
-
-    //     if(i!=category.length-1)
-    //     q+=',';
-
-    // }
     q+=');'
-    console.log(q);
     const client = new Client(config);
 
         try{
@@ -46,9 +39,11 @@ exports.getRandom = async(req,res) =>{
             const rand = Math.floor(Math.random() * query.rowCount);
             const result = {
                 "success" : true,
-                "category" : query.rows[rand].name,
-                "store" : query.rows[rand].store_name,
-                "main_menu" : query.rows[rand].main_menu
+                "store" :{
+                    "category" : query.rows[rand].name,
+                    "store" : query.rows[rand].store_name,
+                    "main_menu" : query.rows[rand].main_menu
+                }
             }
             console.log(result);
             return res.send(result);
@@ -370,5 +365,26 @@ exports.deleteReview = async(req,res)=>{
 }
 
 exports.putReview = async(req,res)=>{
-
+    const store = req.params.name;
+    const id = req.id;
+    const review = req.body.review;
+    const star_rating = req.body.star_rating;
+    const date = new Date();
+    date.setHours(date.getHours()+9);
+    const client = new Client(config);
+    
+    try{
+        await client.connect();
+        await client.query("UPDATE service.store_review a SET star_rating = $1, review =$2 ,writed_at = $3 FROM service.store_information b, service.user_information c WHERE b.store_name = $4 AND a.store_info_index = b.store_info_index AND c.id = $5 AND a.user_index = c.user_index;",[star_rating,review,date,store,id]);
+        client.end();
+        return res.send({
+            "success" : true
+        })
+    }
+    catch(err){
+        console.log(err);
+        return res.send({
+            "success" : false
+        })
+    }
 }

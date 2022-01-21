@@ -4,7 +4,8 @@ const saltRounds = 10;
 const dotenv = require('dotenv');
 const path = require('path');
 const jwt = require('jsonwebtoken');
-
+const nodemailer = require('nodemailer');
+const elastic = require('./elastic');
 
 
 dotenv.config({path : path.join(__dirname, "../../.env")});
@@ -115,6 +116,7 @@ exports.CreateUserFavorite = async(req,res) =>{
             const l_categroy = await client.query("SELECT A.name FROM service.l_category A INNER JOIN service.m_category B ON A.l_category_index = B.l_category_index INNER JOIN service.store_information C ON B.m_category_index = C.m_category_index WHERE C.store_name = $1",[store]);
             await client.query("UPDATE service.store_information SET favorited_count = favorited_count + 1 WHERE store_name = $1;",[store]);
             client.end();
+            elastic.increaseFavoriteCount(store);
             return res.status(200).send({
                 "success" : true,
                 "l_category" : l_categroy.rows[0].name
@@ -138,6 +140,7 @@ exports.DeleteUserFavorite = async(req,res) =>{
         await client.query("DELETE FROM service.user_favorite WHERE user_index = (SELECT user_index FROM service.user_information WHERE id = $1) AND store_info_index = (SELECT store_info_index FROM service.store_information WHERE store_name = $2);",[id,store]);
         await client.query("UPDATE service.store_information SET favorited_count = favorited_count - 1 WHERE store_name = $1",[store]);
         client.end();
+        elastic.decreaseFavoriteCount(store);
         result.success = true;
         return res.status(200).send(result);
     }
@@ -167,4 +170,40 @@ exports.ReadUserFavorite = async(req,res) =>{
             return res.send(result);
         }
 }
+
+exports.userOpinion = async(req,res)=>{
+    const contact = req.body.contact;
+    const opinion = req.body.opinion;
+    const opinionCategory = req.body. opinionCategory;
+    const transporter = nodemailer.createTransport({
+        service : 'naver',
+        host : 'smtp.naver.com',
+        port : 465,
+        secure : false,
+        auth :{
+            user: process.env.MAILER_USER,
+            pass : process.env.MAILER_PASS
+
+        }
+    });
+
+    const result = await transporter.sendMail({
+        from : process.env.MAILER_EMAIL,
+        to : process.env.MAILER_EMAIL,
+        subject : `우대리 ${opinionCategory} 입니다.`,
+        text : 
+        `${opinion}\n\n\nmail : ${contact}
+        `
+    })
+
+    if(result.rejected.length == 0)
+        return res.send({
+            "success" : true
+        });
+
+    return res.send({
+        "success" : false
+    });
+}
+
 

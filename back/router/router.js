@@ -17,6 +17,7 @@ Route.route('/users/favorites')
 Route.route('/users')
     .get(auth.tokenVerify, user.ReadUser)   
     .put(auth.tokenVerify, user.UpdateUser)  // UpdateUSer 수정해야댐
+Route.post('/user/opinion', user.userOpinion);
 
 
 
@@ -34,6 +35,7 @@ Route.get('/l-categories/:l/m-categories/:m/stores/:name/menu', category.getStor
 Route.route('/l-categories/:l/m-categories/:m/stores/:name/review')
     .post(auth.tokenVerify, category.createReview)
     .get(auth.tokenVerify, category.getReview)
+    .delete(auth.tokenVerify, category.deleteReview);
 Route.get('/l-categories/:l/m-categories/:m/stores/location', category.getStoreLocation);
 Route.get('/l-categories/:l/m-categories/:m/stores/:count', category.getStoreList);
 Route.get('/l-categories/:l/m-categories/:m/stores', category.getStoreAll);
@@ -41,16 +43,15 @@ Route.get('/l-categories/:l/m-categories', category.getMiddleCategory);
 Route.get('/l-categories', category.getLargeCategory);
 Route.post('/categories/random', category.getRandom);
 
-Route.get('/elastic/status', elastic.getElasticsearchStatus);
-Route.route('/search/stores/:count')
-    //.post(elastic.pushElasticsearchStore)
-    .post(elastic.getElasticsearchStoreList)
+//elastic
+//Route.get('/search/status', elastic.getElasticsearchStatus);
+Route.post('/search/stores/:count',elastic.getElasticsearchStoreList)
+Route.post('/search/store',elastic.pushElasticsearchStore);
 
-Route.get('/setting', elastic.setNoriTokenizer);
-Route.get('/test/test',elastic.deleteelastic);
-
-
-
+//Route.get('/setting', elastic.setNoriTokenizer);
+//Route.get('/test/test',elastic.deleteelastic);
+//Route.get('/test/update', elastic.updateElasticsearch);
+Route.get('/log',elastic.logging);
 
 
 module.exports = Route

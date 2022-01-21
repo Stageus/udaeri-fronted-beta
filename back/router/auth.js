@@ -47,7 +47,7 @@ exports.OauthLogin = async(req,res) =>{
         "success" : true,
         "token" : jwtToken,
         "refreshToken" : refreshToken,
-        "expires_in" : 21540000 //21540000
+        "expires_in" : 43080000 //21540000
     });
     
 }
@@ -158,7 +158,7 @@ const getJwtToken = async(userInfo,platform) =>{
     },
     secretKey,
     {
-        expiresIn : "360m",
+        expiresIn : "720m",
         issuer : "UDR"
     })
 
@@ -255,7 +255,7 @@ exports.getNewToken = async(req,res)=>{
                     },
                     secretKey,
                     {
-                        expiresIn : "360m",
+                        expiresIn : "720m",
                         issuer : "UDR"
                     })
 
@@ -263,7 +263,7 @@ exports.getNewToken = async(req,res)=>{
                         success : true,
                         message : "새로운 토큰이 발급되었습니다.",
                         token : jwtToken,
-                        expires_in : 21540000
+                        expires_in : 43080000
                     })
                 }
                 else{                                                        //프론트 보낸 토큰과 redis에 저장된 토큰이 다를 때
@@ -314,7 +314,7 @@ exports.getNewToken = async(req,res)=>{
                         },
                         secretKey,
                         {
-                            expiresIn : "360m",
+                            expiresIn : "720m",
                             issuer : "UDR"
                         })
 
@@ -322,7 +322,7 @@ exports.getNewToken = async(req,res)=>{
                             success : true,
                             message : "새로운 토큰이 발급되었습니다.",
                             token : jwtToken,
-                            expires_in : 21540000
+                            expires_in : 43080000
                         })
                     }
                     else{                                                        //프론트 보낸 토큰과 redis에 저장된 토큰이 다를 때
@@ -359,7 +359,7 @@ exports.getNewToken = async(req,res)=>{
 }
 
 const getUserNickname = async()=>{
-    const list = ['아싸인척 하는','과제하기 싫은', '과제가 많은', '연애가 하고 싶은', '알바가기 싫은', '학고 받은', '대학원생', '밤샘 중인', 'CC 중인', '종강하고 싶은'];
+    const list = ['아싸인척 하는','과제하기 싫은', '과제가 많은', '연애가 하고 싶은', '알바가기 싫은', '학고 받은', '대학원생', '밤샘 중인', 'CC 중인', '종강하고 싶은', '출튀한'];
     const rand = Math.floor(Math.random() * list.length);
     return list[rand] + ' 우대리';
 }

@@ -31,6 +31,8 @@ exports.pushElasticsearchStore = async(req,res)=>{
     const inha_location = req.body.inha_location;
     const favorited_count = 0;
     const menu = req.body.menu;
+    const latitude = req.body.latitude;
+    const longitude = req.body.longitude;
 
     const elasticClient = new elastic.Client({
         node: "http://127.0.0.1:9200"
@@ -45,13 +47,17 @@ exports.pushElasticsearchStore = async(req,res)=>{
                 "inha_location" : inha_location,
                 "favorited_count" : favorited_count,
                 "menu" : menu,
-                "image_url" : image_url
+                "image_url" : image_url,
+                "latitude" : Number(latitude),
+                "longitude" : Number(longitude)
             },
         }
     )
     .then(() => {
-        res.send({success : true})
+        return res.send({success : true})
     })
+
+    
 
 }
 
@@ -110,55 +116,7 @@ exports.setNoriTokenizer = async(req,res)=>{
         }
     });
 
-   /* await elasticClient.indices.close({"index" : "stores"});
-    const result = await elasticClient.indices.putSettings( 
-        {   
-            "index" : "stores",
-            "body":{
-            "settings": {
-                "analysis": {
-                  "analyzer": {
-                    "nori_discard": {
-                      "tokenizer": "nori_t_discard",
-                      "filter": "shingle"
-                    }
-                  },
-                  "tokenizer": {
-                    "nori_t_discard": {
-                      "type": "nori_tokenizer",
-                      "decompound_mode": "discard"
-                    }
-                  }
-                }
-              },
-              "mappings": {
-                "properties": {
-                  "store_name": {
-                    "type": "text",
-                    "fields": {
-                      "nori_discard": {
-                        "type": "text",
-                        "analyzer": "nori_discard",
-                        "search_analyzer": "standard"
-                      }
-                    }
-                  },
-                  "menu": {
-                    "type": "text",
-                    "fields": {
-                      "nori_discard": {
-                        "type": "text",
-                        "analyzer": "nori_discard",
-                        "search_analyzer": "standard"
-                      }
-                    }
-                  }
-                }
-              }              
-        }
-    }
-    );
-    await elasticClient.indices.open({"index" : "stores"});*/
+ 
     return res.send(result);
 
 }
@@ -189,7 +147,7 @@ exports.getElasticsearchStoreList = async(req,res)=>{
     const result = await elasticClient.search({
         index : 'stores',
         q : searchText,
-        _source : ["store_name", "main_menu", "inha_location", "favorited_count", "image_url"],
+        _source : ["store_name", "main_menu", "inha_location", "favorited_count", "image_url", "latitude", "longitude"],
         from : (startOffset-1) * 15,
         size : 15
     })
@@ -199,4 +157,107 @@ exports.getElasticsearchStoreList = async(req,res)=>{
         storeList.push(result.hits.hits[i]._source);
     }
     return res.send(storeList);
+}
+
+exports.updateElasticsearch = async(req,res)=>{    //test
+    const elasticClient = new elastic.Client({
+        node:"http://127.0.0.1:9200"
+    })
+
+    const result = await elasticClient.updateByQuery({
+        index : 'stores',
+        refresh : true,
+        body :{
+            script : {
+                lang : 'painless',
+                source : `ctx._source.latitude = ${37.452278}` + ';' + `ctx._source.longitude = ${126.660746}`,
+            },
+            query :{
+                bool :{
+                must : [ {
+                    match : {
+                        'store_name' : '성화해장국'
+                    }
+                }
+            ]
+            }
+        }
+        }
+    })
+
+    return res.send(result);
+}
+
+exports.increaseFavoriteCount = async(storeName)=>{
+    const elasticClient = new elastic.Client({
+        node : "http://127.0.0.1:9200"
+    })
+
+    const result = await elasticClient.updateByQuery({
+        index : 'stores',
+        refresh : true,
+        body : {
+            script : {
+                lang : 'painless',
+                source : 'ctx._source.favorited_count++'
+            },
+            query :{
+                bool :{
+                    must :[{
+                        match : {
+                            'store_name' : storeName
+                        }
+                    }]
+                }
+            }
+        }
+    })
+
+}
+
+exports.decreaseFavoriteCount = async(storeName)=>{
+    const elasticClient = new elastic.Client({
+        node : "http://127.0.0.1:9200"
+    })
+
+    const result = await elasticClient.updateByQuery({
+        index : 'stores',
+        refresh : true,
+        body : {
+            script : {
+                lang : 'painless',
+                source : 'ctx._source.favorited_count--'
+            },
+            query :{
+                bool :{
+                    must :[{
+                        match : {
+                            'store_name' : storeName
+                        }
+                    }]
+                }
+            }
+        }
+    })
+}
+
+
+exports.logging = async(req,res)=>{
+
+    console.log(req.method);
+    console.log(req.url);
+    console.log(JSON.stringify(req.body));
+    console.log(req.headers);
+    console.log(req._remoteAddress);
+    console.log(req);
+    /*const elasticClient = new elastic.Client({
+        node:"http://127.0.0.1:9200"
+    })
+
+    await elasticClient.index({
+        
+    })*/
+
+    return res.send('1');
+
 }
