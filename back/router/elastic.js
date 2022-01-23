@@ -56,9 +56,6 @@ exports.pushElasticsearchStore = async(req,res)=>{
     .then(() => {
         return res.send({success : true})
     })
-
-    
-
 }
 
 exports.setNoriTokenizer = async(req,res)=>{
@@ -242,7 +239,7 @@ exports.decreaseFavoriteCount = async(storeName)=>{
 }
 
 
-exports.logging = async(req)=>{
+exports.apiLogging = async(req, status)=>{
 
     const elasticClient = new elastic.Client({
         node:"http://127.0.0.1:9200"
@@ -257,11 +254,38 @@ exports.logging = async(req)=>{
             "body" : JSON.stringify(req.body),
             "headers" : req.headers,
             "remoteAddress" : req._remoteAddress,
-            "status" : 200,
+            "status" : status,
             "time" : date
         }
     })
     console.log(result);
 }
 
-//exports.errorLogging = async()
+exports.errLogging = async(req, status, err)=>{
+
+    const elasticClient = new elastic.Client({
+        node:"http://127.0.0.1:9200"
+    })
+    const date = new Date();
+
+    const result = await elasticClient.index({
+        "index" : "err_log",
+        "body" : {
+            "method" : req.method,
+            "url" : req.url,
+            "body" : JSON.stringify(req.body),
+            "headers" : req.headers,
+            "remoteAddress" : req._remoteAddress,
+            "status" : status,
+            "error" : err,
+            "time" : date
+        }
+    })
+    console.log(result);
+}
+
+
+
+
+
+
