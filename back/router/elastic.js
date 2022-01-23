@@ -242,22 +242,26 @@ exports.decreaseFavoriteCount = async(storeName)=>{
 }
 
 
-exports.logging = async(req,res)=>{
+exports.logging = async(req)=>{
 
-    console.log(req.method);
-    console.log(req.url);
-    console.log(JSON.stringify(req.body));
-    console.log(req.headers);
-    console.log(req._remoteAddress);
-    console.log(req);
-    /*const elasticClient = new elastic.Client({
+    const elasticClient = new elastic.Client({
         node:"http://127.0.0.1:9200"
     })
+    const date = new Date();
 
-    await elasticClient.index({
-        
-    })*/
-
-    return res.send('1');
-
+    const result = await elasticClient.index({
+        "index" : "api_log",
+        "body" : {
+            "method" : req.method,
+            "url" : req.url,
+            "body" : JSON.stringify(req.body),
+            "headers" : req.headers,
+            "remoteAddress" : req._remoteAddress,
+            "status" : 200,
+            "time" : date
+        }
+    })
+    console.log(result);
 }
+
+//exports.errorLogging = async()
