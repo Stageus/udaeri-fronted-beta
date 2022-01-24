@@ -120,8 +120,8 @@ const MapSearch = ({ navigation }) => {
           text: word,
         })
         .then((res) => {
-          console.log("받아온 값" + JSON.stringify(res.data));
-          setSearchingResult(res.data);
+          word === "" ? setSearchingResult([]) : {};
+          res.data.length !== 0 ? setSearchingResult(res.data) : {};
         })
         .catch((err) => {
           console.log("검색 에러: " + err);

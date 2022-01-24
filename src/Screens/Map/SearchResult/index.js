@@ -108,7 +108,6 @@ const MapSearchResult = ({ navigation, route }) => {
         text: word,
       })
       .then((res) => {
-        console.log("검색 성공");
         setSearchList(res.data);
       })
       .catch((err) => {
@@ -141,7 +140,6 @@ const MapSearchResult = ({ navigation, route }) => {
           "/information"
       )
       .then((res) => {
-        console.log("클릭한 가게 정보 가져오기 성공");
         setStoreInfo(res.data);
       })
       .catch((err) => {

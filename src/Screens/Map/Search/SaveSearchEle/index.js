@@ -1,20 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { Ionicons, Feather } from "@expo/vector-icons";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  StatusBar,
-  ScrollView,
-  Dimensions,
-  TextInput,
-} from "react-native";
+import { Text, TouchableOpacity, Dimensions } from "react-native";
 import styled from "styled-components/native";
 import { useSelector, useDispatch } from "react-redux";
-import axios from "axios";
-// import { restoreCurStore } from "../../../../reducer/index";
+import { addSearchWord } from "../../../../../reducer/index";
 
 const { width, height } = Dimensions.get("window");
 
@@ -47,6 +37,7 @@ const SaveSearchEle = (props) => {
   const dispatch = useDispatch();
 
   const { text = "", deleteBtn = {}, navigation = {} } = props;
+  const recentSearchList = useSelector((state) => state.recentSearchList);
 
   return (
     <SC.Container>
@@ -59,6 +50,7 @@ const SaveSearchEle = (props) => {
             navigation.navigate("MapSearchResult", {
               searchValue: text,
             });
+            dispatch(addSearchWord(recentSearchList, text));
           }}
         >
           <SC.SearchWord numberOfLines={1}>{text}</SC.SearchWord>

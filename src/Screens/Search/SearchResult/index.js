@@ -74,8 +74,8 @@ const SearchResult = ({ navigation, route }) => {
         text: word,
       })
       .then((res) => {
-        console.log("받아온 값" + JSON.stringify(res.data));
-        setSearchResultList(res.data);
+        word === "" ? setSearchResultList([]) : {};
+        res.data.length !== 0 ? setSearchResultList(res.data) : {};
       })
       .catch((err) => {
         console.log("검색 에러: " + err);
@@ -93,8 +93,8 @@ const SearchResult = ({ navigation, route }) => {
         text: word,
       })
       .then((res) => {
-        console.log("받아온 값" + JSON.stringify(res.data));
-        setSearchingResult(res.data);
+        word === "" ? setSearchingResult([]) : {};
+        res.data.length !== 0 ? setSearchingResult(res.data) : {};
       })
       .catch((err) => {
         console.log("검색 에러: " + err);
@@ -153,10 +153,10 @@ const SearchResult = ({ navigation, route }) => {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ marginTop: 5 }}
           >
-            {searchResultList.map((value) => {
+            {searchResultList.map((value, index) => {
               return (
                 <StoreEle
-                  key={value}
+                  key={index}
                   storeName={value.store_name}
                   content={""}
                   location={""}
@@ -170,10 +170,10 @@ const SearchResult = ({ navigation, route }) => {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ marginTop: 5, paddingHorizontal: 15 }}
           >
-            {searchingResult.map((value) => {
+            {searchingResult.map((value, index) => {
               return (
                 <SearchResultEle
-                  key={value.store_name}
+                  key={index}
                   searchValue={text}
                   storeName={value.store_name}
                   navigation={navigation}

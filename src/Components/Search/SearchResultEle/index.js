@@ -21,9 +21,7 @@ const SC = {
     align-items: center;
   `,
   SearchWordWrap: styled.TouchableOpacity`
-    // flex: 1;
-    // flex-direction: row;
-    // align-items: center;
+    width: 100%;
     padding: 10px 0px 10px 10px;
   `,
   SearchWord: styled.Text`

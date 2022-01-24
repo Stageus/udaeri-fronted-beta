@@ -1,19 +1,10 @@
 import React from "react";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import { Ionicons, Feather } from "@expo/vector-icons";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  StatusBar,
-  ScrollView,
-  Dimensions,
-  TextInput,
-} from "react-native";
+import { Text, View, TouchableOpacity, Dimensions } from "react-native";
 import styled from "styled-components/native";
 import { useSelector, useDispatch } from "react-redux";
-import { restoreCurStore } from "../../../../reducer/index";
+import { addSearchWord } from "../../../../reducer/index";
 
 const { width, height } = Dimensions.get("window");
 
@@ -45,7 +36,8 @@ const SaveSearchEle = (props) => {
   const grayColor = useSelector((state) => state.grayColor);
   const dispatch = useDispatch();
 
-  const { text = "", deleteBtn = {}, navigation = {} } = props;
+  const { text = "", deleteBtn = {}, navigation = {}, setText = {} } = props;
+  const recentSearchList = useSelector((state) => state.recentSearchList);
 
   return (
     <SC.Container>
@@ -57,8 +49,9 @@ const SaveSearchEle = (props) => {
           onPress={() => {
             navigation.navigate("SearchResult", {
               searchValue: text,
-              existValue: "Yes",
             });
+            setText("");
+            dispatch(addSearchWord(recentSearchList, text));
           }}
         >
           <SC.SearchWord numberOfLines={1}>{text}</SC.SearchWord>

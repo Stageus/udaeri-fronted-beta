@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
 import {
-  TouchableOpacity,
   ScrollView,
-  SafeAreaView,
   StatusBar,
   Platform,
   Dimensions,
   View,
   Text,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import styled, { css } from "styled-components/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LongBarBtn from "../../Components/LongBarBtn/index";
@@ -51,21 +48,16 @@ const SC = {
   SchoolTitle: styled.Text`
     font-size: 20px;
     font-family: Bold;
-    color: #ff9933;
+    color: ${(props) => props.color};
   `,
   Middle: styled.View`
-    // height: ${height * 0.5}px;
     padding-top: 10px;
     margin-bottom: 25px;
     justify-content: space-between;
   `,
   CategoryWrap: styled.View`
-    // height: ${height * 0.2}px;
     justify-content: space-between;
     margin-bottom: 10px;
-  `,
-  Bottom: styled.View`
-    height: ${height * 0.25}px;
   `,
   JjimWrapNoLogin: styled.View`
     background-color: #ebedef;
@@ -110,6 +102,7 @@ const Home = ({ navigation }) => {
   const TOKEN_KEY = "@userKey";
 
   const jjimjjim = useSelector((state) => state.jjimStore);
+  const mainColor = useSelector((state) => state.mainColor);
 
   useEffect(async () => {
     let token;
@@ -158,7 +151,7 @@ const Home = ({ navigation }) => {
         {/* Top */}
         <SC.Top>
           <SC.MainTitle>우리대학거리</SC.MainTitle>
-          <SC.SchoolTitle>인하대학교</SC.SchoolTitle>
+          <SC.SchoolTitle color={mainColor}>인하대학교</SC.SchoolTitle>
         </SC.Top>
 
         <ScrollView showsHorizontalScrollIndicator={false}>
@@ -191,7 +184,7 @@ const Home = ({ navigation }) => {
               ></LongBarBtn>
             </View>
           </SC.Middle>
-          <SC.Bottom>
+          <View>
             <SC.MainTitle>내가 찜한 가게</SC.MainTitle>
             <ScrollView
               horizontal
@@ -227,8 +220,8 @@ const Home = ({ navigation }) => {
                 <></>
               )}
             </ScrollView>
-          </SC.Bottom>
-          <SC.Bottom>
+          </View>
+          <View>
             <SC.MainTitle>내가 찜한 가게</SC.MainTitle>
             <ScrollView
               horizontal
@@ -264,7 +257,7 @@ const Home = ({ navigation }) => {
                 <></>
               )}
             </ScrollView>
-          </SC.Bottom>
+          </View>
         </ScrollView>
       </SC.Container>
     </SC.SafeAreaViewContainer>

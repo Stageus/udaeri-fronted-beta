@@ -1,30 +1,15 @@
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  StatusBar,
-  ScrollView,
-  Dimensions,
-} from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import {
-  AntDesign,
-  Ionicons,
-  FontAwesome,
-  Entypo,
-  Fontisto,
-} from "@expo/vector-icons";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { RFPercentage } from "react-native-responsive-fontsize";
 
 import Home from "../../../Screens/Home";
-// import Search from "../../../Screens/Search";
 import RecentSearch from "../../../Screens/Search/RecentSearch";
 import MyPage from "../../../Screens/MyPage";
 import JjimPage from "../../../Screens/Jjim";
 
 import type { RouteProp, ParamListBase } from "@react-navigation/native";
+import { useSelector } from "react-redux";
 type TabBarIconProps = { focused: boolean; color: string; size: number };
 
 const screenOptions = ({
@@ -36,7 +21,8 @@ const screenOptions = ({
     headerShown: false,
     tabBarIcon: ({ focused, color, size }: TabBarIconProps) => {
       const { name } = route;
-      const focusColor = focused ? "#ff9933" : "black";
+      const mainColor = useSelector((state) => state.mainColor);
+      const focusColor = focused ? mainColor : "black";
       switch (name) {
         case "Home":
           return (
