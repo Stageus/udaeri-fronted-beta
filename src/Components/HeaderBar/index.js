@@ -49,48 +49,48 @@ const HeaderBar = (props) => {
   const jjimToggle = (storeName) => {
     jjimState
       ? axios
-        .delete("/users/favorites/", {
-          headers: {
-            "Content-Type": "application/json",
-            authorization: token,
-          },
-          data: {
-            store: storeName,
-          },
-        })
-        .then((res) => {
-          res.data.success
-            ? (dispatch(jjimCheck(false)),
-              dispatch(deleteJjim(jjimList, storeName)),
-              console.log("찜 삭제 성공"))
-            : console.log(JSON.stringify(res.data) + "찜 삭제 실패");
-        })
-        .catch((err) => {
-          console.log("찜 삭제 실패 이유: " + err);
-        })
-      : axios
-        .post(
-          "/users/favorites/",
-          {
-            store: storeName,
-          },
-          {
+          .delete("/users/favorites/", {
             headers: {
               "Content-Type": "application/json",
               authorization: token,
             },
-          }
-        )
-        .then((res) => {
-          res.data.success
-            ? (dispatch(jjimCheck(true)),
-              dispatch(addJjim(jjimList, storeName, res.data.l_category)),
-              console.log("찜추가 성공"))
-            : console.log("찜 추가 실패");
-        })
-        .catch((err) => {
-          console.log("찜 추가 실패 이유: " + err);
-        });
+            data: {
+              store: storeName,
+            },
+          })
+          .then((res) => {
+            res.data.success
+              ? (dispatch(jjimCheck(false)),
+                dispatch(deleteJjim(jjimList, storeName)),
+                console.log("찜 삭제 성공"))
+              : console.log(JSON.stringify(res.data) + "찜 삭제 실패");
+          })
+          .catch((err) => {
+            console.log("찜 삭제 실패 이유: " + err);
+          })
+      : axios
+          .post(
+            "/users/favorites/",
+            {
+              store: storeName,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                authorization: token,
+              },
+            }
+          )
+          .then((res) => {
+            res.data.success
+              ? (dispatch(jjimCheck(true)),
+                dispatch(addJjim(jjimList, storeName, res.data.l_category)),
+                console.log("찜추가 성공"))
+              : console.log("찜 추가 실패");
+          })
+          .catch((err) => {
+            console.log("찜 추가 실패 이유: " + err);
+          });
   };
 
   return (
@@ -113,7 +113,11 @@ const HeaderBar = (props) => {
           name="magnifying-glass"
           size={24}
           color="gray"
-          onPress={() => props.navigation.navigate("Search")}
+          onPress={() =>
+            props.title === "지도"
+              ? props.navigation.navigate("MapSearch")
+              : props.navigation.navigate("RecentSearch")
+          }
         />
       ) : props.right === "heart" ? (
         <Ionicons

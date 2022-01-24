@@ -29,6 +29,8 @@ import SignUpPW from "./src/Screens/SignUp/PW";
 import SearchResult from "./src/Screens/Search/SearchResult";
 import RecentSearch from "./src/Screens/Search/RecentSearch";
 import Map from "./src/Screens/Map";
+import MapSearch from "./src/Screens/Map/Search/index";
+import MapSearchResult from "./src/Screens/Map/SearchResult";
 import MyPage from "./src/Screens/MyPage";
 import KakaoLogin from "./src/Screens/Social/Login/Kakao/index";
 import NaverLogin from "./src/Screens/Social/Login/Naver/index";
@@ -111,7 +113,6 @@ const App = () => {
           <>
             <Stack.Screen name="BottomNavigator" component={BottomNavigator} />
             <Stack.Screen name="Home" component={Home} />
-            {/* <Stack.Screen name="Search" component={Search} /> */}
             <Stack.Screen name="SearchResult" component={SearchResult} />
             <Stack.Screen name="RecentSearch" component={RecentSearch} />
             <Stack.Screen name="JjimPage" component={JjimPage} />
@@ -119,6 +120,8 @@ const App = () => {
             <Stack.Screen name="StoreList" component={StoreList} />
             <Stack.Screen name="StorePage" component={StorePage} />
             <Stack.Screen name="Map" component={Map} />
+            <Stack.Screen name="MapSearch" component={MapSearch} />
+            <Stack.Screen name="MapSearchResult" component={MapSearchResult} />
             <Stack.Screen name="MyPage" component={MyPage} />
             <Stack.Screen name="Inquiry" component={Inquiry} />
             <Stack.Screen name="RandomMenu" component={RandomMenu} />

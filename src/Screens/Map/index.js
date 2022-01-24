@@ -105,10 +105,10 @@ const Map = ({ navigation, route }) => {
     dispatch(restoreCurMidCat(null));
   };
 
-  const handleMidCatClick = (midCat) => {
-    setTarget(midCat);
-    getStoreInfo(midCat);
-    dispatch(restoreCurStore(midCat));
+  const handlePinClick = (pinStoreName) => {
+    setTarget(pinStoreName);
+    getStoreInfo(pinStoreName);
+    dispatch(restoreCurStore(pinStoreName));
   };
 
   return (
@@ -160,9 +160,9 @@ const Map = ({ navigation, route }) => {
         <MapView
           initialRegion={initialRegion}
           provider={PROVIDER_GOOGLE}
+          style={{ height: "100%", width: "100%" }}
           // showsUserLocation={true}
           // showsMyLocationButton={true}
-          style={{ flex: 1, width: "100%" }}
         >
           {middleCatLocation.map((item, index) => {
             return (
@@ -174,7 +174,7 @@ const Map = ({ navigation, route }) => {
                     longitude: item.longitude,
                   }}
                   // title={item.store_name}
-                  onPress={() => handleMidCatClick(item.store_name)}
+                  onPress={() => handlePinClick(item.store_name)}
                 >
                   {/* <MapView.Callout
                     onPress={() => {
@@ -289,8 +289,6 @@ const SC = {
     width: 100%;
     height: 100px;
     background-color: #fff;
-    // border-top-left-radius: 30px;
-    // border-top-right-radius: 30px;
     padding: 12px;
   `,
   StoreInfoTop: styled.View`

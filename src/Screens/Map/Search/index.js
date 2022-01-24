@@ -22,9 +22,10 @@ import {
   restoreSearchWord,
   addSearchWord,
   deleteSearchWord,
+  restoreCurStore,
 } from "../../../../reducer/index";
-import SaveSearchEle from "../../../Components/Search/SaveSearchEle";
-import SearchResultEle from "../../../Components/Search/SearchResultEle";
+import SaveSearchEle from "./SaveSearchEle";
+import SearchResultEle from "./SearchResultEle";
 
 const StatusBarHeight = StatusBar.currentHeight;
 const { width, height } = Dimensions.get("window");
@@ -56,7 +57,7 @@ const SC = {
     padding: 5px 30px 5px 15px;
   `,
   Middle: styled.View`
-    height: ${height * 0.8}px;
+    height: ${height * 0.9}px;
     margin-top: 20px;
   `,
   MiddleHeader: styled.View`
@@ -76,7 +77,7 @@ const SC = {
   `,
 };
 
-const RecentSearch = ({ navigation }) => {
+const MapSearch = ({ navigation }) => {
   const dispatch = useDispatch();
 
   const url = useSelector((state) => state.url);
@@ -141,7 +142,7 @@ const RecentSearch = ({ navigation }) => {
   const searchSubmit = () => {
     addSearchWordSubmit();
     setText("");
-    navigation.navigate("SearchResult", {
+    navigation.navigate("MapSearchResult", {
       searchValue: text,
     });
   };
@@ -170,6 +171,7 @@ const RecentSearch = ({ navigation }) => {
           <TouchableOpacity
             onPress={() => {
               navigation.goBack();
+              dispatch(restoreCurStore(null));
             }}
           >
             <AntDesign
@@ -222,7 +224,7 @@ const RecentSearch = ({ navigation }) => {
               // 최근 검색어가 있을 때 최근 검색어 목록 보여줌
               <ScrollView
                 showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ marginTop: 5 }}
+                contentContainerStyle={{ marginTop: 5, paddingBottom: 30 }}
               >
                 {recentSearchList.map((searchWord) => {
                   return (
@@ -262,7 +264,7 @@ const RecentSearch = ({ navigation }) => {
   );
 };
 
-export default RecentSearch;
+export default MapSearch;
 
 const styles = StyleSheet.create({
   topIcon: {
