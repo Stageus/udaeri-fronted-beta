@@ -27,7 +27,7 @@ exports.OauthLogin = async(req,res) =>{
     const state = req.body.state;
 
     if(platform == undefined || code == undefined || state == undefined){
-        elastic.apiLogging(req,400);
+        await elastic.apiLogging(req,400);
         return res.status(400).send({
             success : false,
             message : "요청 데이터가 너무 적습니다"
@@ -49,7 +49,7 @@ exports.OauthLogin = async(req,res) =>{
         await redisClient.expire(refreshKey,60*60*24*365);
         await redisClient.disconnect();
         
-        elastic.apiLogging(req,200);
+        await elastic.apiLogging(req,200);
         return res.status(200).send({
             "success" : true,
             "token" : jwtToken,
@@ -58,7 +58,7 @@ exports.OauthLogin = async(req,res) =>{
         }); 
     }
     catch(err){
-        elastic.errLogging(req,500,err);
+        await elastic.errLogging(req,500,err);
         return res.status(500).send({
             success : false
         })
@@ -192,7 +192,7 @@ const getRefreshToken = async() =>{
 
 exports.tokenVerify = async(req,res,next) => {
     if(req.headers.authorization == undefined){
-        elastic.apiLogging(req,401);
+        await elastic.apiLogging(req,401);
         return res.status(401).send({
             success : false,
             message : "토큰이 필요합니다."
@@ -203,11 +203,10 @@ exports.tokenVerify = async(req,res,next) => {
         const userinfo = await jwt.verify(req.headers.authorization, secretKey);
         req.id = userinfo.id;
         req.nickname = userinfo.nickname;
-
         return next();
     }
     catch(err){
-        elastic.errLogging(req,401,err);
+        await elastic.errLogging(req,401,err);
         if(err.message == "jwt expired"){
             return res.send({
                 success : false,
@@ -224,14 +223,14 @@ exports.tokenVerify = async(req,res,next) => {
 
 exports.creatState = async(req,res) =>{
     const result = {"state" : Math.random().toString(36).slice(2)}
-    elastic.apiLogging(req,200);
+    await elastic.apiLogging(req,200);
     return res.status(200).send(result);
 }
 
 exports.getNewToken = async(req,res)=>{
     try{        
         if(req.headers.refreshtoken == undefined || req.headers.authorization == undefined){
-            elastic.apiLogging(req,400);
+            await elastic.apiLogging(req,400);
             return res.status(400).send({
                 success : false,
                 message : "refresh이나 access token이 필요합니다"
@@ -269,7 +268,7 @@ exports.getNewToken = async(req,res)=>{
                     })
                 }
                 else{                                                        
-                    elastic.apiLogging(req,401);
+                    await elastic.apiLogging(req,401);
                     return res.status(401).send({                            //프론트 보낸 토큰과 redis에 저장된 토큰이 다를 때                   
                         success : false,
                         message : "로그인이 필요합니다."
@@ -277,7 +276,7 @@ exports.getNewToken = async(req,res)=>{
                 }
             }
             else{                                                           
-                elastic.apiLogging(req,401);
+                await elastic.apiLogging(req,401);
                 return res.status(401).send({                                           //redis에 해당 refresh token이 없을 경우
                     success : false,
                     message : "로그인이 필요합니다."
@@ -287,7 +286,7 @@ exports.getNewToken = async(req,res)=>{
         }
         catch(error){                                                       // refresh token이 만료됐을 경우
             if(error.message = "jwt expired"){
-                elastic.apiLogging(req,401);
+                await elastic.apiLogging(req,401);
                 return res.status(401).send({
                     success : false,
                     message : "로그인이 필요합니다."
@@ -320,7 +319,7 @@ exports.getNewToken = async(req,res)=>{
                             issuer : "UDR"
                         })
 
-                        elastic.apiLogging(req,200);
+                        await elastic.apiLogging(req,200);
                         return res.status(200).send({
                             success : true,
                             message : "새로운 토큰이 발급되었습니다.",
@@ -329,7 +328,7 @@ exports.getNewToken = async(req,res)=>{
                         })
                     }
                     else{                                                        
-                        elastic.apiLogging(req,401);
+                        await elastic.apiLogging(req,401);
                         return res.status(401).send({                            //프론트 보낸 토큰과 redis에 저장된 토큰이 다를 때                   
                             success : false,
                             message : "로그인이 필요합니다."
@@ -337,7 +336,7 @@ exports.getNewToken = async(req,res)=>{
                     }
                 }
                 else{                    
-                    elastic.apiLogging(req,401);                                       
+                    await elastic.apiLogging(req,401);                                       
                     return res.status(401).send({                                             //redis에 해당 refresh token이 없을 경우
                         success : false,
                         message : "로그인이 필요합니다."
@@ -346,7 +345,7 @@ exports.getNewToken = async(req,res)=>{
             }
             catch(e){
                 if(e.message == "jwt expired"){                              // refresh token도 만료됐을 경우
-                    elastic.apiLogging(req,401);
+                    await elastic.apiLogging(req,401);
                     return res.status(401).send({
                         success : false,
                         message : "로그인이 필요합니다."
@@ -355,7 +354,7 @@ exports.getNewToken = async(req,res)=>{
             }
         }
 
-        elastic.errLogging(req,401,err);
+        await elastic.errLogging(req,401,err);
         return res.status(401).send({                                                              // invalid한 token일 경우
             success : false,
             message : "유효하지 않은 token"

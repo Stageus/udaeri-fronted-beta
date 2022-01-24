@@ -3,8 +3,10 @@ const fetch = require("node-fetch");
 
 
 exports.getElasticsearchStatus = async(req,res)=>{
+
+    const auth = `${process.env.ELASTIC_USER}:${process.env.ELASTIC_PASSWORD}`;
     const elasticClient = new elastic.Client({
-        node : "http://127.0.0.1:9200"
+	    host : `http://${auth}@localhost:9200`
     })
 
     await elasticClient.ping(
@@ -14,6 +16,7 @@ exports.getElasticsearchStatus = async(req,res)=>{
         (err) => {
             if (err) {
                 console.log("elastic connection error")
+		console.log(err);
                 return res.send({success : false})
             }
             else{
@@ -34,9 +37,11 @@ exports.pushElasticsearchStore = async(req,res)=>{
     const latitude = req.body.latitude;
     const longitude = req.body.longitude;
 
+    const auth = `${process.env.ELASTIC_USER}:${process.env.ELASTIC_PASSWORD}`;
     const elasticClient = new elastic.Client({
-        node: "http://127.0.0.1:9200"
+	    host : `http://${auth}@localhost:9200`
     })
+
 
     await elasticClient.index( 
         { 
@@ -59,8 +64,9 @@ exports.pushElasticsearchStore = async(req,res)=>{
 }
 
 exports.setNoriTokenizer = async(req,res)=>{
+    const auth = `${process.env.ELASTIC_USER}:${process.env.ELASTIC_PASSWORD}`;
     const elasticClient = new elastic.Client({
-        node: "http://127.0.0.1:9200"
+	    host : `http://${auth}@localhost:9200`
     })
 
     const setting = {
@@ -119,9 +125,11 @@ exports.setNoriTokenizer = async(req,res)=>{
 }
 
 exports.deleteelastic = async (req,res)=>{
-    const e = new elastic.Client({
-        node: "http://127.0.0.1:9200"
+    const auth = `${process.env.ELASTIC_USER}:${process.env.ELASTIC_PASSWORD}`;
+    const elasticClient = new elastic.Client({
+	    host : `http://${auth}@localhost:9200`
     })
+
     const result = await e.indices.delete({
         index : 'stores'
     })
@@ -136,10 +144,11 @@ exports.getElasticsearchStoreList = async(req,res)=>{
         return res.send({
             "message" : "잘못된 요청입니다"
         })
-
+    const auth = `${process.env.ELASTIC_USER}:${process.env.ELASTIC_PASSWORD}`;
     const elasticClient = new elastic.Client({
-        node: "http://127.0.0.1:9200"
+	    host : `http://${auth}@localhost:9200`
     })
+
 
     const result = await elasticClient.search({
         index : 'stores',
@@ -157,8 +166,9 @@ exports.getElasticsearchStoreList = async(req,res)=>{
 }
 
 exports.updateElasticsearch = async(req,res)=>{    //test
+    const auth = `${process.env.ELASTIC_USER}:${process.env.ELASTIC_PASSWORD}`;
     const elasticClient = new elastic.Client({
-        node:"http://127.0.0.1:9200"
+	    host : `http://${auth}@localhost:9200`
     })
 
     const result = await elasticClient.updateByQuery({
@@ -186,9 +196,11 @@ exports.updateElasticsearch = async(req,res)=>{    //test
 }
 
 exports.increaseFavoriteCount = async(storeName)=>{
+    const auth = `${process.env.ELASTIC_USER}:${process.env.ELASTIC_PASSWORD}`;
     const elasticClient = new elastic.Client({
-        node : "http://127.0.0.1:9200"
+	    host : `http://${auth}@localhost:9200`
     })
+
 
     const result = await elasticClient.updateByQuery({
         index : 'stores',
@@ -213,8 +225,9 @@ exports.increaseFavoriteCount = async(storeName)=>{
 }
 
 exports.decreaseFavoriteCount = async(storeName)=>{
+    const auth = `${process.env.ELASTIC_USER}:${process.env.ELASTIC_PASSWORD}`;
     const elasticClient = new elastic.Client({
-        node : "http://127.0.0.1:9200"
+	    host : `http://${auth}@localhost:9200`
     })
 
     const result = await elasticClient.updateByQuery({
@@ -240,12 +253,12 @@ exports.decreaseFavoriteCount = async(storeName)=>{
 
 
 exports.apiLogging = async(req, status)=>{
-
+    const auth = `${process.env.ELASTIC_USER}:${process.env.ELASTIC_PASSWORD}`;
     const elasticClient = new elastic.Client({
-        node:"http://127.0.0.1:9200"
-    })
-    const date = new Date();
+	    host : `http://${auth}@localhost:9200`
+    })	
 
+    const date = new Date();
     const result = await elasticClient.index({
         "index" : "api_log",
         "body" : {
@@ -258,16 +271,17 @@ exports.apiLogging = async(req, status)=>{
             "time" : date
         }
     })
-    console.log(result);
+
+	console.log(result);
 }
 
 exports.errLogging = async(req, status, err)=>{
-
+    const auth = `${process.env.ELASTIC_USER}:${process.env.ELASTIC_PASSWORD}`;
     const elasticClient = new elastic.Client({
-        node:"http://127.0.0.1:9200"
-    })
-    const date = new Date();
+	    host : `http://${auth}@localhost:9200`
+    })	
 
+    const date = new Date();
     const result = await elasticClient.index({
         "index" : "err_log",
         "body" : {

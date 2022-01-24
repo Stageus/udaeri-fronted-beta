@@ -15,9 +15,8 @@ const config = {
 
 exports.getRandom = async(req,res) =>{
     let category = req.body.categoryList;
-
     if(category == undefined || category == []){
-        elastic.apiLogging(req,400);
+        await elastic.apiLogging(req,400);
         return res.status(400).send({
             success : false,
             message : "요청 데이터가 너무 적습니다."
@@ -39,7 +38,7 @@ exports.getRandom = async(req,res) =>{
         const query = await client.query(q);
         client.end();
         const rand = Math.floor(Math.random() * query.rowCount);
-        elastic.apiLogging(req,200);
+        await elastic.apiLogging(req,200);
         return res.status(200).send({
             "success" : true,
             "store" :{
@@ -50,7 +49,7 @@ exports.getRandom = async(req,res) =>{
         });
     }
     catch(err){
-        elastic.errLogging(req,500,err);
+        await elastic.errLogging(req,500,err);
         return res.status(500).send({
             success : false
         });
@@ -63,7 +62,7 @@ exports.getStoreAll = async(req,res) =>{      // 중분류 가게들 10개씩 �
     const m_category = req.params.m;
 
     if(l_category == undefined || m_category == undefined){
-        elastic.apiLogging(req,400);
+        await elastic.apiLogging(req,400);
         return res.status(400).send({
             success : false,
             message : "요청 데이터가 너무 적습니다."
@@ -87,19 +86,19 @@ exports.getStoreAll = async(req,res) =>{      // 중분류 가게들 10개씩 �
             for(i=0; i<query.rowCount; i++){           // 가게들을 중분류에 맞게 배열에 넣음
                 all[query.rows[i].m_name].push(query.rows[i]);
             }
-            elastic.apiLogging(req,200);
+            await elastic.apiLogging(req,200);
             return res.status(200).send(all);
         }
         else{
             client.end();
-            elastic.apiLogging(req,400);
+            await elastic.apiLogging(req,400);
             return res.status(400).send({
                 success : false
             });
         }
     }
     catch(err){
-        elastic.errLogging(req,500,err);
+        await elastic.errLogging(req,500,err);
         return res.status(500).send({
             success : false
         });
@@ -116,7 +115,7 @@ exports.getStoreList = async(req,res) =>{      // 가게목록 가져오기
     const count = req.params.count * 10;
 
     if(m_category == undefined || count == undefined){
-        elastic.apiLogging(req,400);
+        await elastic.apiLogging(req,400);
         return res.status(400).send({
             success : false,
             message : "요청 데이터가 너무 적습니다."
@@ -134,11 +133,11 @@ exports.getStoreList = async(req,res) =>{      // 가게목록 가져오기
             result.success= true;
             result.list = query.rows;
         }
-        elastic.apiLogging(req,200);
+        await elastic.apiLogging(req,200);
         return res.status(200).send(result);
     }
     catch(err){
-        elastic.errLogging(req,500,err);
+        await elastic.errLogging(req,500,err);
         return res.status(500).send(result);
     }
 }
@@ -147,7 +146,7 @@ exports.getStoreInformation = async(req,res) =>{      // 가게 정보(위치, �
     const store_name = req.params.name;
 
     if(store_name == undefined){
-        elastic.apiLogging(req,400);
+        await elastic.apiLogging(req,400);
         return res.status(400).send({
             success : false,
             message : "요청 데이터가 너무 적습니다."
@@ -159,7 +158,7 @@ exports.getStoreInformation = async(req,res) =>{      // 가게 정보(위치, �
         await client.connect();
         const query = await client.query('SELECT * FROM service.store_information WHERE store_name = $1;',[store_name]);
         client.end();
-        elastic.apiLogging(req,200);
+        await elastic.apiLogging(req,200);
         return res.status(200).send({
             "success" : true,
             "store" : query.rows[0].store_name,
@@ -173,7 +172,7 @@ exports.getStoreInformation = async(req,res) =>{      // 가게 정보(위치, �
         });
     }
     catch(err){
-        elastic.errLogging(req,500,err);
+        await elastic.errLogging(req,500,err);
         return res.status(500).send({
             success : false
         });
@@ -184,7 +183,7 @@ exports.getStoreLocation = async(req,res) =>{
     const category = req.params.m;
 
     if(category == undefined){
-        elastic.apiLogging(req,400);
+        await elastic.apiLogging(req,400);
         return res.status(400).send({
             success : false,
             message : "요청 데이터가 너무 적습니다."
@@ -196,14 +195,14 @@ exports.getStoreLocation = async(req,res) =>{
         await client.connect();
         const query = await client.query('SELECT store_name, latitude, longitude FROM service.store_information INNER JOIN service.m_category ON m_category.name = $1 AND m_category.m_category_index = store_information.m_category_index;',[category]);
         client.end();
-        elastic.apiLogging(req,200);
+        await elastic.apiLogging(req,200);
         return res.status(200).send({
             success : true,
             list : query.rows
         });
     }
     catch(err){
-        elastic.errLogging(req,500,err);
+        await elastic.errLogging(req,500,err);
         return res.send({
             success : false
         });
@@ -217,14 +216,15 @@ exports.getLargeCategory = async(req,res) =>{
             await client.connect();
             const query = await client.query("SELECT name, icon_url FROM service.l_category;");
             client.end();
-            elastic.apiLogging(req,200);
+            await elastic.apiLogging(req,200);
             return res.status(200).send({
                 success : true,
                 list : query.rows
             });
         }
         catch(err){
-            elastic.errLogging(req,500,err);
+		console.log(err);
+            await elastic.errLogging(req,500,err);
             return res.status(500).send({
                 success : false
             });
@@ -235,7 +235,7 @@ exports.getMiddleCategory = async(req,res) =>{
     const largeCategory = req.params.l;
 
     if(largeCategory == undefined){
-        elastic.apiLogging(req,400);
+        await elastic.apiLogging(req,400);
         return res.status(400).send({
             success : false,
             message : "요청 데이터가 너무 적습니다."
@@ -278,20 +278,20 @@ exports.getMiddleCategory = async(req,res) =>{
                         continue;
                 }
             }
-            elastic.apiLogging(req,200);
+            await elastic.apiLogging(req,200);
             return res.status(200).send(all);
             }
 
             const query = await client.query("SELECT m_category.name, m_category.icon_url FROM service.m_category INNER JOIN service.l_category ON l_category.name = $1 AND m_category.l_category_index = l_category.l_category_index;",[largeCategory]);
             client.end();
-            elastic.apiLogging(req,200);
+            await elastic.apiLogging(req,200);
             return res.status(200).send({
                 success : true,
                 list : query.rows
             });
         }
         catch(err){
-            elastic.errLogging(req,500,err);
+            await elastic.errLogging(req,500,err);
             return res.status(500).send({
                 success : false
             })
@@ -301,7 +301,7 @@ exports.getMiddleCategory = async(req,res) =>{
 exports.getStoreMenu = async(req,res) =>{     //메뉴목록 가져오기
     const store_name = req.params.name;
     if(store_name == undefined){
-        elastic.apiLogging(req,400);
+        await elastic.apiLogging(req,400);
         return res.status(400).send({
             success : false,
             message : "요청 데이터가 너무 적습니다."
@@ -314,14 +314,14 @@ exports.getStoreMenu = async(req,res) =>{     //메뉴목록 가져오기
             const query = await client.query("SELECT menu_name, brief_info, price, store_menu.image_url FROM service.store_menu INNER JOIN service.store_information ON store_information.store_name = $1 AND store_information.store_info_index = store_menu.store_info_index;",[store_name]);
             client.end();
 
-            elastic.apiLogging(req,200);
+            await elastic.apiLogging(req,200);
             return res.status(200).send({
                 success : true,
                 list : query.rows
             });
         }
         catch(err){
-            elastic.errLogging(req,500,err);
+            await elastic.errLogging(req,500,err);
             return res.status(500).send({
                 success : false
             });
@@ -346,7 +346,7 @@ exports.getReview = async(req,res) =>{
     }
 
     if(store == undefined || id == undefined || order == undefined){
-        elastic.apiLogging(req,400);
+        await elastic.apiLogging(req,400);
         return res.status(400).send({
             success : false,
             message : "요청 데이터가 너무 적습니다."
@@ -368,11 +368,11 @@ exports.getReview = async(req,res) =>{
         client.end();
         result.success = true;
         result.list = review.rows;
-        elastic.apiLogging(req,200);
+        await elastic.apiLogging(req,200);
         return res.status(200).send(result);
     }
     catch(err){
-        elastic.errLogging(req,500,err);
+        await elastic.errLogging(req,500,err);
         return res.status(500).send(result);
     }
 }
@@ -384,7 +384,7 @@ exports.createReview = async(req,res) =>{
     const star_rating = req.body.star_rating;
 
     if(store == undefined || id ==undefined || review == undefined || star_rating == undefined){
-        elastic.apiLogging(req,400);
+        await elastic.apiLogging(req,400);
         return res.status(400).send({
             success : false,
             message : "요청 데이터가 너무 적습니다."
@@ -399,13 +399,13 @@ exports.createReview = async(req,res) =>{
             await client.query("INSERT INTO service.store_review (store_info_index, user_index, star_rating, review, writed_at) VALUES((SELECT store_info_index FROM service.store_information WHERE store_name = $1), (SELECT user_index FROM service.user_information WHERE id = $2), $3, $4, $5);",[store, id, star_rating, review, date]);
             client.end();
             
-            elastic.apiLogging(req,200);
+            await elastic.apiLogging(req,200);
             return res.status(200).send({
                 "success" : true
             })
         }
         catch(err){
-            elastic.errLogging(req,500,err);
+            await elastic.errLogging(req,500,err);
             return res.status(500).send({
                 "success" : false,
                 "message" : "이미 리뷰를 작성하였습니다."
@@ -418,7 +418,7 @@ exports.deleteReview = async(req,res)=>{
     const id = req.id;
 
     if(store == undefined || id == undefined){
-        elastic.apiLogging(req,400);
+        await elastic.apiLogging(req,400);
         return res.status(400).send({
             success : false,
             message : "요청 데이터가 너무 적습니다."
@@ -430,14 +430,14 @@ exports.deleteReview = async(req,res)=>{
         await client.connect();
         await client.query("DELETE FROM service.store_review a USING service.store_information b, service.user_information c WHERE a.store_info_index = b.store_info_index AND b.store_name = $1 AND c.user_index = a.user_index AND c.id =$2;",[store,id]);
         client.end();
-        elastic.apiLogging(req,200);
+        await elastic.apiLogging(req,200);
         return res.status(200).send({
             "success" : true
         })
     }
     catch(err){
-        elastic.errLogging(req,500,err);
-        return res.send({
+        await elastic.errLogging(req,500,err);
+        return res.status(500).send({
             "success" : false
         })
     }
@@ -452,7 +452,7 @@ exports.putReview = async(req,res)=>{
     date.setHours(date.getHours()+9);
 
     if(store == undefined || id == undefined || review == undefined || star_rating == undefined){
-        elastic.apiLogging(req,400);
+        await elastic.apiLogging(req,400);
         return res.status(400).send({
             success : false,
             message : "요청 데이터가 너무 적습니다."
@@ -464,13 +464,13 @@ exports.putReview = async(req,res)=>{
         await client.connect();
         await client.query("UPDATE service.store_review a SET star_rating = $1, review =$2 ,writed_at = $3 FROM service.store_information b, service.user_information c WHERE b.store_name = $4 AND a.store_info_index = b.store_info_index AND c.id = $5 AND a.user_index = c.user_index;",[star_rating,review,date,store,id]);
         client.end();
-        elastic.apiLogging(req,200);
+        await elastic.apiLogging(req,200);
         return res.status(200).send({
             "success" : true
         })
     }
     catch(err){
-        elastic.errLogging(req,500,err);
+        await elastic.errLogging(req,500,err);
         return res.status(500).send({
             "success" : false
         })

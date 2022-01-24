@@ -42,10 +42,11 @@ Route.get('/l-categories', category.getLargeCategory);
 Route.post('/categories/random', category.getRandom);
 
 //elastic
-//Route.get('/search/status', elastic.getElasticsearchStatus);
+Route.get('/search/status', elastic.getElasticsearchStatus);
 Route.post('/search/stores/:count',elastic.getElasticsearchStoreList)
 Route.post('/search/store',elastic.pushElasticsearchStore);
 //Route.get('/setting', elastic.setNoriTokenizer);
+Route.get('/test',elastic.apiLogging);
 
 
 module.exports = Route
