@@ -10,11 +10,9 @@ import {
   Text,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { RFPercentage } from "react-native-responsive-fontsize";
 import styled, { css } from "styled-components/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LongBarBtn from "../../Components/LongBarBtn/index";
-import HomeLargeCatEle from "../../Components/HomeLargeCatEle";
 import JjimEle from "../../Components/JjimEle/index";
 import LargeCatEle from "../../Components/LargeCatEle";
 import axios from "axios";
@@ -23,30 +21,28 @@ import {
   restoreLargeCatList,
   restoreMidCatList,
   restoreJjimStore,
-  restoreCurStore,
-  restoreUserNickname,
-  checkSponsor,
 } from "../../../reducer/index";
 
 const StatusBarHeight = StatusBar.currentHeight;
 const { width, height } = Dimensions.get("window");
 
 const SC = {
-  Container: styled.View`
+  SafeAreaViewContainer: styled.SafeAreaView`
     background-color: #fff;
-    padding: 0 20px;
-
     ${Platform.OS === "android"
       ? css`
-          padding-top: ${StatusBarHeight + 15}px;
+          padding-top: ${StatusBarHeight}px;
         `
       : undefined}
   `,
+  Container: styled.ScrollView`
+    padding: 0 20px;
+  `,
   Top: styled.View`
-    // height: ${height * 0.05}px;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    margin-top: 10px;
   `,
   MainTitle: styled.Text`
     font-size: 20px;
@@ -105,7 +101,6 @@ const SC = {
 
 const Home = ({ navigation }) => {
   const dispatch = useDispatch();
-
   const url = useSelector((state) => state.url);
   axios.defaults.baseURL = url;
 
@@ -113,6 +108,8 @@ const Home = ({ navigation }) => {
   const [jjimList, setJjimList] = useState([]);
 
   const TOKEN_KEY = "@userKey";
+
+  const jjimjjim = useSelector((state) => state.jjimStore);
 
   useEffect(async () => {
     let token;
@@ -127,11 +124,10 @@ const Home = ({ navigation }) => {
       ])
       .then(
         axios.spread((res1, res2) => {
-          console.log("대분류, 중분류 잘 받아옴");
           const largeCategoryList = res1.data.list;
+          const middleCategoryList = res2.data;
           setCategoryList(largeCategoryList);
           dispatch(restoreLargeCatList(largeCategoryList));
-          const middleCategoryList = res2.data;
           dispatch(restoreMidCatList(middleCategoryList));
         })
       )
@@ -144,14 +140,12 @@ const Home = ({ navigation }) => {
         },
       })
       .then((res) => {
-        console.log("찜 목록: " + JSON.stringify(res.data.list));
         if (res.data.list !== undefined) setJjimList(res.data.list);
         dispatch(restoreJjimStore(res.data.list));
       })
       .catch((err) => console.log("찜 목록 못 받아옴~~ " + err));
   }, []);
 
-  const jjimjjim = useSelector((state) => state.jjimStore);
   useEffect(() => {
     if (jjimjjim) {
       setJjimList(jjimjjim);
@@ -159,24 +153,12 @@ const Home = ({ navigation }) => {
   }, [jjimjjim]);
 
   return (
-    <SafeAreaView
-      style={{
-        backgroundColor: "#FFFFFF",
-        flex: 1,
-      }}
-    >
+    <SC.SafeAreaViewContainer>
       <SC.Container>
         {/* Top */}
         <SC.Top>
           <SC.MainTitle>우리대학거리</SC.MainTitle>
           <SC.SchoolTitle>인하대학교</SC.SchoolTitle>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("Search");
-            }}
-          >
-            <Ionicons name="ios-search-outline" size={24} color="black" />
-          </TouchableOpacity>
         </SC.Top>
 
         <ScrollView showsHorizontalScrollIndicator={false}>
@@ -199,9 +181,7 @@ const Home = ({ navigation }) => {
                 page="RandomMenu"
                 navi={navigation}
                 color="random"
-              >
-
-              </LargeCatEle>
+              ></LargeCatEle>
             </SC.CategoryWrap>
             <View style={{ alignItems: "center" }}>
               <LongBarBtn
@@ -248,9 +228,46 @@ const Home = ({ navigation }) => {
               )}
             </ScrollView>
           </SC.Bottom>
+          <SC.Bottom>
+            <SC.MainTitle>내가 찜한 가게</SC.MainTitle>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ marginTop: 15, flexDirection: "row" }}
+            >
+              {jjimList == false ? (
+                <SC.NoJjimWrap>
+                  <Text>찜한 가게가 없어요~</Text>
+                </SC.NoJjimWrap>
+              ) : (
+                jjimList &&
+                jjimList.slice(0, 5).map((item, index) => {
+                  return (
+                    <JjimEle
+                      key={index}
+                      l_category={item.l_category}
+                      // icon={item.icon}
+                      name={item.store_name}
+                      navigation={navigation}
+                    ></JjimEle>
+                  );
+                })
+              )}
+              {jjimList && jjimList.length >= 5 ? (
+                <SC.JjimEleWrap
+                  activeOpacity={0.8}
+                  onPress={() => navigation.navigate("JjimPage")}
+                >
+                  <Text>더보기 ^0^</Text>
+                </SC.JjimEleWrap>
+              ) : (
+                <></>
+              )}
+            </ScrollView>
+          </SC.Bottom>
         </ScrollView>
       </SC.Container>
-    </SafeAreaView>
+    </SC.SafeAreaViewContainer>
   );
 };
 export default Home;
