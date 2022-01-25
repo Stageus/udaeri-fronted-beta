@@ -271,8 +271,6 @@ exports.apiLogging = async(req, status)=>{
             "time" : date
         }
     })
-
-	console.log(result);
 }
 
 exports.errLogging = async(req, status, err)=>{
