@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   StatusBar,
   TextInput,
+  View,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
@@ -15,7 +16,7 @@ import styled, { css } from "styled-components/native";
 import axios from "axios";
 import HeaderBar from "../../Components/HeaderBar";
 import MyPageEle from "../../Components/MyPageEle";
-import { restoreUserNickname } from "../../../reducer/index";
+import { restoreUserNickname, checkSponsor } from "../../../reducer/index";
 
 const StatusBarHeight = StatusBar.currentHeight;
 
@@ -23,15 +24,12 @@ const SC = {
   Container: styled.View`
     background-color: #fff;
     padding: 0 20px;
-    // height: 100%;
-
     ${Platform.OS === "android"
       ? css`
           padding-top: ${StatusBarHeight + 15}px;
         `
       : undefined}
   `,
-  HeaderBar: styled.View``,
   Top: styled.View`
     flex-direction: row;
     padding-bottom: 12px;
@@ -49,7 +47,6 @@ const SC = {
     font-weight: bold;
     margin-right: 10px;
   `,
-  MyPageList: styled.View``,
   MyPageListWrap: styled.View`
     border-bottom-width: 1px;
     border-color: #d3d3d3;
@@ -75,15 +72,12 @@ const SC = {
 
 const MyPage = ({ navigation }) => {
   const dispatch = useDispatch();
-
-  const url = useSelector((state) => state.url);
-  const nickname = useSelector((state) => state.userNickname);
-  const checkSponsor = useSelector((state) => state.sponsorCheck);
   const mainColor = useSelector((state) => state.mainColor);
 
+  const [token, setToken] = useState();
   const [nickNameChange, setNickNameChange] = useState(false);
   const [onChangeNickname, setOnchangeNickname] = useState("");
-  const [token, setToken] = useState();
+  const [sponsor, setSponsor] = useState();
 
   const TOKEN_KEY = "@userKey";
 
@@ -97,10 +91,27 @@ const MyPage = ({ navigation }) => {
   ];
 
   useEffect(async () => {
-    setOnchangeNickname(nickname);
+    let tokentoken;
     await AsyncStorage.getItem(TOKEN_KEY, (err, result) => {
+      tokentoken = result;
       setToken(result);
     });
+
+    axios
+      .get("/users", {
+        headers: {
+          authorization: tokentoken,
+        },
+      })
+      .then((res) => {
+        res.data.success
+          ? (dispatch(restoreUserNickname(res.data.nickname)),
+            dispatch(checkSponsor(res.data.sponsor)),
+            setOnchangeNickname(res.data.nickname),
+            setSponsor(res.data.sponsor))
+          : console.log("유저 데이터 가져오기 실패", res.data);
+      })
+      .catch((err) => console.log("회원 정보 못 받아옴", err));
   }, []);
 
   const saveToken = async (token) => {
@@ -116,8 +127,7 @@ const MyPage = ({ navigation }) => {
         },
         {
           headers: {
-            authorization:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkhWV2tvRlIyQXVuUFZyV0dTbHJkN1k4ZEdob1pBQTdoLUgtQWxXQ3NpaG8iLCJuaWNrbmFtZSI6IuyasOuMgOuMgOuMgOuMgOuMgOuMgOuMgOuMgCIsInNwb25zb3IiOiJOIiwicGxhdGZvcm0iOiJuYXZlciIsImlhdCI6MTY0MzAxOTMzMCwiZXhwIjoxNjQzMDQwOTMwLCJpc3MiOiJVRFIifQ.ZNUIN_gZzRQyRw1J-BejqwMxntp8xvBfihapBCXjoJs",
+            authorization: token,
           },
         }
       )
@@ -126,7 +136,7 @@ const MyPage = ({ navigation }) => {
           saveToken(res.data.token); // 토큰 asyncstorage에 저장
           dispatch(restoreUserNickname(name)); // 닉네임 리덕스에 저장
         } else {
-          console.log("false: ", res.data.success);
+          console.log("false: ", res.data);
         }
       })
       .catch((err) => {
@@ -163,7 +173,7 @@ const MyPage = ({ navigation }) => {
           ) : (
             <SC.NickNameWrap>
               <SC.NickName color={mainColor}>{onChangeNickname}</SC.NickName>
-              {checkSponsor === "Y" ? (
+              {sponsor === "Y" ? (
                 <Text>
                   <FontAwesome5
                     name="crown"
@@ -188,7 +198,7 @@ const MyPage = ({ navigation }) => {
           </TouchableOpacity>
         </SC.Top>
 
-        <SC.MyPageList>
+        <View>
           {listElement.map((item, index) => {
             return (
               <MyPageEle
@@ -199,7 +209,7 @@ const MyPage = ({ navigation }) => {
               ></MyPageEle>
             );
           })}
-        </SC.MyPageList>
+        </View>
       </SC.Container>
     </SafeAreaView>
   );

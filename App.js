@@ -67,7 +67,6 @@ const App = () => {
 
   const TOKEN_KEY = "@userKey";
   const tokenCheck = useSelector((state) => state.tokenCheck);
-  const nickname = useSelector((state) => state.userNickname);
 
   useEffect(async () => {
     preLoad();
@@ -85,11 +84,8 @@ const App = () => {
       })
       .then((res) => {
         res.data.success
-          ? (console.log("회원정보: " + JSON.stringify(res.data)),
-            dispatch(restoreUserNickname(res.data.nickname)),
-            dispatch(checkSponsor(res.data.sponsor)),
-            dispatch(checkToken(true)))
-          : (checkToken(false),
+          ? dispatch(checkToken(true))
+          : (dispatch(checkToken(false)),
             console.log("로그인 실패: " + res.data.message));
       })
       .catch((err) => console.log("회원정보 못 받아옴~" + err));
