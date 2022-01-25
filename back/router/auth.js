@@ -259,7 +259,7 @@ exports.getNewToken = async(req,res)=>{
                         expiresIn : "720m",
                         issuer : "UDR"
                     })
-
+                    await elastic.apiLogging(req,200);
                     return res.status(200).send({
                         success : true,
                         message : "새로운 토큰이 발급되었습니다.",

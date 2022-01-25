@@ -258,5 +258,5 @@ exports.userOpinion = async(req,res)=>{
 }
 
 exports.payment = async(req,res) =>{
-
+    const client = new Client(config);
 }
