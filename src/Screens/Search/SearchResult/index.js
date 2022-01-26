@@ -75,7 +75,9 @@ const SearchResult = ({ navigation, route }) => {
       })
       .then((res) => {
         word === "" ? setSearchResultList([]) : {};
-        res.data.length !== 0 ? setSearchResultList(res.data) : {};
+        res.data.length !== 0
+          ? setSearchResultList(res.data)
+          : setSearchResultList([]);
       })
       .catch((err) => {
         console.log("검색 에러: " + err);
@@ -102,9 +104,13 @@ const SearchResult = ({ navigation, route }) => {
   };
 
   const searchSubmit = () => {
-    setSearchingResult([]);
-    getSearchStore(text);
-    dispatch(addSearchWord(recentSearchList, text));
+    if (text !== "") {
+      setSearchingResult([]);
+      getSearchStore(text);
+      if (searchingResult.length !== 0) {
+        dispatch(addSearchWord(recentSearchList, text));
+      }
+    }
   };
 
   return (
@@ -149,22 +155,34 @@ const SearchResult = ({ navigation, route }) => {
         </SC.Top>
 
         {searchingResult.length === 0 ? (
-          <ScrollView
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ marginTop: 5 }}
-          >
-            {searchResultList.map((value, index) => {
+          searchResultList.length !== 0 ? (
+            searchResultList.map((value, index) => {
               return (
-                <StoreEle
-                  key={index}
-                  storeName={value.store_name}
-                  content={""}
-                  location={""}
-                  navigation={navigation}
-                />
+                <ScrollView
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{ marginTop: 5 }}
+                >
+                  <StoreEle
+                    key={index}
+                    storeName={value.store_name}
+                    content={""}
+                    location={""}
+                    navigation={navigation}
+                  />
+                </ScrollView>
               );
-            })}
-          </ScrollView>
+            })
+          ) : (
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                height: "100%",
+              }}
+            >
+              <Text>해당 검색어가 존재하지 않습니다!</Text>
+            </View>
+          )
         ) : (
           <ScrollView
             showsHorizontalScrollIndicator={false}

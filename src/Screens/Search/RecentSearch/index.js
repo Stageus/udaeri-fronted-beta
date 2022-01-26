@@ -44,7 +44,7 @@ const SC = {
     justify-content: space-between;
     padding: 0 10px 10px 10px;
     border-bottom-width: 1px;
-    border-bottom-color: #999999;
+    border-bottom-color: gray;
     position: relative;
   `,
   SearchInput: styled.TextInput`
@@ -131,16 +131,17 @@ const RecentSearch = ({ navigation }) => {
   const addSearchWordSubmit = () => {
     if (searchingResult.length !== 0)
       dispatch(addSearchWord(recentSearchList, text));
-    setText("");
   };
 
   // 검색어 입력 후 submit할 때 실행되는 함수
   const searchSubmit = () => {
-    addSearchWordSubmit();
-    setText("");
-    navigation.navigate("SearchResult", {
-      searchValue: text,
-    });
+    if (text !== "") {
+      addSearchWordSubmit();
+      setText("");
+      navigation.navigate("SearchResult", {
+        searchValue: text,
+      });
+    }
   };
 
   const allDeleteSearch = () => {
@@ -164,16 +165,8 @@ const RecentSearch = ({ navigation }) => {
     >
       <SC.Container>
         <SC.Top>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.goBack();
-            }}
-          >
-            <AntDesign
-              name="arrowleft"
-              style={styles.topIcon}
-              color="#797D7F"
-            />
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <AntDesign name="arrowleft" style={styles.topIcon} color="gray" />
           </TouchableOpacity>
           <SC.SearchInput
             multiline={false}
