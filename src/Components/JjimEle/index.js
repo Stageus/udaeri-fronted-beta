@@ -2,11 +2,7 @@ import React from "react";
 import { Dimensions } from "react-native";
 import styled from "styled-components/native";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  restoreCurStore,
-  restoreCurLargeCat,
-  restoreCurMidCat,
-} from "../../../reducer/index";
+import { restoreCurStore } from "../../../reducer/index";
 
 const { width, height } = Dimensions.get("window");
 
@@ -45,13 +41,6 @@ const SC = {
     font-weight: bold;
   `,
 };
-
-// interface Props {
-//   icon: string;
-//   category: string;
-//   name: string;
-//   navigation: any;
-// }
 
 const JjimEle = (props) => {
   const dispatch = useDispatch();

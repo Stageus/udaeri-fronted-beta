@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, SafeAreaView } from "react-native";
+import { View, Dimensions } from "react-native";
 import { Ionicons, Entypo } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { RFPercentage } from "react-native-responsive-fontsize";
 import { jjimCheck, addJjim, deleteJjim } from "../../../reducer/index";
+
+const { width, height } = Dimensions.get("window");
 
 const SC = {
   headerBar: styled.View`
-    // height: 5%;
+    height: ${height * 0.07}px;
     align-items: center;
     flex-direction: row;
     padding: 10px 20px;
-    padding-bottom: 15px;
     border-bottom-width: 1px;
     border-color: #d3d3d3;
 
@@ -25,7 +27,7 @@ const SC = {
   `,
   storeName: styled.Text`
     font-family: Bold;
-    font-size: 24px;
+    font-size: ${RFPercentage(2.7)};
   `,
 };
 

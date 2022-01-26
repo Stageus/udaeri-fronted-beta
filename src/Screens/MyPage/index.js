@@ -23,7 +23,7 @@ const StatusBarHeight = StatusBar.currentHeight;
 const SC = {
   Container: styled.View`
     background-color: #fff;
-    padding: 0 20px;
+
     ${Platform.OS === "android"
       ? css`
           padding-top: ${StatusBarHeight + 15}px;
@@ -32,6 +32,7 @@ const SC = {
   `,
   Top: styled.View`
     flex-direction: row;
+    padding: 0 20px;
     padding-bottom: 12px;
     align-items: center;
     justify-content: space-between;
@@ -46,6 +47,9 @@ const SC = {
     font-size: 20px;
     font-weight: bold;
     margin-right: 10px;
+  `,
+  MyPageList: styled.View`
+    padding: 0 20px;
   `,
   MyPageListWrap: styled.View`
     border-bottom-width: 1px;
@@ -73,6 +77,7 @@ const SC = {
 const MyPage = ({ navigation }) => {
   const dispatch = useDispatch();
   const mainColor = useSelector((state) => state.mainColor);
+  const grayColor = useSelector((state) => state.grayColor);
 
   const [token, setToken] = useState();
   const [nickNameChange, setNickNameChange] = useState(false);
@@ -193,12 +198,12 @@ const MyPage = ({ navigation }) => {
           >
             <FontAwesome
               name="gear"
-              style={{ fontSize: RFPercentage(2.5), color: "#797D7F" }}
+              style={{ fontSize: RFPercentage(2.5), color: grayColor }}
             />
           </TouchableOpacity>
         </SC.Top>
 
-        <View>
+        <SC.MyPageList>
           {listElement.map((item, index) => {
             return (
               <MyPageEle
@@ -209,7 +214,7 @@ const MyPage = ({ navigation }) => {
               ></MyPageEle>
             );
           })}
-        </View>
+        </SC.MyPageList>
       </SC.Container>
     </SafeAreaView>
   );

@@ -11,7 +11,6 @@ const KakaoLogin = () => {
   const dispatch = useDispatch();
 
   const url = useSelector((state) => state.url);
-  axios.defaults.baseURL = url;
 
   const runFirst = `window.ReactNativeWebView.postMessage("this is message from web");`;
 
@@ -39,11 +38,12 @@ const KakaoLogin = () => {
         platform: "kakao",
       })
       .then((res) => {
-        console.log("access token post 성공" + res.data.token);
+        console.log("access token post 성공");
         saveToken(res.data.token);
         dispatch(checkToken(true));
       })
       .catch((err) => {
+        console.log(access_code);
         console.log("server로 access code post 실패");
         console.log(err);
       });

@@ -26,6 +26,7 @@ const { width, height } = Dimensions.get("window");
 const SC = {
   SafeAreaViewContainer: styled.SafeAreaView`
     background-color: #fff;
+    flex: 1;
     ${Platform.OS === "android"
       ? css`
           padding-top: ${StatusBarHeight}px;
@@ -189,44 +190,10 @@ const Home = ({ navigation }) => {
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ marginTop: 15, flexDirection: "row" }}
-            >
-              {jjimList == false ? (
-                <SC.NoJjimWrap>
-                  <Text>찜한 가게가 없어요~</Text>
-                </SC.NoJjimWrap>
-              ) : (
-                jjimList &&
-                jjimList.slice(0, 5).map((item, index) => {
-                  return (
-                    <JjimEle
-                      key={index}
-                      l_category={item.l_category}
-                      // icon={item.icon}
-                      name={item.store_name}
-                      navigation={navigation}
-                    ></JjimEle>
-                  );
-                })
-              )}
-              {jjimList && jjimList.length >= 5 ? (
-                <SC.JjimEleWrap
-                  activeOpacity={0.8}
-                  onPress={() => navigation.navigate("JjimPage")}
-                >
-                  <Text>더보기 ^0^</Text>
-                </SC.JjimEleWrap>
-              ) : (
-                <></>
-              )}
-            </ScrollView>
-          </View>
-          <View>
-            <SC.MainTitle>내가 찜한 가게</SC.MainTitle>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ marginTop: 15, flexDirection: "row" }}
+              contentContainerStyle={{
+                marginVertical: 15,
+                flexDirection: "row",
+              }}
             >
               {jjimList == false ? (
                 <SC.NoJjimWrap>

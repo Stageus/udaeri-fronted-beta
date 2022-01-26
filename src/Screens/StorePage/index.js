@@ -13,7 +13,7 @@ const SC = {
     background-color: #fff;
     ${Platform.OS === "android"
       ? css`
-          padding-top: ${StatusBarHeight + 15}px;
+          padding-top: ${StatusBarHeight + 10}px;
         `
       : undefined}
   `,

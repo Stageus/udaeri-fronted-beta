@@ -35,12 +35,7 @@ const JjimPage = ({ navigation }) => {
       }}
     >
       <SC.Container>
-        <HeaderBar
-          left="arrow"
-          title="찜"
-          right="magni"
-          navigation={navigation}
-        />
+        <HeaderBar left="arrow" title="찜" navigation={navigation} />
         <SC.JjimContainer>
           <ScrollView>
             {jjimList.map((item, index) => {

@@ -19,7 +19,7 @@ const SC = {
   `,
   thumbnail: styled.View`
     background-color: ${(props) =>
-      props.color === "main" ? "#ff9933" : "#1876FB"};
+      props.color === "main" ? props.mainColor : "#1876FB"};
     width: 32px;
     height: 32px;
     align-items: center;
@@ -36,6 +36,7 @@ const SC = {
 
 const LargeCatEle = (props) => {
   const dispatch = useDispatch();
+  const mainColor = useSelector((state) => state.mainColor);
   return (
     <SC.Container
       onPress={() => {
@@ -44,7 +45,9 @@ const LargeCatEle = (props) => {
       }}
     >
       <SC.left>
-        <SC.thumbnail color={props.color}>{props.icon}</SC.thumbnail>
+        <SC.thumbnail color={props.color} mainColor={mainColor}>
+          {props.icon}
+        </SC.thumbnail>
         <SC.catTitle>{props.name}</SC.catTitle>
       </SC.left>
       <MaterialIcons name="arrow-forward-ios" size={12} color="gray" />
