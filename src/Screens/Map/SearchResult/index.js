@@ -6,6 +6,8 @@ import {
   ScrollView,
   Dimensions,
   SafeAreaView,
+  Text,
+  View,
 } from "react-native";
 import { AntDesign, Feather, FontAwesome } from "@expo/vector-icons";
 import { RFPercentage } from "react-native-responsive-fontsize";
@@ -153,9 +155,13 @@ const MapSearchResult = ({ navigation, route }) => {
   };
 
   const searchSubmit = () => {
-    setInputFocusCheck(false);
-    getSearchStore(text);
-    dispatch(addSearchWord(recentSearchList, text));
+    if (text !== "") {
+      setInputFocusCheck(false);
+      getSearchStore(text);
+    }
+    if (searchList.length !== 0) {
+      dispatch(addSearchWord(recentSearchList, text));
+    }
   };
 
   const onChangeText = (val) => {
@@ -208,61 +214,87 @@ const MapSearchResult = ({ navigation, route }) => {
 
         {inputFocusCheck ? (
           <>
-            <ScrollView
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ marginTop: 5, paddingHorizontal: 15 }}
-            >
-              {searchList.map((value) => {
-                return (
-                  <SearchResultEle
-                    key={value.store_name}
-                    storeName={value.store_name}
-                    navigation={navigation}
-                    page="second"
-                    getSearchStore={getSearchStore}
-                    setInputFocusCheck={setInputFocusCheck}
-                    setText={setText}
-                  ></SearchResultEle>
-                );
-              })}
-            </ScrollView>
+            {searchList.length !== 0 ? (
+              <ScrollView
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ marginTop: 5, paddingHorizontal: 15 }}
+              >
+                {searchList.map((value) => {
+                  return (
+                    <SearchResultEle
+                      key={value.store_name}
+                      storeName={value.store_name}
+                      navigation={navigation}
+                      page="second"
+                      getSearchStore={getSearchStore}
+                      setInputFocusCheck={setInputFocusCheck}
+                      setText={setText}
+                    ></SearchResultEle>
+                  );
+                })}
+              </ScrollView>
+            ) : (
+              <View
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: "100%",
+                }}
+              >
+                <Text>해당 검색어가 존재하지 않습니다!</Text>
+              </View>
+            )}
           </>
         ) : (
           <>
-            <MapView
-              initialRegion={initialRegion}
-              provider={PROVIDER_GOOGLE}
-              style={{ height: "100%", width: "100%" }}
-            >
-              {searchList.map((item, index) => {
-                return (
-                  <>
-                    <MapView.Marker
-                      key={index}
-                      coordinate={{
-                        latitude: !item.latitude ? 0 : Number(item.latitude),
-                        longitude: !item.longitude ? 0 : Number(item.longitude),
-                      }}
-                      onPress={() => handlePinClick(item.store_name)}
-                    >
-                      {target === item.store_name ? (
-                        <FontAwesome
-                          name="map-marker"
-                          size={37}
-                          color={mainColor}
-                        />
-                      ) : (
-                        <FontAwesome
-                          name="map-marker"
-                          size={30}
-                          color={mainColor}
-                        />
-                      )}
-                    </MapView.Marker>
-                  </>
-                );
-              })}
-            </MapView>
+            {searchList.length === 0 ? (
+              <View
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: "100%",
+                }}
+              >
+                <Text>해당 검색어가 존재하지 않습니다!</Text>
+              </View>
+            ) : (
+              <MapView
+                initialRegion={initialRegion}
+                provider={PROVIDER_GOOGLE}
+                style={{ height: "100%", width: "100%" }}
+              >
+                {searchList.map((item, index) => {
+                  return (
+                    <>
+                      <MapView.Marker
+                        key={item.store_name}
+                        coordinate={{
+                          latitude: !item.latitude ? 0 : Number(item.latitude),
+                          longitude: !item.longitude
+                            ? 0
+                            : Number(item.longitude),
+                        }}
+                        onPress={() => handlePinClick(item.store_name)}
+                      >
+                        {target === item.store_name ? (
+                          <FontAwesome
+                            name="map-marker"
+                            size={37}
+                            color={mainColor}
+                          />
+                        ) : (
+                          <FontAwesome
+                            name="map-marker"
+                            size={30}
+                            color={mainColor}
+                          />
+                        )}
+                      </MapView.Marker>
+                    </>
+                  );
+                })}
+              </MapView>
+            )}
             {clickedStore ? (
               <SC.StoreWrap
                 onPress={() => {
