@@ -8,9 +8,9 @@ const { width, height } = Dimensions.get("window");
 
 const SC = {
   Container: styled.ScrollView`
-    position: absolute;
-    top: ${StatusBarHeight + height * 0.03}px;
-    z-index: 5;
+    // position: absolute;
+    // top: ${StatusBarHeight + height * 0.03}px;
+    // z-index: 5;
   `,
 };
 

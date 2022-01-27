@@ -120,8 +120,8 @@ const MapSearch = ({ navigation }) => {
           text: word,
         })
         .then((res) => {
-          console.log("받아온 값" + JSON.stringify(res.data));
-          setSearchingResult(res.data);
+          word === "" ? setSearchingResult([]) : {};
+          res.data.length !== 0 ? setSearchingResult(res.data) : {};
         })
         .catch((err) => {
           console.log("검색 에러: " + err);
@@ -132,19 +132,18 @@ const MapSearch = ({ navigation }) => {
 
   // 검색어 입력 후 submit할 때 최근검색어 목록에 검색어가 추가되는 함수
   const addSearchWordSubmit = () => {
-    if (searchingResult.length === 0) {
-    } else {
+    if (searchingResult.length !== 0)
       dispatch(addSearchWord(recentSearchList, text));
-    }
-    setText("");
   };
 
   const searchSubmit = () => {
-    addSearchWordSubmit();
-    setText("");
-    navigation.navigate("MapSearchResult", {
-      searchValue: text,
-    });
+    if (text !== "") {
+      addSearchWordSubmit();
+      setText("");
+      navigation.navigate("MapSearchResult", {
+        searchValue: text,
+      });
+    }
   };
 
   const allDeleteSearch = () => {

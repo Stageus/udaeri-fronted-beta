@@ -74,8 +74,10 @@ const SearchResult = ({ navigation, route }) => {
         text: word,
       })
       .then((res) => {
-        console.log("받아온 값" + JSON.stringify(res.data));
-        setSearchResultList(res.data);
+        word === "" ? setSearchResultList([]) : {};
+        res.data.length !== 0
+          ? setSearchResultList(res.data)
+          : setSearchResultList([]);
       })
       .catch((err) => {
         console.log("검색 에러: " + err);
@@ -93,8 +95,8 @@ const SearchResult = ({ navigation, route }) => {
         text: word,
       })
       .then((res) => {
-        console.log("받아온 값" + JSON.stringify(res.data));
-        setSearchingResult(res.data);
+        word === "" ? setSearchingResult([]) : {};
+        res.data.length !== 0 ? setSearchingResult(res.data) : {};
       })
       .catch((err) => {
         console.log("검색 에러: " + err);
@@ -102,9 +104,13 @@ const SearchResult = ({ navigation, route }) => {
   };
 
   const searchSubmit = () => {
-    setSearchingResult([]);
-    getSearchStore(text);
-    dispatch(addSearchWord(recentSearchList, text));
+    if (text !== "") {
+      setSearchingResult([]);
+      getSearchStore(text);
+      if (searchingResult.length !== 0) {
+        dispatch(addSearchWord(recentSearchList, text));
+      }
+    }
   };
 
   return (
@@ -149,31 +155,43 @@ const SearchResult = ({ navigation, route }) => {
         </SC.Top>
 
         {searchingResult.length === 0 ? (
-          <ScrollView
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ marginTop: 5 }}
-          >
-            {searchResultList.map((value) => {
+          searchResultList.length !== 0 ? (
+            searchResultList.map((value, index) => {
               return (
-                <StoreEle
-                  key={value}
-                  storeName={value.store_name}
-                  content={""}
-                  location={""}
-                  navigation={navigation}
-                />
+                <ScrollView
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{ marginTop: 5 }}
+                >
+                  <StoreEle
+                    key={index}
+                    storeName={value.store_name}
+                    content={""}
+                    location={""}
+                    navigation={navigation}
+                  />
+                </ScrollView>
               );
-            })}
-          </ScrollView>
+            })
+          ) : (
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                height: "100%",
+              }}
+            >
+              <Text>해당 검색어가 존재하지 않습니다!</Text>
+            </View>
+          )
         ) : (
           <ScrollView
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ marginTop: 5, paddingHorizontal: 15 }}
           >
-            {searchingResult.map((value) => {
+            {searchingResult.map((value, index) => {
               return (
                 <SearchResultEle
-                  key={value.store_name}
+                  key={index}
                   searchValue={text}
                   storeName={value.store_name}
                   navigation={navigation}

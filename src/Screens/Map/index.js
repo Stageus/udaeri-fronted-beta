@@ -36,8 +36,8 @@ const Map = ({ navigation, route }) => {
   const [initialRegion, setInitialRegion] = useState({
     latitude: 37.4513546060566,
     longitude: 126.65759221275367,
-    latitudeDelta: 0.01,
-    longitudeDelta: 0.01,
+    latitudeDelta: 0.015,
+    longitudeDelta: 0.015,
   });
 
   const [clickedCat, setClickedCat] = useState("");
@@ -144,7 +144,7 @@ const Map = ({ navigation, route }) => {
             })}
           </ScrollView>
         </SC.LargeCatWrap>
-        <View style={{ marginLeft: 10 }}>
+        <SC.MidCatWrap>
           {
             {
               먹거리: <MiddleCatBtnWrap cat={midCatList}></MiddleCatBtnWrap>,
@@ -155,7 +155,7 @@ const Map = ({ navigation, route }) => {
               상점: <MiddleCatBtnWrap cat={midCatList}></MiddleCatBtnWrap>,
             }[clickedCat]
           }
-        </View>
+        </SC.MidCatWrap>
 
         <MapView
           initialRegion={initialRegion}
@@ -238,14 +238,15 @@ const styles = StyleSheet.create({
       ios: {
         shadowColor: "#000",
         shadowOffset: {
-          width: 0,
+          width: 1,
           height: 2,
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
       },
       android: {
-        elevation: 3,
+        shadowColor: "#000",
+        elevation: 4,
       },
     }),
   },
@@ -276,10 +277,16 @@ const SC = {
   `,
   LargeCatWrap: styled.View`
     position: absolute;
-    top: ${StatusBarHeight + height * 0.06}px;
+    top: ${StatusBarHeight + height * 0.075}px;
     z-index: 5;
     flex-direction: row;
     justify-content: space-between;
+    margin-left: 10px;
+  `,
+  MidCatWrap: styled.View`
+    position: absolute;
+    top: ${StatusBarHeight + height * 0.085 + 30}px;
+    z-index: 5;
     margin-left: 10px;
   `,
   StoreWrap: styled.TouchableOpacity`

@@ -1,52 +1,58 @@
-import React from 'react';
-import styled from 'styled-components/native';
-import { StyleSheet, View, Dimensions } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import React from "react";
+import styled from "styled-components/native";
+import { StyleSheet, View, Dimensions } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
-import { restoreCurLargeCat } from '../../../reducer/index';
+import { restoreCurLargeCat } from "../../../reducer/index";
+import { RFPercentage } from "react-native-responsive-fontsize";
 
 const SC = {
-    Container: styled.TouchableOpacity`
-        align-Items: center;
-        flex-Direction: row;
-        justify-Content: space-between;
-        margin : 7.5px 0;
-    `,
-    left: styled.View`
-        flex-Direction: row;
-        align-Items: center;
-    `,
-    thumbnail: styled.View`
-        background-Color: ${props => props.color === "main" ? "#ff9933" : "#1876FB"};
-        width: 32px;
-        height: 32px;
-        align-Items: center;
-        justify-Content: center;
-        border-radius: 16px;
-        margin-Right: 15px;
-    `,
-    catTitle: styled.Text`
-        font-family: Regular;
-        font-size: 18px;
-        color : black;
-    `,
-}
-
+  Container: styled.TouchableOpacity`
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 7.5px 0;
+  `,
+  left: styled.View`
+    flex-direction: row;
+    align-items: center;
+  `,
+  thumbnail: styled.View`
+    background-color: ${(props) =>
+      props.color === "main" ? props.mainColor : "#1876FB"};
+    width: 32px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    margin-right: 15px;
+  `,
+  catTitle: styled.Text`
+    font-family: Regular;
+    font-size: ${RFPercentage(2.3)};
+    color: black;
+  `,
+};
 
 const LargeCatEle = (props) => {
-    const dispatch = useDispatch();
-    return (
-        <SC.Container onPress={() => {
-            props.navi.navigate(props.page, { key: props.name });
-            dispatch(restoreCurLargeCat(props.name))
-        }}>
-            <SC.left>
-                <SC.thumbnail color={props.color}>{props.icon}</SC.thumbnail>
-                <SC.catTitle>{props.name}</SC.catTitle>
-            </SC.left>
-            <MaterialIcons name="arrow-forward-ios" size={12} color="gray" />
-        </SC.Container>
-    )
-}
+  const dispatch = useDispatch();
+  const mainColor = useSelector((state) => state.mainColor);
+  return (
+    <SC.Container
+      onPress={() => {
+        props.navi.navigate(props.page, { key: props.name });
+        dispatch(restoreCurLargeCat(props.name));
+      }}
+    >
+      <SC.left>
+        <SC.thumbnail color={props.color} mainColor={mainColor}>
+          {props.icon}
+        </SC.thumbnail>
+        <SC.catTitle>{props.name}</SC.catTitle>
+      </SC.left>
+      <MaterialIcons name="arrow-forward-ios" size={12} color="gray" />
+    </SC.Container>
+  );
+};
 
-export default LargeCatEle
+export default LargeCatEle;

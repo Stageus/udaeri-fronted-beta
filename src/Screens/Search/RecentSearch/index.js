@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
-  Text,
   View,
   TouchableOpacity,
   Platform,
   StatusBar,
   ScrollView,
   Dimensions,
-  TextInput,
   SafeAreaView,
   Alert,
 } from "react-native";
@@ -46,7 +44,7 @@ const SC = {
     justify-content: space-between;
     padding: 0 10px 10px 10px;
     border-bottom-width: 1px;
-    border-bottom-color: #999999;
+    border-bottom-color: gray;
     position: relative;
   `,
   SearchInput: styled.TextInput`
@@ -73,6 +71,9 @@ const SC = {
   AllDeleteBtn: styled.Text`
     font-size: 10px;
     color: #797d7f;
+  `,
+  NoRecentSearch: styled.Text`
+    font-size: 16px;
   `,
 };
 
@@ -112,38 +113,35 @@ const RecentSearch = ({ navigation }) => {
     saveSearch(recentSearchList);
   }, [recentSearchList]);
 
-  useEffect(() => {
-    const onChangeSearch = (word) => {
-      axios
-        .post("search/stores/1", {
-          text: word,
-        })
-        .then((res) => {
-          console.log("받아온 값" + JSON.stringify(res.data));
-          setSearchingResult(res.data);
-        })
-        .catch((err) => {
-          console.log("검색 에러: " + err);
-        });
-    };
-    onChangeSearch(text);
-  }, [text]);
+  const onChangeSearch = (word) => {
+    axios
+      .post("search/stores/1", {
+        text: word,
+      })
+      .then((res) => {
+        word === "" ? setSearchingResult([]) : {};
+        res.data.length !== 0 ? setSearchingResult(res.data) : {};
+      })
+      .catch((err) => {
+        console.log("검색 에러: " + err);
+      });
+  };
 
   // 검색어 입력 후 submit할 때 최근검색어 목록에 검색어가 추가되는 함수
   const addSearchWordSubmit = () => {
-    if (searchingResult.length === 0) {
-    } else {
+    if (searchingResult.length !== 0)
       dispatch(addSearchWord(recentSearchList, text));
-    }
-    setText("");
   };
 
+  // 검색어 입력 후 submit할 때 실행되는 함수
   const searchSubmit = () => {
-    addSearchWordSubmit();
-    setText("");
-    navigation.navigate("SearchResult", {
-      searchValue: text,
-    });
+    if (text !== "") {
+      addSearchWordSubmit();
+      setText("");
+      navigation.navigate("SearchResult", {
+        searchValue: text,
+      });
+    }
   };
 
   const allDeleteSearch = () => {
@@ -167,16 +165,8 @@ const RecentSearch = ({ navigation }) => {
     >
       <SC.Container>
         <SC.Top>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.goBack();
-            }}
-          >
-            <AntDesign
-              name="arrowleft"
-              style={styles.topIcon}
-              color="#797D7F"
-            />
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <AntDesign name="arrowleft" style={styles.topIcon} color="gray" />
           </TouchableOpacity>
           <SC.SearchInput
             multiline={false}
@@ -184,6 +174,7 @@ const RecentSearch = ({ navigation }) => {
             value={text}
             onChangeText={(val) => {
               setText(val);
+              onChangeSearch(val);
             }}
             onSubmitEditing={() => searchSubmit()}
             maxLength={20}
@@ -208,7 +199,7 @@ const RecentSearch = ({ navigation }) => {
             </SC.MiddleHeader>
 
             {/* 최근 검색어가 없을 때 */}
-            {recentSearchList.length === 0 ? (
+            {recentSearchList && recentSearchList.length === 0 ? (
               <View
                 style={{
                   alignItems: "center",
@@ -216,7 +207,7 @@ const RecentSearch = ({ navigation }) => {
                   height: "100%",
                 }}
               >
-                <Text>최근 검색어가 없습니다.</Text>
+                <SC.NoRecentSearch>최근 검색어가 없습니다.</SC.NoRecentSearch>
               </View>
             ) : (
               // 최근 검색어가 있을 때 최근 검색어 목록 보여줌
@@ -224,18 +215,22 @@ const RecentSearch = ({ navigation }) => {
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{ marginTop: 5 }}
               >
-                {recentSearchList.map((searchWord) => {
-                  return (
-                    <SaveSearchEle
-                      key={searchWord}
-                      text={searchWord}
-                      deleteBtn={() =>
-                        dispatch(deleteSearchWord(recentSearchList, searchWord))
-                      }
-                      navigation={navigation}
-                    ></SaveSearchEle>
-                  );
-                })}
+                {recentSearchList &&
+                  recentSearchList.map((searchWord) => {
+                    return (
+                      <SaveSearchEle
+                        key={searchWord}
+                        text={searchWord}
+                        setText={setText}
+                        deleteBtn={() =>
+                          dispatch(
+                            deleteSearchWord(recentSearchList, searchWord)
+                          )
+                        }
+                        navigation={navigation}
+                      ></SaveSearchEle>
+                    );
+                  })}
               </ScrollView>
             )}
           </SC.Middle>

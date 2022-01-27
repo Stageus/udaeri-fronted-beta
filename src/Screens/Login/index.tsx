@@ -74,13 +74,13 @@ const Login = ({ navigation }: any) => {
             navigation={navigation}
             moveScreen={"NaverLogin"}
           />
-          <SNSLoginBar id={"fb"} navigation={navigation} />
+          {/* <SNSLoginBar id={"fb"} navigation={navigation} />
           <SC.barContainer>
             <SC.bar />
             <SC.barText>또는</SC.barText>
             <SC.bar />
           </SC.barContainer>
-          <SNSLoginBar id={"nothing"} navigation={navigation} />
+          <SNSLoginBar id={"nothing"} navigation={navigation} /> */}
         </SC.loginContainer>
       </SC.container>
     </SafeAreaView>
