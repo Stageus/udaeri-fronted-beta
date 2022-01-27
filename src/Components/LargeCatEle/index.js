@@ -4,6 +4,7 @@ import { StyleSheet, View, Dimensions } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
 import { restoreCurLargeCat } from "../../../reducer/index";
+import { restoreCurMidCat } from '../../../reducer/index';
 import { RFPercentage } from "react-native-responsive-fontsize";
 
 const SC = {
@@ -38,6 +39,22 @@ const LargeCatEle = (props) => {
   const dispatch = useDispatch();
   const mainColor = useSelector((state) => state.mainColor);
   return (
+    JSON.stringify(props.name) === JSON.stringify("술집") ?
+    <SC.Container
+      onPress={() => {
+        props.navi.navigate("StoreList", { key: props.name });
+        dispatch(restoreCurLargeCat(props.name));
+        dispatch(restoreCurMidCat(props.name));
+      }}
+    >
+    <SC.left>
+        <SC.thumbnail color={props.color} mainColor={mainColor}>
+          {props.icon}
+        </SC.thumbnail>
+        <SC.catTitle>{props.name}</SC.catTitle>
+      </SC.left>
+      <MaterialIcons name="arrow-forward-ios" size={12} color="gray" />
+    </SC.Container>  :
     <SC.Container
       onPress={() => {
         props.navi.navigate(props.page, { key: props.name });

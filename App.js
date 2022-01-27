@@ -94,7 +94,7 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {!loaded ? (
+         {!loaded ? (
           <Stack.Screen name="Loading" component={Loading} />
         ) : !tokenCheck ? (
           <>
