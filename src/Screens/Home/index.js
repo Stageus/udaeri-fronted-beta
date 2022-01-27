@@ -1,256 +1,233 @@
-import React, {useState, useEffect} from 'react';
-// import 'react-native-gesture-handler';
-import { StyleSheet, Text, View, TouchableOpacity, StatusBar, ScrollView, Dimensions  } from 'react-native';
-import {AntDesign, Ionicons ,FontAwesome,Entypo,Fontisto   } from '@expo/vector-icons';
-import { RFPercentage } from "react-native-responsive-fontsize";
-import styled from 'styled-components/native';
-import LongBarBtn from '../../Components/LongBarBtn';
-import HomeLargeCatEle from '../../Components/HomeLargeCatEle';
-import JjimEle from '../../Components/JjimEle';
+import React, { useState, useEffect } from "react";
+import {
+  ScrollView,
+  StatusBar,
+  Platform,
+  Dimensions,
+  View,
+  Text,
+} from "react-native";
+import styled, { css } from "styled-components/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import LongBarBtn from "../../Components/LongBarBtn/index";
+import JjimEle from "../../Components/JjimEle/index";
+import LargeCatEle from "../../Components/LargeCatEle";
+import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  restoreLargeCatList,
+  restoreMidCatList,
+  restoreJjimStore,
+} from "../../../reducer/index";
 
+const StatusBarHeight = StatusBar.currentHeight;
+const { width, height } = Dimensions.get("window");
 
-const Container = styled.View`
-  background-color: #fff;
-  padding: 0 20px;
-  padding-Top: 45px;
-  height: 100%;
-`
-const Top = styled.View`
-  height: 5%;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`
-const MainTitle = styled.Text`
-  font-size: 20px;
-  font-family: Bold;
-`
-const SchoolTitle = styled(MainTitle)`
-  color: #ff9933;
-`
-const Middle = styled.View`
-  height: 70%;
-  margin-bottom: 3px;
-  // background-color: yellow;
-  justify-content: space-between;
-`
-const CategoryWrap = styled.View`
-  height: 90%;
-  justify-content: space-between;
-`
-const Bottom = styled.View`
-  height: 25%;
-`
+const SC = {
+  SafeAreaViewContainer: styled.SafeAreaView`
+    background-color: #fff;
+    flex: 1;
+    ${Platform.OS === "android"
+      ? css`
+          padding-top: ${StatusBarHeight}px;
+        `
+      : undefined}
+  `,
+  Container: styled.ScrollView`
+    padding: 0 20px;
+  `,
+  Top: styled.View`
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+  `,
+  MainTitle: styled.Text`
+    font-size: 20px;
+    font-family: Bold;
+  `,
+  SchoolTitle: styled.Text`
+    font-size: 20px;
+    font-family: Bold;
+    color: ${(props) => props.color};
+  `,
+  Middle: styled.View`
+    padding-top: 10px;
+    margin-bottom: 25px;
+    justify-content: space-between;
+  `,
+  CategoryWrap: styled.View`
+    justify-content: space-between;
+    margin-bottom: 10px;
+  `,
+  JjimWrapNoLogin: styled.View`
+    background-color: #ebedef;
+    height: 75%;
+    border-radius: 10px;
+    margin-top: 10px;
+    align-items: center;
+    justify-content: center;
+  `,
+  JjimTextNoLogin: styled.Text`
+    font-size: 24px;
+    font-family: Medium;
+    color: #797d7f;
+  `,
+  JjimEleWrap: styled.TouchableOpacity`
+    width: ${width * 0.35}px;
+    height: ${width * 0.35}px;
+    background-color: #ebedef;
+    border-radius: 20px;
+    padding: 10px;
+    justify-content: center;
+    align-items: center;
+  `,
+  NoJjimWrap: styled.View`
+    width: ${width * 0.89}px;
+    height: ${width * 0.35}px;
+    background-color: #ebedef;
+    border-radius: 20px;
+    justify-content: center;
+    align-items: center;
+  `,
+};
 
-const JjimWrapNoLogin = styled.View`
-  background-color: #EBEDEF;
-  height: 75%;
-  border-radius: 10px;
-  margin-top: 10px;
-  align-items: center;
-  justify-content: center;
-`
+const Home = ({ navigation }) => {
+  const dispatch = useDispatch();
+  const url = useSelector((state) => state.url);
+  axios.defaults.baseURL = url;
 
-const JjimTextNoLogin = styled.Text`
-  font-size: 30px;
-  font-family: Medium;
-  color: #797D7F;
-`
+  const [categoryList, setCategoryList] = useState([]);
+  const [jjimList, setJjimList] = useState([]);
 
+  const TOKEN_KEY = "@userKey";
 
-const Home = ({navigation}) => {
+  const jjimjjim = useSelector((state) => state.jjimStore);
+  const mainColor = useSelector((state) => state.mainColor);
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  useEffect(async () => {
+    let token;
+    await AsyncStorage.getItem(TOKEN_KEY, (err, result) => {
+      token = result;
+    });
 
+    axios
+      .all([
+        axios.get("/l-categories/"),
+        axios.get("/l-categories/all/m-categories/"),
+      ])
+      .then(
+        axios.spread((res1, res2) => {
+          const largeCategoryList = res1.data.list;
+          const middleCategoryList = res2.data;
+          setCategoryList(largeCategoryList);
+          dispatch(restoreLargeCatList(largeCategoryList));
+          dispatch(restoreMidCatList(middleCategoryList));
+        })
+      )
+      .catch((err) => console.log("대분류, 중분류 하나 못 받아옴~~~" + err));
 
-  // const [data, setData] = useState();
-  // let res;
-  // useEffect(() => {
-  //   async function test() {
-  //     const res = await axios.get('http://3.12.241.33:8000/l-categories/먹거리/m-categories');
-  //     setData(res.data)
-  //   }
-  //   test()
+    axios
+      .get("/users/favorites/", {
+        headers: {
+          authorization: token,
+        },
+      })
+      .then((res) => {
+        if (res.data.list !== undefined) setJjimList(res.data.list);
+        dispatch(restoreJjimStore(res.data.list));
+      })
+      .catch((err) => console.log("찜 목록 못 받아옴~~ " + err));
+  }, []);
 
-  //   axios.get('http://3.12.241.33:8000/l-categories/먹거리/m-categories')
-  //     .then((res)=> {
-  //       setData(res.data)
-  //     })
-  //   }, [data])
+  useEffect(() => {
+    if (jjimjjim) {
+      setJjimList(jjimjjim);
+    }
+  }, [jjimjjim]);
 
-  const categoryList = [
-    {category: "먹거리", icon: <Ionicons name="fast-food" size={24} color="white" />},
-    {category: "카페", icon: <FontAwesome name="coffee" size={24} color="white" />},
-    {category: "술집", icon: <Ionicons name="beer" size={24} color="white" />},
-    {category: "놀거리", icon: <Entypo name="game-controller" size={24} color="white" />},
-    {category: "편의시설/서비스", icon: <Ionicons name="fast-food" size={24} color="white" />},
-    {category: "상점", icon: <Fontisto name="shopping-basket" size={24} color="white" />},
-  ]
+  return (
+    <SC.SafeAreaViewContainer>
+      <SC.Container>
+        {/* Top */}
+        <SC.Top>
+          <SC.MainTitle>우리대학거리</SC.MainTitle>
+          <SC.SchoolTitle color={mainColor}>인하대학교</SC.SchoolTitle>
+        </SC.Top>
 
-  const myJjim = [
-    {category:"먹거리", name:"맛사랑", icon: <Ionicons name="fast-food" size={22} color="white" />},
-    {category:"상점", name:"다이소", icon: <Fontisto name="shopping-basket" size={22} color="white" />},
-    {category:"카페", name:"스타벅스", icon: <FontAwesome   name="coffee" size={22} color="white" />},
-    {category:"놀거리", name:"코인노래방방방방", icon: <Entypo name="game-controller" size={22} color="white" />},
-    {category:"편의시설/서비스", name:"미용미용실", icon: <Entypo name="game-controller" size={22} color="white" />}
-  
-  ];
-
-  return <Container>
-    {/* Top */}
-    <Top>
-      <MainTitle>우리대학거리</MainTitle>
-      <SchoolTitle>인하대학교</SchoolTitle>
-      <TouchableOpacity
-        onPress={() => {navigation.navigate('Search'); }}>
-        <Ionicons name="ios-search-outline" size={24} color="black" />
-      </TouchableOpacity>
-    </Top>
-
-    {/* Middle */}
-    <Middle>
-      {/* 대분류 카테고리 */}
-      <CategoryWrap>
-        {categoryList.map((item, index)=> {
-          return <HomeLargeCatEle key={index} title={item.category} icon={item.icon} navigation={navigation}></HomeLargeCatEle>
-        })}
-      </CategoryWrap>
-      
-      {/* 지도로 보기 버튼 */}
-      <LongBarBtn 
-        text="지도로 보기"
-        onPress={() => alert('지도페이지 아직 안 만듦~.~')}>
-      </LongBarBtn>
-    </Middle>
-
-
-    {/* 내가 찜한 가게 */}
-    <Bottom>
-      <MainTitle>내가 찜한 가게</MainTitle>
-      {isLoggedIn 
-      ? (<ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{marginTop:15, flexDirection: 'row'}}>
-          {myJjim.map((item, index) => {
-            return <JjimEle key={index} category={item.category} icon={item.icon} name={item.name}></JjimEle>
-          })}
-        </ScrollView>)
-      :  (<JjimWrapNoLogin>
-        <JjimTextNoLogin>로그인을 해주세요 ^0^</JjimTextNoLogin>
-        </JjimWrapNoLogin>)
-      }
-    </Bottom>
-  </Container>
-}
-
+        <ScrollView showsHorizontalScrollIndicator={false}>
+          <SC.Middle>
+            <SC.CategoryWrap>
+              {categoryList &&
+                categoryList.map((item, index) => {
+                  return (
+                    <LargeCatEle
+                      key={index}
+                      name={item.name}
+                      page="MiddleCat"
+                      navi={navigation}
+                      color="main"
+                    ></LargeCatEle>
+                  );
+                })}
+              <LargeCatEle
+                name={"랜덤 뽑기"}
+                page="RandomMenu"
+                navi={navigation}
+                color="random"
+              ></LargeCatEle>
+            </SC.CategoryWrap>
+            <View style={{ alignItems: "center" }}>
+              <LongBarBtn
+                text="지도로 보기"
+                nextPage="Map"
+                navigation={navigation}
+              ></LongBarBtn>
+            </View>
+          </SC.Middle>
+          <View>
+            <SC.MainTitle>내가 찜한 가게</SC.MainTitle>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{
+                marginVertical: 15,
+                flexDirection: "row",
+              }}
+            >
+              {jjimList == false ? (
+                <SC.NoJjimWrap>
+                  <Text>찜한 가게가 없어요~</Text>
+                </SC.NoJjimWrap>
+              ) : (
+                jjimList &&
+                jjimList.slice(0, 5).map((item, index) => {
+                  return (
+                    <JjimEle
+                      key={index}
+                      l_category={item.l_category}
+                      // icon={item.icon}
+                      name={item.store_name}
+                      navigation={navigation}
+                    ></JjimEle>
+                  );
+                })
+              )}
+              {jjimList && jjimList.length >= 5 ? (
+                <SC.JjimEleWrap
+                  activeOpacity={0.8}
+                  onPress={() => navigation.navigate("JjimPage")}
+                >
+                  <Text>더보기 ^0^</Text>
+                </SC.JjimEleWrap>
+              ) : (
+                <></>
+              )}
+            </ScrollView>
+          </View>
+        </ScrollView>
+      </SC.Container>
+    </SC.SafeAreaViewContainer>
+  );
+};
 export default Home;
-
-
-// const styles = StyleSheet.create({
-  // container: {
-  //   flex: 1,
-  //   backgroundColor: '#fff',
-  //   paddingHorizontal: 20, 
-  //   paddingTop: 45,
-  // },
-  // top: {
-  //   flex: 0.7,
-  //   flexDirection: 'row',
-  // },
-  // mainTitle: {
-  //   fontSize: RFPercentage(2.5),
-  //   fontWeight: "bold",
-  // },
-  // title: {
-  //   fontSize: RFPercentage(2.4),
-  //   fontWeight: "bold",
-  // },
-  // schoolName: {
-  //   color: "#ff9933",
-  //   fontSize: RFPercentage(2.5),
-  //   fontWeight: "bold",
-  // },
-  // searchIcon: {
-  //   fontSize: RFPercentage(3.5),
-  // },
-  // MiddleWrap: {
-  //   flex:5.5,
-  //   marginBottom: 20
-  // },
-  // categoryElementWrap: {
-  //   flexDirection: 'row', 
-  //   alignItems:"center", 
-  //   justifyContent:"space-between", 
-  //   height:"13%"
-  // },
-  // categoryIconWrap: {
-  //   backgroundColor: "#ff9933",
-  //   width: Dimensions.get('window').width*0.1,
-  //   height: Dimensions.get('window').width*0.1,
-  //   alignItems:"center", 
-  //   justifyContent: 'center',
-  //   borderRadius: 17,
-  //   marginRight: 15,
-  // },
-  // categoryIcon : {
-  //   fontSize:RFPercentage(3),
-  // },
-  // categoryText: {
-  //   color:'black', 
-  //   fontSize:RFPercentage(2.2),
-  //   width:"78%", 
-  //   fontWeight:"bold"
-  // },
-
-  // mapBtn: {
-  //   backgroundColor: '#ff9933', 
-  //   borderRadius:5, 
-  //   alignItems:"center", 
-  //   justifyContent: 'center', 
-  //   height: Dimensions.get('window').height*0.06,
-  //   marginTop: 20 
-  // },
-  // mapText: {
-  //   fontSize: RFPercentage(2.4), 
-  //   color: '#fff', 
-  //   fontWeight:'bold'
-  // },
-  // jjimWrap: {
-  //   flex:2.5,
-  // },
-  // jjimIcon: {
-  //   fontSize:RFPercentage(2.8)
-  // },
-  // jjimElementWrap: {
-  //   width:Dimensions.get('window').width*0.3, 
-  //   height:Dimensions.get('window').width*0.3, 
-  //   backgroundColor:'#EBEDEF', 
-  //   marginRight:15, 
-  //   borderRadius:20, 
-  //   padding:10
-  // },
-  // jjimIcons:{
-  //   flexDirection:'row', 
-  //   alignItems:"center", 
-  //   justifyContent: 'space-between',
-  //   marginBottom:10
-  // },
-  // jjimIconWrap:{
-  //   width:Dimensions.get('window').width*0.09,
-  //   height:Dimensions.get('window').width*0.09, 
-  //   backgroundColor:'#A9CCE3', 
-  //   alignItems:"center", 
-  //   justifyContent: 'center',
-  //   borderRadius:50, 
-  // },
-//   jjimWrapNoLogin: {
-//     backgroundColor:'#EBEDEF', 
-//     height:Dimensions.get('window').width*0.3, 
-//     borderRadius:20, 
-//     marginTop:15,
-//     alignItems:"center", 
-//     justifyContent: 'center',
-//   },
-//   jjimTextNoLogin: {
-//     fontSize: RFPercentage(3),
-//     color: '#797D7F'
-//   }
-// });

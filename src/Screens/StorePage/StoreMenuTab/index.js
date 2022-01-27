@@ -1,59 +1,62 @@
-import React from 'react';
-import { StyleSheet, View, ScrollView, Dimensions } from 'react-native';
-import MenuEle from '../../../Components/MenuEle';
-import styled from 'styled-components/native'
-
-const Container = styled.View`
-    background-color: #fff;
-`;
+import React, { useState, useEffect } from "react";
+import { StyleSheet, View, ScrollView, Dimensions } from "react-native";
+import MenuEle from "../../../Components/MenuEle";
+import styled from "styled-components/native";
+import { useSelector } from "react-redux";
+import axios from "axios";
 
 const SC = {
-    Container: styled.View`
-        background-color: #fff;
-        height: 100%;
-    `,
-
-}
+  Container: styled.View`
+    background-color: #fff;
+    height: 100%;
+  `,
+};
 
 const StoreMenuTab = () => {
-    const menuList = [
-        {
-            menuName: "제육볶음",
-            menuDes: "매콤한 돼지고기 볶음",
-            menuPrice: "5,500 원"
-        },
-        {
-            menuName: "치킨까스",
-            menuDes: "바삭한 치킨까스",
-            menuPrice: "5,500 원"
-        },
-        {
-            menuName: "돈까스",
-            menuDes: "바삭한 돈까스",
-            menuPrice: "5,500 원"
-        },
-        {
-            menuName: "순두부찌개",
-            menuDes: "얼큰한 순두부찌개",
-            menuPrice: "5,500 원"
-        },
-        {
-            menuName: "김치찌개",
-            menuDes: "칼칼한 생고기 김치찌개",
-            menuPrice: "5,500 원"
-        }
-    ]
+  const curLargeCat = useSelector((state) => state.curLargeCat);
+  const curMidCat = useSelector((state) => state.curMidCat);
+  const curStore = useSelector((state) => state.curStore);
+  const [storeMenu, setStoreMenu] = useState([]);
 
-    return (
-        <SC.Container>
-            <ScrollView>
-                {menuList.map((item) => (
-                    <MenuEle menuName={item.menuName} menuDes={item.menuDes} menuPrice={item.menuPrice} />
-                ))}
-            </ScrollView>
-        </SC.Container>
-    );
-
-}
+  useEffect(() => {
+    const getStore = async () => {
+      await axios
+        .get(
+          "/l-categories/" +
+            curLargeCat +
+            "/m-categories/" +
+            curMidCat +
+            "/stores/" +
+            curStore +
+            "/menu"
+        )
+        .then((res) => {
+          setStoreMenu(res.data.list);
+        })
+        .catch((err) => {
+          console.log("error");
+          console.log(err);
+        });
+    };
+    getStore();
+  }, []);
+  return (
+    <SC.Container>
+      <ScrollView>
+        {storeMenu &&
+          storeMenu.map((item, index) => {
+            return (
+              <MenuEle
+                key={index}
+                menuName={item.menu_name}
+                menuDes={item.brief_info}
+                menuPrice={item.price}
+              />
+            );
+          })}
+      </ScrollView>
+    </SC.Container>
+  );
+};
 
 export default StoreMenuTab;

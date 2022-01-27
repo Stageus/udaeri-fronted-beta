@@ -1,9 +1,13 @@
-import React from 'react';
-import { SafeAreaView } from 'react-native';
-import { ScrollView, FlatList } from 'react-native-gesture-handler';
-import { Foundation, FontAwesome } from '@expo/vector-icons';
-import { Rating } from 'react-native-ratings';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import axios from "axios";
+
+import { Dimensions } from 'react-native';
+import { ScrollView, FlatList, TouchableOpacity } from 'react-native-gesture-handler';
+const { width, height } = Dimensions.get('window');
 import styled from 'styled-components/native';
+import { restoreStoreReviews } from "../../../../reducer/index";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import ReviewEle from '../../../Components/ReviewEle';
 import ScoreRating from '../../../Components/ScoreRating';
 import ScoreSummary from '../../../Components/ScoreSummary';
@@ -11,65 +15,59 @@ import ReviewOptionBar from '../../../Components/ReviewOptionBar';
 import ReviewWriteBtn from '../../../Components/ReviewWriteBtn';
 
 const StoreReviewTab = () => {
-    const reviewList = [
-        {
-            nickname: "효다몬",
-            content: "ㄹㅇ 맛있음",
-            score: 5,
-            date: "2021-09-12"
-        },
-        {
-            nickname: "코딩하는 노예",
-            content: "자주 먹으니깐 질림",
-            score: 4,
-            date: "2021-09-10"
-        },
-        {
-            nickname: "이상민",
-            content: "양이 너무 많음",
-            score: 5,
-            date: "2021-09-09"
-        },
-        {
-            nickname: "정유진",
-            content: "",
-            score: 4,
-            date: "2021-09-02"
-        },
-        {
-            nickname: "아무개",
-            content: "",
-            score: 5,
-            date: "2021-09-01"
-        },
-        {
-            nickname: "홍길동",
-            content: "",
-            score: 5,
-            date: "2021-08-12"
-        },
-        {
-            nickname: "혜팔이",
-            content: "야야야야야야야야",
-            score: 1,
-            date: "2021-08-12"
-        },
-    ]
+    const TOKEN_KEY = "@userKey";
+    const curLargeCat = useSelector((state) => state.curLargeCat);
+    const curMidCat = useSelector((state) => state.curMidCat);
+    const curStore = useSelector((state) => state.curStore);
+    const [storeReview, setStoreReview] = useState([]);
+
+    const [reload, setReload] = useState(true); // 새로고침 state
+    console.log("reload :", reload);
+    const getStore = async () => {
+        let token;
+        await AsyncStorage.getItem(TOKEN_KEY, (err, result) => {
+            token = result;
+        });
+        axios
+            .get("/l-categories/" + curLargeCat + "/m-categories/" + curMidCat + "/stores/" + curStore + "/review",
+                {
+                    headers: {
+                        Authorization: token,
+                    },
+                    body: { "order_type": "최신순" }
+                }
+            )
+            .then((res) => {
+                //console.log("이미 썼는가? :", res.data.isWrited);
+                if (res.data.success) {
+                    setStoreReview(res.data.list);
+                    setReload(false);
+                }
+            })
+            .catch((err) => {
+                console.log("error");
+                console.log(err);
+            });
+    }
+
+    useEffect(() => {
+        if (reload) {
+            getStore();
+        }
+    }, [reload])
 
     let scoreSum = 0
     const scoreDist = [0, 0, 0, 0, 0] // 별점 분포
-    reviewList.map((item) => {
-        scoreSum += item.score
-        scoreDist[5 - item.score] += 1
+    storeReview && storeReview.map((item) => {
+        scoreSum += item.star_rating
+        scoreDist[5 - item.star_rating] += 1
     })
-
-    const scoreAvg = (scoreSum / reviewList.length).toFixed(1); // 평균 별점
+    const scoreAvg = (scoreSum / storeReview.length).toFixed(1); // 평균 별점
     const totalScore = scoreDist.reduce((a, b) => a + b);
-
     const SC = {
         Container: styled.View`
+            flex: 1;
             background-color: #fff;
-            height: auto;
         `,
         scoreContainer: styled.View`
             flex-Direction: row;
@@ -82,28 +80,35 @@ const StoreReviewTab = () => {
         scoresSummaryWrap: styled.View`
         `,
         reviewContainer: styled.View`
+            flex: 1;
         `,
+        scrollView: styled.ScrollView`
+            
+        `
     };
 
     return (
         <SC.Container>
-            <ScrollView>
-                <SC.scoreContainer>
-                    <ScoreRating score={scoreAvg} />
-                    <SC.scoresSummaryWrap>
-                        {scoreDist.map((item, index) => (
-                            <ScoreSummary score={index} nums={item} total={totalScore} />
-                        ))}
-                    </SC.scoresSummaryWrap>
-                </SC.scoreContainer>
-                <ReviewOptionBar reviewNums={reviewList.length} />
-                <SC.reviewContainer>
-                    {reviewList.map((item) => (
-                        <ReviewEle nickname={item.nickname} score={item.score} content={item.content} date={item.date} />
+
+            <SC.scoreContainer>
+                <ScoreRating score={scoreAvg} />
+                <SC.scoresSummaryWrap>
+                    {scoreDist && scoreDist.map((item, index) => (
+                        <ScoreSummary score={index} nums={item} total={totalScore} />
                     ))}
-                </SC.reviewContainer>
-            </ScrollView>
-            <ReviewWriteBtn />
+                </SC.scoresSummaryWrap>
+            </SC.scoreContainer>
+            <ReviewOptionBar reviewNums={storeReview.length} />
+            <SC.reviewContainer>
+                <SC.scrollView>
+
+                    {storeReview && storeReview.map((item) => (
+                        <ReviewEle nickname={item.nickname} score={item.star_rating} content={item.review} date={item.writed_at} />
+                    ))}
+
+                </SC.scrollView>
+            </SC.reviewContainer>
+            <ReviewWriteBtn setReload={setReload} />
         </SC.Container>
     );
 }

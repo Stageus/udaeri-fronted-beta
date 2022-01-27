@@ -1,64 +1,67 @@
-import React from 'react';
-import styled from 'styled-components/native'
+import React from "react";
+import { Dimensions } from "react-native";
+import styled from "styled-components/native";
+import { useSelector, useDispatch } from "react-redux";
+import { restoreCurStore } from "../../../reducer/index";
 
-const JjimEleWrap = styled.View`
-  width: 30px;
-  height: 30px;
-  background-color: #EBEDEF;
-  margin-right: 15px;
-  border-radius: 20px;
-  padding: 10px;
-`
+const { width, height } = Dimensions.get("window");
 
-const Top = styled.View`
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  flex-direction: row;
-`
-
-const IconWrap = styled.View`
-  width: 9px;
-  height: 9px;
-  background-color: #A9CCE3;
-  align-items: center;
-  justify-content: center;
-  border-radius: 20px;
-`
-
-const Bottom = styled.View`
-  margin-left: 7px;
-`
-
-const CatTitle = styled.Text`
-  font-size: 1.7px;
-  color: #797D7F;
-`
-
-const ShopName = styled.Text`
-  font-size: 2.2px;
-  font-weight: bold;
-`
+const SC = {
+  JjimEleWrap: styled.TouchableOpacity`
+    width: ${width * 0.35}px;
+    height: ${width * 0.35}px;
+    background-color: #ebedef;
+    margin-right: 15px;
+    border-radius: 20px;
+    padding: 10px;
+  `,
+  Top: styled.View`
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    flex-direction: row;
+  `,
+  IconWrap: styled.View`
+    width: ${width * 0.1}px;
+    height: ${width * 0.1}px;
+    background-color: #a9cce3;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+  `,
+  Bottom: styled.View`
+    margin-left: 7px;
+  `,
+  CatTitle: styled.Text`
+    font-size: 14px;
+    color: #797d7f;
+  `,
+  ShopName: styled.Text`
+    font-size: 12px;
+    font-weight: bold;
+  `,
+};
 
 const JjimEle = (props) => {
+  const dispatch = useDispatch();
 
   return (
-    <JjimEleWrap>
-      <Top>
-        <IconWrap>
-          {props.icon}
-        </IconWrap>
-      </Top>
-      <Bottom>
-        <CatTitle>{props.category}</CatTitle>
-        <ShopName numberOfLines={1}>{props.name}</ShopName>
-      </Bottom>
-
-
-    </JjimEleWrap>
-
-
-  )
-}
+    <SC.JjimEleWrap
+      activeOpacity={0.8}
+      onPress={() => {
+        props.navigation.navigate("StorePage", { key: props.name });
+        dispatch(restoreCurStore(props.name));
+      }}
+    >
+      <SC.Top>
+        <SC.IconWrap>{props.icon}</SC.IconWrap>
+      </SC.Top>
+      <SC.Bottom>
+        <SC.CatTitle>{props.l_category}</SC.CatTitle>
+        <SC.ShopName numberOfLines={1}>{props.name}</SC.ShopName>
+      </SC.Bottom>
+    </SC.JjimEleWrap>
+  );
+};
 
 export default JjimEle;

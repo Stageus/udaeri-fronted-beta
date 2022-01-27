@@ -1,42 +1,58 @@
-import React from 'react';
-import { View, Text } from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
-import styled from 'styled-components/native';
+import React from "react";
+import styled from "styled-components/native";
+import { StyleSheet, View, Dimensions } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useSelector, useDispatch } from "react-redux";
+import { restoreCurLargeCat } from "../../../reducer/index";
+import { RFPercentage } from "react-native-responsive-fontsize";
 
 const SC = {
-    categoryElementWrap: styled.View`
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        height : 13%;
-    `,
-    categoryIconWrap: styled.View`
-        background-color: #ff9933;
-        width : 20px;
-        height : 20px;
-        align-items: center;
-        justify-content: center;
-        border-radius: 17px;
-        margin-right: 15px;
-    `,
-    categoryText: styled.Text`
-        color : black;
-        font-size : 10px;
-        width: 78%;
-        font-weight: bold;
-    `,
-}
+  Container: styled.TouchableOpacity`
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 7.5px 0;
+  `,
+  left: styled.View`
+    flex-direction: row;
+    align-items: center;
+  `,
+  thumbnail: styled.View`
+    background-color: ${(props) =>
+      props.color === "main" ? props.mainColor : "#1876FB"};
+    width: 32px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    margin-right: 15px;
+  `,
+  catTitle: styled.Text`
+    font-family: Regular;
+    font-size: ${RFPercentage(2.3)};
+    color: black;
+  `,
+};
 
 const LargeCatEle = (props) => {
-    return (
-        <SC.categoryElementWrap key={props.key}>
-            <SC.categoryIconWrap>
-                {props.icon}
-            </SC.categoryIconWrap>
-            <SC.categoryText>{props.category}</SC.categoryText>
-            <AntDesign name="right" size={15} color="black" />
-        </SC.categoryElementWrap>
-    )
-}
+  const dispatch = useDispatch();
+  const mainColor = useSelector((state) => state.mainColor);
+  return (
+    <SC.Container
+      onPress={() => {
+        props.navi.navigate(props.page, { key: props.name });
+        dispatch(restoreCurLargeCat(props.name));
+      }}
+    >
+      <SC.left>
+        <SC.thumbnail color={props.color} mainColor={mainColor}>
+          {props.icon}
+        </SC.thumbnail>
+        <SC.catTitle>{props.name}</SC.catTitle>
+      </SC.left>
+      <MaterialIcons name="arrow-forward-ios" size={12} color="gray" />
+    </SC.Container>
+  );
+};
 
 export default LargeCatEle;

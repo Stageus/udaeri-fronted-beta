@@ -2,13 +2,14 @@ import React from 'react';
 import styled from 'styled-components/native';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useSelector, useDispatch } from "react-redux";
+import { restoreCurLargeCat } from '../../../reducer/index';
 
 const SC = {
     Container: styled.TouchableOpacity`
         align-Items: center;
         flex-Direction: row;
         justify-Content: space-between;
-        padding: 0 20px;
         margin : 7.5px 0;
     `,
     left: styled.View`
@@ -39,10 +40,14 @@ const SC = {
         color : black;
     `,
 }
+
+
 const CatEle = (props) => {
+    const dispatch = useDispatch();
     return (
         <SC.Container onPress={() => {
-            props.navi.navigate('StoreList', { key: props.name });
+            props.navi.navigate(props.page, { key: props.name });
+            dispatch(restoreCurLargeCat(props.name))
         }}>
             <SC.left>
                 <SC.thumbnail>{props.icon}</SC.thumbnail>

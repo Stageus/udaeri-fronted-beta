@@ -5,6 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "sdkVersion": "43.0.0",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -16,6 +17,10 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "packagerOpts": { 
+      "config": "metro.config.js", 
+      "sourceExts": ["js", "jsx", "svg"]
+    },
     "ios": {
       "supportsTablet": true
     },
@@ -23,7 +28,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
+      },
+      "config": {
+        "googleMaps": {"apiKey": "AIzaSyAS9tWbUhSQZnx-2_as1gBAKK5GIPhkI6g"}
       }
+
     },
     "web": {
       "favicon": "./assets/favicon.png"

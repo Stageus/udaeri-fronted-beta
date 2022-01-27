@@ -1,38 +1,50 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, StatusBar, ScrollView, Dimensions, TouchableOpacity, SafeAreaView } from 'react-native';
-import styled from 'styled-components/native';
+import { SafeAreaView, StatusBar, Platform } from "react-native";
+import styled, { css } from "styled-components/native";
 
-import HeaderBar from '../../Components/HeaderBar';
-import HorizontalBar from '../../Components/HorizontalBar';
-import StoreEle from '../../Components/StoreEle';
-import StoreListNavi from '../../Components/Navigation/StoreListNavi';
+import HeaderBar from "../../Components/HeaderBar";
+import StoreListNavi from "../../Components/Navigation/StoreListNavi";
+
+import { useSelector, useDispatch } from "react-redux";
 
 const SC = {
-    Container: styled.View`
-        background-Color: #fff;
-    `,
-    storeContainer: styled.View`
-        height: 100%;
-    `,
-    Content: styled.View`
-        height: 100%;
-        border-top-width: 0.75px;
-        border-color: #f1f1f1;
-    `,
-}
-const StoreList = ({ navigation, route }) => {
-    return (
-        <SafeAreaView>
-            <SC.Container>
-                {/* 헤더 */}
-                <HeaderBar left="arrow" title={route.params.key} right="magni" navigation={navigation} />
-                <SC.Content>
-                    <StoreListNavi title={route.params.key} />
-                </SC.Content>
-            </SC.Container>
-        </SafeAreaView>
+  Container: styled.View`
+    background-color: #fff;
+    ${Platform.OS === "android"
+      ? css`
+          padding-top: ${StatusBar.currentHeight}px;
+        `
+      : undefined}
+  `,
+  storeContainer: styled.View`
+    height: 100%;
+  `,
+  Content: styled.View`
+    height: 100%;
+    // border-top-width: 0.75px;
+    // border-color: #f1f1f1;
+  `,
+};
+const StoreList = ({ navigation }) => {
+  const curLargeCat = useSelector((state) => state.curLargeCat);
+  const curMidCat = useSelector((state) => state.curMidCat);
 
-    )
-}
+  return (
+    <SafeAreaView
+      style={{
+        backgroundColor: "#FFFFFF",
+        flex: 1,
+      }}
+    >
+      <SC.Container>
+        {/* 헤더 */}
+        <HeaderBar left="arrow" title={curLargeCat} navigation={navigation} />
+        <SC.Content>
+          <StoreListNavi title={curMidCat} navigation={navigation} />
+        </SC.Content>
+      </SC.Container>
+    </SafeAreaView>
+  );
+};
 
 export default StoreList;

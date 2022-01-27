@@ -19,8 +19,6 @@ const SC = {
         color: gray;
     `
 }
-
-
 const StoreInfoEle = (props) => {
     return (
         <SC.storeInfoWrap>

@@ -2,6 +2,9 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import styled from 'styled-components/native';
 import { Ionicons, Entypo } from '@expo/vector-icons';
+import { useSelector, useDispatch } from 'react-redux';
+import { restoreCurStore } from '../../../reducer/index';
+
 
 const SC = {
     Container: styled.TouchableOpacity`
@@ -52,9 +55,11 @@ const SC = {
     `,
 }
 const StoreEle = (props) => {
+    const dispatch = useDispatch();
     return (
         <SC.Container onPress={() => {
             props.navigation.navigate('StorePage', { key: props.storeName });
+            dispatch(restoreCurStore(props.storeName));
         }}>
             <SC.storeThumbnail>
             </SC.storeThumbnail>
