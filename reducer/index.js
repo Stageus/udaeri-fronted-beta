@@ -7,7 +7,7 @@ const initState = {
   url: "https://udaeri.com",
   mainColor: "#ffaa56",
   BGColor1: "#F1F1F5",
-  BGColor2: "F8F8FA",
+  BGColor2: "#F8F8FA",
   fontColor1: "#191919",
   fontColor2: "#767676",
   fontColor3: "#999999",
