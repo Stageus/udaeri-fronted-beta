@@ -160,15 +160,15 @@ const Home = ({ navigation }) => {
             <SC.CategoryWrap>
               {categoryList &&
                 categoryList.map((item, index) => {
-                  return (
+                  return(
                     <LargeCatEle
-                      key={index}
-                      name={item.name}
-                      page="MiddleCat"
-                      navi={navigation}
-                      color="main"
+                        key={index}
+                        name={item.name}
+                        page="MiddleCat"
+                        navi={navigation}
+                        color="main"
                     ></LargeCatEle>
-                  );
+                  )
                 })}
               <LargeCatEle
                 name={"랜덤 뽑기"}

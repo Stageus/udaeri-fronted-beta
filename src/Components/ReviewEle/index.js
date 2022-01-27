@@ -5,11 +5,14 @@ import { Rating } from 'react-native-ratings';
 
 const SC = {
     reviewWrap: styled.View`
+        margin: 10px;
+        background-color: white;
         flex-Direction: row;
         justify-Content: space-between;
         padding: 20px;
-        border-Bottom-Width: 1px;
-        border-Bottom-Color: #d3d3d3;
+        border-radius: 10px;
+        border-width: ${(props) => props.isMyReview ? 1 : 0}px;
+        border-color: ${(props) => props.isMyReview ? "#ff9933" : "rgba(0,0,0,0)"};
     `,
     leftWrap: styled.View`
         align-items:flex-start;
@@ -31,8 +34,9 @@ const SC = {
 }
 
 const ReviewEle = (props) => {
+    console.log("내꺼? ", props.isMyReview);
     return (
-        <SC.reviewWrap>
+        <SC.reviewWrap isMyReview={props.isMyReview}>
             <SC.leftWrap>
                 <SC.nickname>{props.nickname}</SC.nickname>
                 <Rating

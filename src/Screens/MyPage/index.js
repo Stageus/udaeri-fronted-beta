@@ -87,11 +87,10 @@ const MyPage = ({ navigation }) => {
   const TOKEN_KEY = "@userKey";
 
   const listElement = [
-    { title: "문의하기", page: "Inquiry" },
-    { title: "버전정보", page: null },
-    { title: "후원하기", page: null },
-    { title: "버그리포트", page: null },
-    { title: "개발자정보", page: null },
+    { title: "문의/버그리포트", page: "Inquiry" },
+    { title: "개발정보", page: null },
+    { title: "이용약관", page: null },
+    { title: "후원하기", page: "Sponsor" },
     { title: "로그아웃", page: null },
   ];
 
