@@ -6,10 +6,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { restoreToken, checkToken } from "../../../reducer/index";
 import { MaterialIcons } from "@expo/vector-icons";
 
-import { loadTossPayments } from '@tosspayments/payment-sdk'
-
-
-
 const SC = {
   MyPageListWrap: styled.View`
     border-bottom-width: 1px;
@@ -37,19 +33,6 @@ const MyPageEle = (props) => {
 
   const GrayColor = useSelector((state) => state.grayColor);
   
-  const tossPay = async () => {
-    const clientKey = 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq'
-    const tossPayments = await loadTossPayments(clientKey);
-    tossPayments.requestPayment('카드', {
-      amount: 15000,
-      orderId: 'W-zFTtRywj6DFeoCC-SRy',
-      orderName: '토스 티셔츠 외 2건',
-      customerName: '박토스',
-      successUrl: 'http://localhost:8080/success',
-      failUrl: 'http://localhost:8080/fail',
-    })
-  }
-  
   return (
     <SC.MyPageListWrap>
       <SC.MyPageListEle
@@ -57,8 +40,6 @@ const MyPageEle = (props) => {
         onPress={() => {
           if (props.title === "로그아웃") {
             tokenExpire();
-          } else if (props.page === "Sponsor") {
-            tossPay();
           } else {
             props.navigation.navigate(props.page);
           }

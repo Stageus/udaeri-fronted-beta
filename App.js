@@ -37,6 +37,10 @@ import NaverLogin from "./src/Screens/Social/Login/Naver/index";
 import JjimPage from "./src/Screens/Jjim/index";
 
 import Inquiry from "./src/Screens/Inquiry";
+import Sponsor from "./src/Screens/Sponsor";
+import SponsorSuccess from "./src/Screens/Sponsor/Success";
+import SponsorFailure from "./src/Screens/Sponsor/Failure";
+
 import RandomMenu from "./src/Screens/RandomMenu";
 
 const Stack = createStackNavigator();
@@ -120,9 +124,13 @@ const App = () => {
             <Stack.Screen name="MapSearchResult" component={MapSearchResult} />
             <Stack.Screen name="MyPage" component={MyPage} />
             <Stack.Screen name="Inquiry" component={Inquiry} />
+            <Stack.Screen name="Sponsor" component={Sponsor} />
+            <Stack.Screen name="SponsorSuccess" component={SponsorSuccess} />
+            <Stack.Screen name="SponsorFailure" component={SponsorFailure} />
             <Stack.Screen name="RandomMenu" component={RandomMenu} />
           </>
         )}
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

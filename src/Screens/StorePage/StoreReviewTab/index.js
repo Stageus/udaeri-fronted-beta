@@ -111,14 +111,29 @@ const StoreReviewTab = () => {
                 <SC.scrollView>
 
                     {storeReview && storeReview.map((item) => (
-                        <ReviewEle nickname={item.nickname} score={item.star_rating} content={item.review} date={item.writed_at.substr(0, 10)} isMyReview={JSON.stringify(item) === JSON.stringify(myReview)} />
+                        <ReviewEle 
+                            nickname={item.nickname} 
+                            score={item.star_rating} 
+                            content={item.review} 
+                            date={item.writed_at.substr(0, 10)} 
+                            isMyReview={JSON.stringify(item) === JSON.stringify(myReview)} 
+                            curLargeCat={curLargeCat}
+                            curMidCat={curMidCat}
+                            curStore={curStore}
+                            setReload={setReload}
+                        />
                     ))}
 
                 </SC.scrollView>
             </SC.reviewContainer>
             {
                 myReview === null ? 
-                    <ReviewWriteBtn setReload={setReload} /> :
+                    <ReviewWriteBtn 
+                        setReload={setReload} 
+                        curLargeCat={curLargeCat}
+                        curMidCat={curMidCat}
+                        curStore={curStore}
+                    /> :
                     <></>
             }
             
