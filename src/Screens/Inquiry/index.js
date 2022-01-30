@@ -31,10 +31,10 @@ const SC = {
     `,
     blankSpace: styled.View`
         width : ${width / 1.2}px;
-        height: ${width / 1.5}px;
+        height: ${width / 2}px;
         background-color : #ffffff;
         padding: 20px;
-        border-radius: 10px;
+        border-radius: 5px;
         border-color : #ff9933;
         border-width : 1px;
         margin-bottom : 20px;
@@ -55,7 +55,7 @@ const SC = {
         width: ${width / 1.2}px;
         height: 40px;
         background-color: #ff9933;
-        border-radius: 10px;
+        border-radius: 5px;
         justify-content: center;
         align-items: center;
     `,
@@ -100,7 +100,6 @@ const Inquiry = ({ navigation }) => {
                 <SC.keyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
                     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                         <SC.mainContainer>
-                            <MaterialCommunityIcons name="account-question-outline" size={96} color="#ff9933" />
                             <SC.blankSpace>
                                 <SC.inputText
                                     onChangeText={setInquiryText}

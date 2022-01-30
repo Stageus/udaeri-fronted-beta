@@ -4,20 +4,19 @@ import {
     SafeAreaView,
     StatusBar,
     Dimensions,
-    TouchableWithoutFeedback,
-    Keyboard
+    Alert
 } from "react-native";
+import { useSelector } from "react-redux";
 import styled, { css } from "styled-components/native";
 import HeaderBar from "../../Components/HeaderBar";
 import { loadTossPayments } from '@tosspayments/payment-sdk'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import Payments from "tosspayments-react-native";
 
-import SponsorSuccess from "./Success";
-import SponsorFailure from "./Failure";
 const { width, height } = Dimensions.get('window');
 const StatusBarHeight = StatusBar.currentHeight;
-const clientKey = 'test_ck_0Poxy1XQL8Rbx1a2WJY87nO5Wmlg'
+const clientKey = 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq'
 
 const SC = {
     container: styled.View`
@@ -30,14 +29,13 @@ const SC = {
             : undefined}
     `,
     mainContainer: styled.View`
-        height:auto;
         flex : 1;
         justify-content : center;
         align-items : center;
     `,
-    tossBtn : styled.TouchableOpacity`
-        width: 100px;
-        height: 100px;
+    tossBtn : styled.View`
+        width: 100%;
+        height: 100%;
         background-color: red;
     `,
     keyboardAvoidingView: styled.KeyboardAvoidingView`
@@ -46,23 +44,26 @@ const SC = {
 }
 
 const Sponsor = ({ navigation }) => {
+    
     const TOKEN_KEY = "@userKey";
-    const onSubmit = async () => {
+
+    const onSubmit = async (data) => {
         let tokentoken;
         await AsyncStorage.getItem(TOKEN_KEY, (err, result) => {
             tokentoken = result;
         });
         axios
             .post("/support",
-                {
-                    "orderId" : "TFMPcFoSzz2S-5yICJL44",
-                    "paymentKey" : "5zJ4xY7m0kODnyRpQWGrNP0xmbDG03Kwv1M9ENjbeoPaZdL6",
-                    "amount" : 15000
-                }, {
+            {
                 headers: {
                     authorization: tokentoken,
                     "Content-Type": "application/json",
                 },
+                body: { 
+                    "orderId" : data.orderId,
+                    "paymentKey" : data.paymentKey,
+                    "amount" : data.amount 
+                }
             })
             .then(function (res) {
                 console.log(res.data)
@@ -71,19 +72,6 @@ const Sponsor = ({ navigation }) => {
                 console.log(error);
             });
     }
-
-    const tossPay = async () => {
-        const tossPayments = await loadTossPayments(clientKey);
-        tossPayments.requestPayment('카드', {
-          amount: 15000,
-          orderId: 'TFMPcFoSzz2S-5yICJLDK',
-          orderName: '토스 티셔츠 외 2건',
-          customerName: '박토스',
-          successUrl: SponsorSuccess,
-          failUrl: SponsorFailure,
-        })
-      }
-
     return (
         <SafeAreaView
             style={{
@@ -97,18 +85,17 @@ const Sponsor = ({ navigation }) => {
                     title="후원하기"
                     navigation={navigation}>
                 </HeaderBar>
-                <SC.keyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
-                    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                        <SC.mainContainer>
-                            <SC.tossBtn onPress={() => {
-                                tossPay()
-                            }}>
-
-                            </SC.tossBtn>
-                        </SC.mainContainer>
-                    </TouchableWithoutFeedback>
-                </SC.keyboardAvoidingView>
-
+                <Payments
+                    clientKey={clientKey}
+                    orderId="TEST01010101010101"
+                    orderName="테스트 주문"
+                    amount={2000}
+                    onSuccess={(data) => {
+                        onSubmit(data)
+                        Alert.alert("결제 성공", JSON.stringify(data))
+                    }}
+                    onError={(error) => Alert.alert("결제 실패", JSON.stringify(error))}
+                />
             </SC.container>
         </SafeAreaView >
 

@@ -129,7 +129,7 @@ const HeaderBar = (props) => {
           onPress={() => jjimToggle(props.title)}
         />
       ) : (
-        <View></View>
+        <View style={{width: 24}}></View>
       )}
     </SC.headerBar>
   );
