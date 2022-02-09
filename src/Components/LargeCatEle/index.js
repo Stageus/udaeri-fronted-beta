@@ -3,8 +3,7 @@ import styled from "styled-components/native";
 import { StyleSheet, View, Dimensions } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
-import { restoreCurLargeCat } from "../../../reducer/index";
-import { restoreCurMidCat } from '../../../reducer/index';
+import { restoreCurLargeCat, restoreCurMidCat } from "../../../reducer/index";
 import { RFPercentage } from "react-native-responsive-fontsize";
 
 const SC = {
@@ -54,7 +53,8 @@ const LargeCatEle = (props) => {
         <SC.catTitle>{props.name}</SC.catTitle>
       </SC.left>
       <MaterialIcons name="arrow-forward-ios" size={12} color="gray" />
-    </SC.Container>  :
+    </SC.Container>  
+    :
     <SC.Container
       onPress={() => {
         props.navi.navigate(props.page, { key: props.name });

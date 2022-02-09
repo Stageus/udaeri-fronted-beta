@@ -16,7 +16,7 @@ import Payments from "tosspayments-react-native";
 
 const { width, height } = Dimensions.get('window');
 const StatusBarHeight = StatusBar.currentHeight;
-const clientKey = 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq'
+const clientKey = 'test_ck_0Poxy1XQL8Rbx1a2WJY87nO5Wmlg'
 
 const SC = {
     container: styled.View`
@@ -52,17 +52,17 @@ const Sponsor = ({ navigation }) => {
         await AsyncStorage.getItem(TOKEN_KEY, (err, result) => {
             tokentoken = result;
         });
+        console.log("token : ", tokentoken)
         axios
-            .post("/support",
-            {
+            .post("/support/",
+            {   
+                orderId : data.orderId,
+                paymentKey : data.paymentKey,
+                amount : data.amount
+            }, {
                 headers: {
                     authorization: tokentoken,
                     "Content-Type": "application/json",
-                },
-                body: { 
-                    "orderId" : data.orderId,
-                    "paymentKey" : data.paymentKey,
-                    "amount" : data.amount 
                 }
             })
             .then(function (res) {
