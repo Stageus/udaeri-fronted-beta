@@ -10,6 +10,7 @@ import {
 import { useSelector } from "react-redux";
 import styled, { css } from "styled-components/native";
 import HeaderBar from "../../Components/HeaderBar";
+import SuccessModal from "../../Components/SuccessModal"
 import axios from "axios";
 
 const { width, height } = Dimensions.get('window');
@@ -44,7 +45,7 @@ const SC = {
         background-Color : ${props => props.color ? "#ff9933" : "#999999"};
     `,
     catText: styled.Text`
-        font-size : 12px;
+        font-size : 16px;
         font-family : 'Regular';
         color : white;
     `,
@@ -135,6 +136,9 @@ const Inquiry = ({ navigation }) => {
     const [emailText, setEmailText] = useState("");
     const [isEmail, setIsEmail] = useState(false);
     const [maxText, setMaxText] = useState(false);
+
+    const [modalVisible, setModalVisible] = useState(false);
+
     useEffect(() => { // 이메일 정규식
         setIsEmail(/^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i.test(emailText)); 
     }, [emailText])
@@ -148,7 +152,6 @@ const Inquiry = ({ navigation }) => {
         }
     }, [inquiryText])
     const onSubmit = async () => {
-        console.log("제출")
         await axios
             .post("/user/opinion",
                 {
@@ -158,12 +161,15 @@ const Inquiry = ({ navigation }) => {
                 }
             )
             .then(function (res) {
-                console.log(res.data);
+                if(res.data.success) {
+                    setModalVisible(true)
+                    console.log(res.data.success)
+                }
             })
             .catch(function (error) {
                 console.log(error);
             })
-    }
+        }
 
     return (
         <SafeAreaView
@@ -240,8 +246,13 @@ const Inquiry = ({ navigation }) => {
                             </SC.submitBtn>
                         </SC.mainContainer>
                     </TouchableWithoutFeedback>
-                </SC.keyboardAvoidingView>
-
+                </SC.keyboardAvoidingView >
+                <SuccessModal
+                    navigation={navigation}
+                    modalVisible={modalVisible}
+                    setModalVisible={setModalVisible}
+                    contentText="빠르게 처리하여 답변드리도록 하겠습니다."
+                />
             </SC.container>
         </SafeAreaView >
 
