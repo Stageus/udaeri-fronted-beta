@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 
 import { Modal, View, Text, Pressable, TextInput } from "react-native";
@@ -26,14 +26,38 @@ const SC = {
     background-color: white;
     box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.36);
   `,
+
+  changeBtn: styled.TouchableOpacity`
+    width: 80px;
+    height: 40px;
+    background-color: ${(props) => props.mainColor};
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+  `,
+  changeBtnText: styled.Text`
+    font-size: 16px;
+    font-weight: bold;
+  `,
 };
 
 const NicknameModal = (props) => {
-  const { modalVisible, setModalVisible, setOnchangeNickname } = props;
+  const {
+    modalVisible,
+    setModalVisible,
+    onChangeNickname,
+    setOnchangeNickname,
+    updateNickname,
+  } = props;
+
+  const mainColor = useSelector((state) => state.mainColor);
+  const [newNickname, setNewNickname] = useState("");
 
   const onSubmit = () => {
-    setModalVisible((v) => !v);
-    updateNickname(onChangeNickname);
+    setModalVisible(false);
+    updateNickname(newNickname);
+    setOnchangeNickname(newNickname);
   };
 
   return (
@@ -48,13 +72,15 @@ const NicknameModal = (props) => {
           <TextInput
             multiline={false}
             returnKeyType={"done"}
-            //value={onChangeNickname}
-            onChangeText={(val) => setOnchangeNickname(val)}
+            value={newNickname}
+            onChangeText={(val) => setNewNickname(val)}
             onSubmitEditing={() => onSubmit()}
             maxLength={15}
             placeholder="닉네임을 입력하세요"
-            //color={mainColor}
           />
+          <SC.changeBtn mainColor={mainColor} onPress={() => onSubmit()}>
+            <SC.changeBtnText>수정</SC.changeBtnText>
+          </SC.changeBtn>
         </SC.modalView>
       </SC.container>
     </Modal>

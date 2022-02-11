@@ -144,7 +144,6 @@ const ReviewWriteModal = ({ setReload, modalVisible, setModalVisible, curLargeCa
             visible={modalVisible}
             overlayBackground={'rgba(0, 0, 0, 0.75)'}
             onRequestClose={() => {
-                Alert.alert("Modal has been closed.");
                 setModalVisible(!modalVisible);
             }}
         >

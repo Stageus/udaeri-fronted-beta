@@ -17,7 +17,7 @@ const SC = {
     flex-direction: row;
     padding: 10px 20px;
     border-bottom-width: 1px;
-    border-color: #d3d3d3;
+    border-color: ${props => props.lineColor};
 
     ${({ center }) => {
       return center === "true"
@@ -34,6 +34,7 @@ const SC = {
 const HeaderBar = (props) => {
   const dispatch = useDispatch();
   const url = useSelector((state) => state.url);
+  const lineColor2 = useSelector((state) => state.lineColor2);
   axios.defaults.baseURL = url;
 
   const [token, setToken] = useState();
@@ -96,7 +97,7 @@ const HeaderBar = (props) => {
   };
 
   return (
-    <SC.headerBar center={props.center}>
+    <SC.headerBar center={props.center} lineColor={lineColor2}>
       {props.left === "arrow" ? (
         <Ionicons
           name="arrow-back"

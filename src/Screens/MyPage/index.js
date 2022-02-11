@@ -92,7 +92,6 @@ const MyPage = ({ navigation }) => {
   const [token, setToken] = useState();
   const [nickNameChange, setNickNameChange] = useState(false);
   const [onChangeNickname, setOnchangeNickname] = useState(userNickname);
-  const [sponsor, setSponsor] = useState(sponsorCheck);
 
   const listElement = [
     { title: "문의/버그리포트", page: "Inquiry" },
@@ -155,30 +154,19 @@ const MyPage = ({ navigation }) => {
       <SC.Container nickNameChange={nickNameChange}>
         <HeaderBar title="마이페이지" center="true"></HeaderBar>
         <SC.Top>
-          {nickNameChange ? (
-            <SC.TextInputNickname
-              multiline={false}
-              returnKeyType={"done"}
-              //value={onChangeNickname}
-              onChangeText={(val) => setOnchangeNickname(val)}
-              onSubmitEditing={() => onSubmit()}
-              maxLength={15}
-              placeholder="닉네임을 입력하세요"
-              color={mainColor}
-            ></SC.TextInputNickname>
-          ) : (
-            <SC.NickNameWrap>
-              <SC.NickName color={mainColor}>{onChangeNickname}</SC.NickName>
-              {sponsor === "Y" && (
-                <Text>
-                  <FontAwesome5
-                    name="crown"
-                    style={{ fontSize: RFPercentage(2.5), color: "#ffec00" }}
-                  />
-                </Text>
-              )}
-            </SC.NickNameWrap>
-          )}
+          <SC.NickNameWrap>
+            <SC.NickName color={mainColor}>{onChangeNickname}</SC.NickName>
+            {sponsorCheck === "Y" ? (
+              <Text>
+                <FontAwesome5
+                  name="crown"
+                  style={{ fontSize: RFPercentage(2.5), color: "#ffec00" }}
+                />
+              </Text>
+            ) : (
+              <></>
+            )}
+          </SC.NickNameWrap>
           <TouchableOpacity
             onPress={() => {
               nickNameChange ? onSubmit() : setNickNameChange((v) => !v);
@@ -193,7 +181,7 @@ const MyPage = ({ navigation }) => {
 
         <SC.MyPageList>
           {listElement.map((item, index) => {
-            return (
+            return sponsorCheck === "Y" && item.title === "후원하기" ? null : (
               <MyPageEle
                 key={index}
                 title={item.title}
@@ -209,6 +197,7 @@ const MyPage = ({ navigation }) => {
         modalVisible={nickNameChange}
         setModalVisible={setNickNameChange}
         setOnchangeNickname={setOnchangeNickname}
+        updateNickname={updateNickname}
       />
     </SafeAreaView>
   );
