@@ -27,6 +27,13 @@ const NaverLogin = () => {
   const client_id = "TtMZfjScaNLpNbVdlfRJ";
   const [randomState, setRandomState] = useState();
 
+  const getState = async () => {
+    await axios.get("/state/").then((res) => {
+      setRandomState(res.data.state);
+      console.log("state 가져옴 : ", randomState);
+    });
+  };
+
   useEffect(() => {
     const getState = () => {
       axios

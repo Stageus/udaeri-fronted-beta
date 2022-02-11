@@ -5,8 +5,7 @@ import {
   Platform,
   SafeAreaView,
   StatusBar,
-  TextInput,
-  View,
+  Modal,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
@@ -16,6 +15,7 @@ import styled, { css } from "styled-components/native";
 import axios from "axios";
 import HeaderBar from "../../Components/HeaderBar";
 import MyPageEle from "../../Components/MyPageEle";
+import NicknameModal from "../../Components/NicknameModal";
 import { restoreUserNickname, checkSponsor } from "../../../reducer/index";
 
 const StatusBarHeight = StatusBar.currentHeight;
@@ -24,11 +24,10 @@ const SC = {
   Container: styled.View`
     background-color: #fff;
 
-    ${Platform.OS === "android"
-      ? css`
-          padding-top: ${StatusBarHeight + 15}px;
-        `
-      : undefined}
+    ${Platform.OS === "android" &&
+    css`
+      padding-top: ${StatusBarHeight + 15}px;
+    `}
   `,
   Top: styled.View`
     flex-direction: row;
@@ -72,19 +71,28 @@ const SC = {
     color: black;
     font-size: 15px;
   `,
+
+  NicknameChangeInput: styled.KeyboardAvoidingView`
+    z-index: 5;
+    height: 80px;
+    background-color: red;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  `,
 };
 
 const MyPage = ({ navigation }) => {
   const dispatch = useDispatch();
   const mainColor = useSelector((state) => state.mainColor);
   const grayColor = useSelector((state) => state.grayColor);
+  const sponsorCheck = useSelector((state) => state.sponsorCheck);
+  const userNickname = useSelector((state) => state.userNickname);
 
   const [token, setToken] = useState();
   const [nickNameChange, setNickNameChange] = useState(false);
-  const [onChangeNickname, setOnchangeNickname] = useState("");
-  const [sponsor, setSponsor] = useState();
-
-  const TOKEN_KEY = "@userKey";
+  const [onChangeNickname, setOnchangeNickname] = useState(userNickname);
+  const [sponsor, setSponsor] = useState(sponsorCheck);
 
   const listElement = [
     { title: "문의/버그리포트", page: "Inquiry" },
@@ -93,29 +101,12 @@ const MyPage = ({ navigation }) => {
     { title: "후원하기", page: "Sponsor" },
     { title: "로그아웃", page: null },
   ];
+  const TOKEN_KEY = "@userKey";
 
   useEffect(async () => {
-    let tokentoken;
     await AsyncStorage.getItem(TOKEN_KEY, (err, result) => {
-      tokentoken = result;
       setToken(result);
     });
-
-    axios
-      .get("/users", {
-        headers: {
-          authorization: tokentoken,
-        },
-      })
-      .then((res) => {
-        res.data.success
-          ? (dispatch(restoreUserNickname(res.data.nickname)),
-            dispatch(checkSponsor(res.data.sponsor)),
-            setOnchangeNickname(res.data.nickname),
-            setSponsor(res.data.sponsor))
-          : console.log("유저 데이터 가져오기 실패", res.data);
-      })
-      .catch((err) => console.log("회원 정보 못 받아옴", err));
   }, []);
 
   const saveToken = async (token) => {
@@ -137,6 +128,7 @@ const MyPage = ({ navigation }) => {
       )
       .then((res) => {
         if (res.data.success) {
+          console.log(res.data.success);
           saveToken(res.data.token); // 토큰 asyncstorage에 저장
           dispatch(restoreUserNickname(name)); // 닉네임 리덕스에 저장
         } else {
@@ -160,14 +152,14 @@ const MyPage = ({ navigation }) => {
         flex: 1,
       }}
     >
-      <SC.Container>
+      <SC.Container nickNameChange={nickNameChange}>
         <HeaderBar title="마이페이지" center="true"></HeaderBar>
         <SC.Top>
           {nickNameChange ? (
             <SC.TextInputNickname
               multiline={false}
               returnKeyType={"done"}
-              value={onChangeNickname}
+              //value={onChangeNickname}
               onChangeText={(val) => setOnchangeNickname(val)}
               onSubmitEditing={() => onSubmit()}
               maxLength={15}
@@ -177,22 +169,19 @@ const MyPage = ({ navigation }) => {
           ) : (
             <SC.NickNameWrap>
               <SC.NickName color={mainColor}>{onChangeNickname}</SC.NickName>
-              {sponsor === "Y" ? (
+              {sponsor === "Y" && (
                 <Text>
                   <FontAwesome5
                     name="crown"
                     style={{ fontSize: RFPercentage(2.5), color: "#ffec00" }}
                   />
                 </Text>
-              ) : (
-                <></>
               )}
             </SC.NickNameWrap>
           )}
-
           <TouchableOpacity
             onPress={() => {
-              setNickNameChange((v) => !v);
+              nickNameChange ? onSubmit() : setNickNameChange((v) => !v);
             }}
           >
             <FontAwesome
@@ -215,6 +204,12 @@ const MyPage = ({ navigation }) => {
           })}
         </SC.MyPageList>
       </SC.Container>
+
+      <NicknameModal
+        modalVisible={nickNameChange}
+        setModalVisible={setNickNameChange}
+        setOnchangeNickname={setOnchangeNickname}
+      />
     </SafeAreaView>
   );
 };

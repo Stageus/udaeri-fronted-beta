@@ -9,14 +9,9 @@ import {
 import { useSelector } from "react-redux";
 import styled, { css } from "styled-components/native";
 import HeaderBar from "../../Components/HeaderBar";
-import { loadTossPayments } from '@tosspayments/payment-sdk'
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
-import Payments from "tosspayments-react-native";
-
+import TossPayment from "../../Components/TossPayment";
 const { width, height } = Dimensions.get('window');
 const StatusBarHeight = StatusBar.currentHeight;
-const clientKey = 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq'
 
 const SC = {
     container: styled.View`
@@ -33,45 +28,31 @@ const SC = {
         justify-content : center;
         align-items : center;
     `,
-    tossBtn : styled.View`
-        width: 100%;
-        height: 100%;
-        background-color: red;
+    Text: styled.Text`
+        font-family: 'Bold';
+        font-size: 20px;
     `,
-    keyboardAvoidingView: styled.KeyboardAvoidingView`
-    flex: 1;
+    paymentBtn : styled.TouchableOpacity`
+        width: ${width / 1.2}px;
+        height: 40px;
+        background-color: #ff9933;
+        border-radius: 5px;
+        justify-content: center;
+        align-items: center;
+        margin: 20px;
+    `,
+    paymentBtnText: styled.Text`
+        color : white;
+        font-family : 'Medium';
+        font-size : 16px;
     `
 }
 
 const Sponsor = ({ navigation }) => {
     
     const TOKEN_KEY = "@userKey";
+    const [modalVisible, setModalVisible] = useState(false);
 
-    const onSubmit = async (data) => {
-        let tokentoken;
-        await AsyncStorage.getItem(TOKEN_KEY, (err, result) => {
-            tokentoken = result;
-        });
-        axios
-            .post("/support",
-            {
-                headers: {
-                    authorization: tokentoken,
-                    "Content-Type": "application/json",
-                },
-                body: { 
-                    "orderId" : data.orderId,
-                    "paymentKey" : data.paymentKey,
-                    "amount" : data.amount 
-                }
-            })
-            .then(function (res) {
-                console.log(res.data)
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    }
     return (
         <SafeAreaView
             style={{
@@ -85,16 +66,20 @@ const Sponsor = ({ navigation }) => {
                     title="후원하기"
                     navigation={navigation}>
                 </HeaderBar>
-                <Payments
-                    clientKey={clientKey}
-                    orderId="TEST01010101010101"
-                    orderName="테스트 주문"
-                    amount={2000}
-                    onSuccess={(data) => {
-                        onSubmit(data)
-                        Alert.alert("결제 성공", JSON.stringify(data))
-                    }}
-                    onError={(error) => Alert.alert("결제 실패", JSON.stringify(error))}
+                <SC.mainContainer>
+                    <SC.Text>
+                        후원의 혜택
+                    </SC.Text>
+                    <SC.paymentBtn onPress={() => setModalVisible(true)}>
+                        <SC.paymentBtnText>
+                            후원하기
+                        </SC.paymentBtnText>
+                    </SC.paymentBtn>
+                </SC.mainContainer>
+                <TossPayment 
+                    navigation={navigation}
+                    modalVisible={modalVisible}
+                    setModalVisible={setModalVisible}
                 />
             </SC.container>
         </SafeAreaView >

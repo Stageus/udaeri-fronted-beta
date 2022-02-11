@@ -18,6 +18,8 @@ import {
   restoreLargeCatList,
   restoreMidCatList,
   restoreJjimStore,
+  checkSponsor,
+  restoreUserNickname
 } from "../../../reducer/index";
 
 const StatusBarHeight = StatusBar.currentHeight;
@@ -110,6 +112,20 @@ const Home = ({ navigation }) => {
     await AsyncStorage.getItem(TOKEN_KEY, (err, result) => {
       token = result;
     });
+
+    axios
+      .get("/users", {
+        headers: {
+          authorization: token,
+        },
+      })
+      .then((res) => {
+        res.data.success
+          ? (dispatch(restoreUserNickname(res.data.nickname)),
+            dispatch(checkSponsor(res.data.sponsor)))
+          : console.log("유저 데이터 가져오기 실패", res.data);
+      })
+      .catch((err) => console.log("회원 정보 못 받아옴", err));
 
     axios
       .all([
