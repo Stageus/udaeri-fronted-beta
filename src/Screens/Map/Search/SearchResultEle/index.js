@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import styled from "styled-components/native";
 import { useSelector, useDispatch } from "react-redux";
-import { addSearchWord } from "../../../../../reducer/index";
+import { addSearchWord, restoreCurStore } from "../../../../../reducer/index";
 
 const SC = {
   Container: styled.View`
@@ -51,6 +51,7 @@ const SearchResultEle = (props) => {
       searchValue: storeName,
     });
     dispatch(addSearchWord(recentSearchList, storeName));
+    dispatch(restoreCurStore(null));
   };
 
   const secondPageOnclick = () => {
@@ -58,6 +59,7 @@ const SearchResultEle = (props) => {
     dispatch(addSearchWord(recentSearchList, storeName));
     setInputFocusCheck(false);
     setText(storeName);
+    dispatch(restoreCurStore(null));
   };
 
   return (

@@ -29,9 +29,14 @@ const NaverLogin = () => {
 
   useEffect(() => {
     const getState = () => {
-      axios.get("/state/").then((res) => {
-        setRandomState(res.data.state);
-      });
+      axios
+        .get("/state/")
+        .then((res) => {
+          setRandomState(res.data.state);
+        })
+        .catch((err) => {
+          console.log("state 받아오기 error");
+        });
     };
     getState();
   }, []);

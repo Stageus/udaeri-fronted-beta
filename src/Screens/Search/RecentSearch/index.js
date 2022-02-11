@@ -52,6 +52,7 @@ const SC = {
     border-radius: 5px;
     width: 85%;
     padding: 5px 30px 5px 15px;
+    font-size: ${RFPercentage(2.5)};
   `,
   Middle: styled.View`
     height: ${height * 0.8}px;
@@ -165,9 +166,9 @@ const RecentSearch = ({ navigation }) => {
     >
       <SC.Container>
         <SC.Top>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          {/* <TouchableOpacity onPress={() => navigation.goBack()}>
             <AntDesign name="arrowleft" style={styles.topIcon} color="gray" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <SC.SearchInput
             multiline={false}
             returnKeyType={"search"}

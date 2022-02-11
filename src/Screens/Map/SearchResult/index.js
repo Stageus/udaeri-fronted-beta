@@ -21,66 +21,6 @@ import SearchResultEle from "../Search/SearchResultEle";
 const StatusBarHeight = StatusBar.currentHeight;
 const { width, height } = Dimensions.get("window");
 
-const SC = {
-  Container: styled.View`
-    background-color: #fff;
-
-    ${Platform.OS === "android"
-      ? css`
-          padding-top: ${StatusBarHeight + 5}px;
-        `
-      : undefined}
-  `,
-  Top: styled.View`
-    height: ${height * 0.07}px;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 10px 10px 10px;
-    border-bottom-width: 1px;
-    border-bottom-color: #999999;
-    position: relative;
-  `,
-  SearchInput: styled.TextInput`
-    background-color: #fff;
-    border-radius: 5px;
-    width: 85%;
-    padding: 5px 30px 5px 15px;
-  `,
-  SearchingMiddle: styled.View`
-    height: ${height * 0.8}px;
-    margin: 5px 15px 0px 15px;
-  `,
-  StoreWrap: styled.TouchableOpacity`
-    position: absolute;
-    bottom: 0;
-    z-index: 5;
-    width: 100%;
-    height: 150px;
-    background-color: #fff;
-    padding: 12px;
-  `,
-  StoreInfoTop: styled.View`
-    flex-direction: row;
-    align-items: center;
-    padding: 3px 0px;
-  `,
-  StoreName: styled.Text`
-    font-size: 16px;
-    font-family: Bold;
-    margin-right: 5px;
-  `,
-  StoreCategory: styled.Text`
-    font-size: 12px;
-    font-family: Regular;
-    color: #999999;
-  `,
-  StoreInfo: styled.Text`
-    font-size: 14px;
-    font-family: Regular;
-  `,
-};
-
 const MapSearchResult = ({ navigation, route }) => {
   const dispatch = useDispatch();
   const url = useSelector((state) => state.url);
@@ -170,7 +110,9 @@ const MapSearchResult = ({ navigation, route }) => {
   };
 
   const onSubmitEditing = () => {
-    searchSubmit(text), setInputFocusCheck(false);
+    searchSubmit(text);
+    setInputFocusCheck(false);
+    dispatch(restoreCurStore(null));
   };
 
   return (
@@ -241,7 +183,7 @@ const MapSearchResult = ({ navigation, route }) => {
                   height: "100%",
                 }}
               >
-                <Text>해당 검색어가 존재하지 않습니다!</Text>
+                <Text>해당 검색어가 존재하지 않습니다!!</Text>
               </View>
             )}
           </>
@@ -321,3 +263,63 @@ const MapSearchResult = ({ navigation, route }) => {
 };
 
 export default MapSearchResult;
+
+const SC = {
+  Container: styled.View`
+    background-color: #fff;
+
+    ${Platform.OS === "android"
+      ? css`
+          padding-top: ${StatusBarHeight + 5}px;
+        `
+      : undefined}
+  `,
+  Top: styled.View`
+    height: ${height * 0.07}px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px 10px 10px;
+    border-bottom-width: 1px;
+    border-bottom-color: #999999;
+    position: relative;
+  `,
+  SearchInput: styled.TextInput`
+    background-color: #fff;
+    border-radius: 5px;
+    width: 85%;
+    padding: 5px 30px 5px 15px;
+  `,
+  SearchingMiddle: styled.View`
+    height: ${height * 0.8}px;
+    margin: 5px 15px 0px 15px;
+  `,
+  StoreWrap: styled.TouchableOpacity`
+    position: absolute;
+    bottom: 0;
+    z-index: 5;
+    width: 100%;
+    height: 150px;
+    background-color: #fff;
+    padding: 12px;
+  `,
+  StoreInfoTop: styled.View`
+    flex-direction: row;
+    align-items: center;
+    padding: 3px 0px;
+  `,
+  StoreName: styled.Text`
+    font-size: 16px;
+    font-family: Bold;
+    margin-right: 5px;
+  `,
+  StoreCategory: styled.Text`
+    font-size: 12px;
+    font-family: Regular;
+    color: #999999;
+  `,
+  StoreInfo: styled.Text`
+    font-size: 14px;
+    font-family: Regular;
+  `,
+};
