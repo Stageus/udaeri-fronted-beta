@@ -28,9 +28,9 @@ const options = {
     cert: fs.readFileSync(path.join(__dirname, process.env.SSL_CERT)),
     ca: fs.readFileSync(path.join(__dirname, process.env.SSL_CA))
 };
+
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-
 
 
 app.get('*', (req,res, next)=>{
@@ -39,7 +39,7 @@ app.get('*', (req,res, next)=>{
         next();
     }
     else{
-        const destination = "https://" + req.hostname + ":8443" + req.url; // req.url -> 메인페이지 이외에 접속할 때도 접속할 수 있게해줌
+        const destination = "https://" + req.hostname + req.url; // req.url -> 메인페이지 이외에 접속할 때도 접속할 수 있게해줌
         res.redirect(destination);
     }
 })

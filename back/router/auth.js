@@ -1,7 +1,6 @@
 const {Client} = require('pg');
 const dotenv = require('dotenv');
 const path = require('path');
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fetch = require('node-fetch');
 const qs = require('qs');
@@ -26,12 +25,18 @@ exports.OauthLogin = async(req,res) =>{
     const code = req.body.code;
     const state = req.body.state;
 
-    if(platform == undefined || code == undefined || state == undefined){
+    if(platform == undefined || code == undefined || (platform == "naver" && state == undefined)){
+        try{
         await elastic.apiLogging(req,400);
         return res.status(400).send({
             success : false,
             message : "요청 데이터가 너무 적습니다"
         })
+        }
+        catch(err){
+            console.log(err);
+            return res.send("요청 데이터가 너무 적습니다.")
+        }
     }
     try{
         const accessToken = await getAccessToken(code, platform, state);

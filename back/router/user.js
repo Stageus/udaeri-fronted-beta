@@ -1,12 +1,10 @@
 const {Client} = require('pg');
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
 const dotenv = require('dotenv');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const elastic = require('./elastic');
-
+const axios = require('axios');
 
 dotenv.config({path : path.join(__dirname, "../../.env")});
 const config = {
@@ -104,6 +102,7 @@ exports.ReadUser = async(req,res)=>{      //회원정보 가져오기
         await elastic.apiLogging(req,200);
         return res.status(200).send({
             success : true,
+            id : req.id,
             nickname : user_info.nickname,
             sponsor : query.rows[0].sponsor
         });
@@ -258,5 +257,66 @@ exports.userOpinion = async(req,res)=>{
 }
 
 exports.payment = async(req,res) =>{
-    const client = new Client(config);
+    const paymentKey = req.body.paymentKey;
+    const amount = req.body.amount;
+    const secretKey = process.env.TOKEN_SCRETKEY;
+    const userInfo = await jwt.decode(req.headers.authorization);
+
+    if(paymentKey == undefined || amount == undefined || orderId == undefined){
+        elastic.apiLogging(req,400);
+        return res.status(400).send({
+            success : false,
+            message : "요청 데이터가 너무 적습니다."
+        })
+    }
+    try{
+        const result = await axios({
+            "url" : `https://api.tosspayments.com/v1/payments/${paymentKey}`,
+            "method" : "POST",
+            "headers" :{
+                "Authorization": "Basic dGVzdF9za19qWjYxSk94UlFWRW1hYnk2RUFEVlcwWDliQXF3Og==",
+                "Content-Type": "application/json"
+            },
+            "data" :({
+                "orderId" : userInfo.id,
+                "amount" : amount
+            }),
+        })
+        console.log(result.data);
+        if(result.data.status == 'DONE'){
+            const client = new Client(config);
+            await client.connect();
+            await client.query("UPDATE service.user_information SET sponsor = 'Y' WHERE id = $1",[userInfo.id]);
+            await client.end();
+
+            const token = jwt.sign({
+                "id" : userInfo.id,
+                "nickname" : userInfo.nickname,
+                "sponsor" : 'Y',
+                "platform" : userInfo.platform
+            },
+            secretKey,
+            {
+                expiresIn : "720m",
+                issuer : "UDR"
+            })
+
+            await elastic.apiLogging(req,200);
+            return res.status(200).send({
+                success : true,
+                message : "결제되었습니다.",
+                token : token
+            })
+        }
+    }
+    catch(err){
+        elastic.errLogging(req,500,err);
+        console.log(err);
+        return res.status(500).send({
+            success : false,
+            message : "결제 실패하였습니다."
+        })
+    }
+
+
 }

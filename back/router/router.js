@@ -8,6 +8,7 @@ const elastic = require("./elastic");
 
 
 // user.js
+Route.post('/support', auth.tokenVerify, user.payment);
 Route.route('/users/favorites')
     .post(auth.tokenVerify, user.CreateUserFavorite)
     .get(auth.tokenVerify, user.ReadUserFavorite)
@@ -21,10 +22,9 @@ Route.post('/user/opinion', user.userOpinion);
 
 // auth.js
 //Route.post('/oauth/logout', auth.OauthLogout);
-Route.post('/oauth', auth.OauthLogin);
-Route.get('/state', auth.creatState);
-Route.get('/newtoken',auth.getNewToken);
-
+Route.post('/oauth', auth.OauthLogin)
+Route.get('/state', auth.creatState)
+Route.get('/newtoken',auth.getNewToken)
 
 // category.js 
 Route.get('/l-categories/:l/m-categories/:m/stores/:name/information', category.getStoreInformation);
@@ -45,8 +45,13 @@ Route.post('/categories/random', category.getRandom);
 Route.get('/search/status', elastic.getElasticsearchStatus);
 Route.post('/search/stores/:count',elastic.getElasticsearchStoreList)
 Route.post('/search/store',elastic.pushElasticsearchStore);
-//Route.get('/setting', elastic.setNoriTokenizer);
-Route.get('/test',elastic.apiLogging);
+Route.delete('/search/log',elastic.deleteelastic);
+Route.get('/setting', elastic.setNoriTokenizer);
+//Route.get('/test',elastic.apiLogging);
+
+
+Route.post('/test',category.insertStore);
+Route.post('/test/test',category.insertMenu);
 
 
 module.exports = Route

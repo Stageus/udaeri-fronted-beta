@@ -14,6 +14,7 @@ const config = {
 };
 
 exports.getRandom = async(req,res) =>{
+    //TODO query문 수정 
     let category = req.body.categoryList;
     if(category == undefined || category == []){
         await elastic.apiLogging(req,400);
@@ -474,5 +475,55 @@ exports.putReview = async(req,res)=>{
         return res.status(500).send({
             "success" : false
         })
+    }
+}
+
+
+exports.insertStore = async(req,res) =>{
+    const m_category_index = req.body.m_category;
+    const name = req.body.name;
+    const main_menu = req.body.main_menu;
+    const call_number =req.body.call_number;
+    const open = req.body.open;
+    const off = req.body.off;
+    const price = req.body.price;
+    const location =req.body.location;
+    const image_url = 'url';
+    const created_at = new Date();
+    created_at.setHours(created_at.getHours()+9);
+    const latitude = req.body.latitude;
+    const longitude = req.body.longitude;
+    const favorite = 0;
+    const inha = '후문';
+
+    const client = new Client(config);
+    await client.connect();
+    try{
+    await client.query('INSERT INTO service.store_information (m_category_index, store_name, main_menu, call_number, opening_hours, day_off, prices, location, image_url, created_at, latitude, longitude, favorited_count, inha_location) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14);',[m_category_index, name, main_menu, call_number, open,off, price, location,image_url, created_at, latitude, longitude, favorite, inha]);
+    await client.end();
+    return res.send("성공!");
+    }
+    catch(err){
+        console.log(err);
+    }
+
+}
+
+exports.insertMenu = async(req,res) =>{
+    const index = req.body.index;
+    const menu = req.body.menu;
+    const brief = req.body.brief;
+    const price = req.body.price;
+    const image = 'url';
+    const client = new Client(config);
+    try{
+    await client.connect();
+    await client.query('INSERT INTO service.store_menu (store_info_index, menu_name, brief_info, price, image_url) VALUES($1,$2,$3,$4,$5);',[index, menu, brief, price, image]);
+    await client.end();
+
+    return res.send("성공!");
+    }
+    catch(err){
+        console.log(err);
     }
 }

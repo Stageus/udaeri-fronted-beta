@@ -74,7 +74,7 @@ exports.setNoriTokenizer = async(req,res)=>{
           "analyzer": {
             "nori_discard": {
               "tokenizer": "nori_t_discard",
-              "filter": "shingle"
+              "filter": "my_shingle"
             }
           },
           "tokenizer": {
@@ -82,6 +82,13 @@ exports.setNoriTokenizer = async(req,res)=>{
               "type": "nori_tokenizer",
               "decompound_mode": "discard"
             }
+          },
+          "filter" :{
+              "my_shingle" :{
+                  "type" : "shingle",
+                  "token_separator" : "",
+                  "max_shingle_size" : 3
+              }
           }
         }
       }
@@ -130,7 +137,7 @@ exports.deleteelastic = async (req,res)=>{
 	    host : `http://${auth}@localhost:9200`
     })
 
-    const result = await e.indices.delete({
+    const result = await elasticClient.indices.delete({
         index : 'stores'
     })
     console.log(result);
