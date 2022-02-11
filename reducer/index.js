@@ -12,7 +12,7 @@ const initState = {
   fontColor2: "#767676",
   fontColor3: "#999999",
   lineColor1: "#191919",
-  lineColor2: "#DBDBDB",
+  lineColor2: "#D3D3D3",
   lineColor3: "#EDEDED",
   largeCatList: null,
   midCatList: null,

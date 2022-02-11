@@ -84,9 +84,6 @@ const MyPage = ({ navigation }) => {
   const [token, setToken] = useState();
   const [nickNameChange, setNickNameChange] = useState(false);
   const [onChangeNickname, setOnchangeNickname] = useState(userNickname);
-  const [sponsor, setSponsor] = useState(sponsorCheck);
-
-  
 
   const listElement = [
     { title: "문의/버그리포트", page: "Inquiry" },
@@ -102,22 +99,6 @@ const MyPage = ({ navigation }) => {
       tokentoken = result;
       setToken(result);
     });
-
-    // axios
-    //   .get("/users", {
-    //     headers: {
-    //       authorization: tokentoken,
-    //     },
-    //   })
-    //   .then((res) => {
-    //     res.data.success
-    //       ? (dispatch(restoreUserNickname(res.data.nickname)),
-    //         dispatch(checkSponsor(res.data.sponsor)),
-    //         setOnchangeNickname(res.data.nickname),
-    //         setSponsor(res.data.sponsor))
-    //       : console.log("유저 데이터 가져오기 실패", res.data);
-    //   })
-    //   .catch((err) => console.log("회원 정보 못 받아옴", err));
   }, []);
 
   const saveToken = async (token) => {
@@ -179,7 +160,7 @@ const MyPage = ({ navigation }) => {
           ) : (
             <SC.NickNameWrap>
               <SC.NickName color={mainColor}>{onChangeNickname}</SC.NickName>
-              {sponsor === "Y" ? (
+              {sponsorCheck === "Y" ? (
                 <Text>
                   <FontAwesome5
                     name="crown"
@@ -206,7 +187,10 @@ const MyPage = ({ navigation }) => {
 
         <SC.MyPageList>
           {listElement.map((item, index) => {
+            
             return (
+              sponsorCheck === "Y" && item.title === "후원하기" ?
+              null :
               <MyPageEle
                 key={index}
                 title={item.title}

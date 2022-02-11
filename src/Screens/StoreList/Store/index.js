@@ -43,7 +43,6 @@ const Store = (props) => {
             dispatch(addCurMidCatList(curMidCat, res.data.list));
             setCnt(cnt + 1);
           }
-
         })
         .catch((err) => {
           console.log("error");

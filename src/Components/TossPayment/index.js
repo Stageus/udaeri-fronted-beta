@@ -4,13 +4,13 @@ import {
     Alert,
     StatusBar
 } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import styled, { css } from "styled-components/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import Payments from "tosspayments-react-native"
 import SuccessModal from "../SuccessModal"
-
+import { checkSponsor } from "../../../reducer/index";
 const { width, height } = Dimensions.get('window');
 const StatusBarHeight = StatusBar.currentHeight;
 const clientKey = 'test_ck_0Poxy1XQL8Rbx1a2WJY87nO5Wmlg'
@@ -42,21 +42,18 @@ const SC = {
 }
 
 const TossPayment = ({ modalVisible, setModalVisible, navigation }) => {
+    const dispatch = useDispatch();
 
     const [modalVisible2, setModalVisible2] = useState(false);
     const [userID, setUserID] = useState("");
-
-
     const TOKEN_KEY = "@userKey";
     
-
-
+    
     useEffect(async () => {
         let tokentoken;
         await AsyncStorage.getItem(TOKEN_KEY, (err, result) => {
             tokentoken = result;
         });
-
         axios
             .get("/users", {
                 headers: {
@@ -68,12 +65,23 @@ const TossPayment = ({ modalVisible, setModalVisible, navigation }) => {
               })
               .catch((err) => console.log("회원 정보 못 받아옴", err));
     }, [])
+    
+    const saveToken = async (token) => {
+        await AsyncStorage.setItem(TOKEN_KEY, token);
+      };
+    
 
     const onSubmit = async (data) => {
-        await axios
+        let tokentoken;
+        await AsyncStorage.getItem(TOKEN_KEY, (err, result) => {
+            tokentoken = result;
+        });
+
+
+        axios
             .post("/support/",
-            {   
-                orderId : data.orderId,
+            { 
+                orderID : data.orderId,
                 paymentKey : data.paymentKey,
                 amount : data.amount
             }, {
@@ -82,13 +90,18 @@ const TossPayment = ({ modalVisible, setModalVisible, navigation }) => {
                     "Content-Type": "application/json",
                 }
             })
-            .then(function (res) {
-                console.log(res.data)
+            .then((res) => {
+                console.log("res.data : ",res.data)
+                if (res.data.success) {
+                    saveToken(res.data.token);
+                    dispatch(checkSponsor("Y"))
+                }
             })
-            .catch(function (error) {
+            .catch((error) => {
                 console.log(error);
             });
     }
+    
     return (
             <SC.Modal
             animationType="slide"
@@ -96,7 +109,6 @@ const TossPayment = ({ modalVisible, setModalVisible, navigation }) => {
             visible={modalVisible}
             overlayBackground={'rgba(0, 0, 0, 0.75)'}
             onRequestClose={() => {
-                Alert.alert("Modal has been closed.");
                 setModalVisible(!modalVisible);
             }}
             >

@@ -10,8 +10,8 @@ const SC = {
     Container: styled.TouchableOpacity`
         flex-Direction: row;
         padding: 20px;
-        border-Bottom-Color: gray;
-        border-Bottom-Width: 0.5px;
+        border-Bottom-Color: ${props => props.lineColor};
+        border-Bottom-Width: 1px;
         align-Items: center;
         height: 100px;
     `,
@@ -56,8 +56,10 @@ const SC = {
 }
 const StoreEle = (props) => {
     const dispatch = useDispatch();
+    const lineColor2 = useSelector((state) => state.lineColor2);
+
     return (
-        <SC.Container onPress={() => {
+        <SC.Container lineColor={lineColor2} onPress={() => {
             props.navigation.navigate('StorePage', { key: props.storeName });
             dispatch(restoreCurStore(props.storeName));
         }}>

@@ -11,23 +11,26 @@ const Tab = createMaterialTopTabNavigator();
 const StoreListNavi = (props) => {
   const curLargeCat = useSelector((state) => state.curLargeCat);
   const MidCatList = useSelector((state) => state.midCatList[curLargeCat]);
+  const lineColor2 = useSelector((state) => state.midCatList[lineColor2]);
+  const lineColor3 = useSelector((state) => state.midCatList[lineColor3]);
   const dispatch = useDispatch();
 
   const url = useSelector((state) => state.url);
   axios.defaults.baseURL = url;
 
+  const getStore = async () => {
+    await axios
+      .get("/l-categories/" + curLargeCat + "/m-categories/all/stores/")
+      .then((res) => {
+        dispatch(restoreCurMidCatList(res.data))
+      })
+      .catch((err) => {
+        console.log("error");
+        console.log(err);
+      });
+  }
   useEffect(() => {
-    const getStore = async () => {
-      await axios
-        .get("/l-categories/" + curLargeCat + "/m-categories/all/stores/")
-        .then((res) => {
-          dispatch(restoreCurMidCatList(res.data))
-        })
-        .catch((err) => {
-          console.log("error");
-          console.log(err);
-        });
-    }
+    
     getStore();
   }, [])
   return (
@@ -53,8 +56,11 @@ const StoreListNavi = (props) => {
         focused: false,
       }}
     >
-      {MidCatList && MidCatList.map((item, index) => (
-        <Tab.Screen name={item} children={() => <Store key={item} midCat={item} navigation={props.navigation} />} />
+      { 
+        props.title === "술집" ?
+        <Tab.Screen name={props.title} children={() => <Store key={props.title} midCat={props.title} navigation={props.navigation} />} /> :
+        MidCatList && MidCatList.map((item, index) => (
+          <Tab.Screen name={item} children={() => <Store key={item} midCat={item} navigation={props.navigation} />} />
       ))}
     </Tab.Navigator>
   );
