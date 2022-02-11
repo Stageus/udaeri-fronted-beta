@@ -74,25 +74,6 @@ const App = () => {
 
   useEffect(async () => {
     preLoad();
-
-    let token;
-    await AsyncStorage.getItem(TOKEN_KEY, (err, result) => {
-      token = result;
-    });
-
-    axios
-      .get("/users", {
-        headers: {
-          authorization: token,
-        },
-      })
-      .then((res) => {
-        res.data.success
-          ? dispatch(checkToken(true))
-          : (dispatch(checkToken(false)),
-            console.log("로그인 실패: " + res.data.message));
-      })
-      .catch((err) => console.log("회원정보 못 받아옴~" + err));
   }, []);
 
   return (

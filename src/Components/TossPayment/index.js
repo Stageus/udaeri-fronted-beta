@@ -13,7 +13,7 @@ import SuccessModal from "../SuccessModal"
 
 const { width, height } = Dimensions.get('window');
 const StatusBarHeight = StatusBar.currentHeight;
-const clientKey = 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq'
+const clientKey = 'test_ck_0Poxy1XQL8Rbx1a2WJY87nO5Wmlg'
 
 const SC = {
     Modal: styled.Modal`
@@ -44,13 +44,33 @@ const SC = {
 const TossPayment = ({ modalVisible, setModalVisible, navigation }) => {
 
     const [modalVisible2, setModalVisible2] = useState(false);
+    const [userID, setUserID] = useState("");
+
+
     const TOKEN_KEY = "@userKey";
-    const onSubmit = async (data) => {
+    
+
+
+    useEffect(async () => {
         let tokentoken;
         await AsyncStorage.getItem(TOKEN_KEY, (err, result) => {
             tokentoken = result;
         });
+
         axios
+            .get("/users", {
+                headers: {
+                  authorization: tokentoken,
+                },
+              })
+              .then((res) => {
+                setUserID(res.data.id)
+              })
+              .catch((err) => console.log("회원 정보 못 받아옴", err));
+    }, [])
+
+    const onSubmit = async (data) => {
+        await axios
             .post("/support/",
             {   
                 orderId : data.orderId,
@@ -85,7 +105,7 @@ const TossPayment = ({ modalVisible, setModalVisible, navigation }) => {
                 </SC.View>
                     <Payments
                         clientKey={clientKey}
-                        orderId="TEST01010101010101"
+                        orderId={userID}
                         orderName="테스트 주문"
                         amount={2000}
                         onSuccess={(data) => {
@@ -93,7 +113,7 @@ const TossPayment = ({ modalVisible, setModalVisible, navigation }) => {
                             setModalVisible2(true)
                         }}
                         onError={() => {
-                            Alert.alert("결제를 취소하셨습니다!");
+                            Alert.alert("후원 결제를 취소하셨습니다!");
                             navigation.goBack()
                         }}
                     />

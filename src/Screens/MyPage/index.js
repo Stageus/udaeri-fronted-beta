@@ -78,13 +78,15 @@ const MyPage = ({ navigation }) => {
   const dispatch = useDispatch();
   const mainColor = useSelector((state) => state.mainColor);
   const grayColor = useSelector((state) => state.grayColor);
+  const sponsorCheck = useSelector((state) => state.sponsorCheck);
+  const userNickname = useSelector((state) => state.userNickname);
 
   const [token, setToken] = useState();
   const [nickNameChange, setNickNameChange] = useState(false);
-  const [onChangeNickname, setOnchangeNickname] = useState("");
-  const [sponsor, setSponsor] = useState();
+  const [onChangeNickname, setOnchangeNickname] = useState(userNickname);
+  const [sponsor, setSponsor] = useState(sponsorCheck);
 
-  const TOKEN_KEY = "@userKey";
+  
 
   const listElement = [
     { title: "문의/버그리포트", page: "Inquiry" },
@@ -93,7 +95,7 @@ const MyPage = ({ navigation }) => {
     { title: "후원하기", page: "Sponsor" },
     { title: "로그아웃", page: null },
   ];
-
+  const TOKEN_KEY = "@userKey";
   useEffect(async () => {
     let tokentoken;
     await AsyncStorage.getItem(TOKEN_KEY, (err, result) => {
@@ -101,21 +103,21 @@ const MyPage = ({ navigation }) => {
       setToken(result);
     });
 
-    axios
-      .get("/users", {
-        headers: {
-          authorization: tokentoken,
-        },
-      })
-      .then((res) => {
-        res.data.success
-          ? (dispatch(restoreUserNickname(res.data.nickname)),
-            dispatch(checkSponsor(res.data.sponsor)),
-            setOnchangeNickname(res.data.nickname),
-            setSponsor(res.data.sponsor))
-          : console.log("유저 데이터 가져오기 실패", res.data);
-      })
-      .catch((err) => console.log("회원 정보 못 받아옴", err));
+    // axios
+    //   .get("/users", {
+    //     headers: {
+    //       authorization: tokentoken,
+    //     },
+    //   })
+    //   .then((res) => {
+    //     res.data.success
+    //       ? (dispatch(restoreUserNickname(res.data.nickname)),
+    //         dispatch(checkSponsor(res.data.sponsor)),
+    //         setOnchangeNickname(res.data.nickname),
+    //         setSponsor(res.data.sponsor))
+    //       : console.log("유저 데이터 가져오기 실패", res.data);
+    //   })
+    //   .catch((err) => console.log("회원 정보 못 받아옴", err));
   }, []);
 
   const saveToken = async (token) => {
