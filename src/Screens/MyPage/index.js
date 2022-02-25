@@ -12,7 +12,7 @@ import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styled, { css } from "styled-components/native";
-import axios from "axios";
+
 import HeaderBar from "../../Components/HeaderBar";
 import MyPageEle from "../../Components/MyPageEle";
 import NicknameModal from "../../Components/NicknameModal";
@@ -83,7 +83,7 @@ const SC = {
 };
 
 const MyPage = ({ navigation }) => {
-  const dispatch = useDispatch();
+
   const mainColor = useSelector((state) => state.mainColor);
   const grayColor = useSelector((state) => state.grayColor);
   const sponsorCheck = useSelector((state) => state.sponsorCheck);
@@ -107,42 +107,6 @@ const MyPage = ({ navigation }) => {
       setToken(result);
     });
   }, []);
-
-  const saveToken = async (token) => {
-    await AsyncStorage.setItem(TOKEN_KEY, token);
-  };
-
-  const updateNickname = (name) => {
-    axios
-      .put(
-        "/users",
-        {
-          nickname: name,
-        },
-        {
-          headers: {
-            authorization: token,
-          },
-        }
-      )
-      .then((res) => {
-        if (res.data.success) {
-          console.log(res.data.success);
-          saveToken(res.data.token); // 토큰 asyncstorage에 저장
-          dispatch(restoreUserNickname(name)); // 닉네임 리덕스에 저장
-        } else {
-          console.log("false: ", res.data);
-        }
-      })
-      .catch((err) => {
-        console.log("닉네임 수정 에러: ", err);
-      });
-  };
-
-  const onSubmit = () => {
-    setNickNameChange((v) => !v);
-    updateNickname(onChangeNickname);
-  };
 
   return (
     <SafeAreaView
@@ -169,7 +133,7 @@ const MyPage = ({ navigation }) => {
           </SC.NickNameWrap>
           <TouchableOpacity
             onPress={() => {
-              nickNameChange ? onSubmit() : setNickNameChange((v) => !v);
+              setNickNameChange((v) => !v);
             }}
           >
             <FontAwesome
@@ -197,7 +161,7 @@ const MyPage = ({ navigation }) => {
         modalVisible={nickNameChange}
         setModalVisible={setNickNameChange}
         setOnchangeNickname={setOnchangeNickname}
-        updateNickname={updateNickname}
+        token = {token}
       />
     </SafeAreaView>
   );

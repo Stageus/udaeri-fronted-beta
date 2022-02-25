@@ -24,7 +24,7 @@ const NaverLogin = () => {
 
   const runFirst = `window.ReactNativeWebView.postMessage("this is message from web");`;
 
-  const client_id = "TtMZfjScaNLpNbVdlfRJ";
+  const client_id = "AAdPC0BBWgoUkyk4otS2";
   const [randomState, setRandomState] = useState();
 
   const getState = async () => {
