@@ -55,9 +55,7 @@ const StoreInfoTap = () => {
         infoContent={
           storeInfo.day_off +
           " / " +
-          storeInfo.opening_hours +
-          " ~ " +
-          storeInfo.opening_hours
+          storeInfo.opening_hours 
         }
       />
       <StoreInfoEle infoTitle="가격대" infoContent={storeInfo.prices} />

@@ -72,7 +72,6 @@ const RandomMenuModal = ({ navigation, modalVisible, setModalVisible, pickedStor
                     transparent={true}
                     visible={modalVisible}
                     onRequestClose={() => {
-                        Alert.alert("Modal has been closed.");
                         setModalVisible(!modalVisible);
                     }}
                 >
