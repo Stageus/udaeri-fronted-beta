@@ -17,9 +17,13 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    "packagerOpts": { 
-      "config": "metro.config.js", 
-      "sourceExts": ["js", "jsx", "svg"]
+    "packagerOpts": {
+      "config": "metro.config.js",
+      "sourceExts": [
+        "js",
+        "jsx",
+        "svg"
+      ]
     },
     "ios": {
       "supportsTablet": true
@@ -30,9 +34,12 @@
         "backgroundColor": "#FFFFFF"
       },
       "config": {
-        "googleMaps": {"apiKey": "AIzaSyAS9tWbUhSQZnx-2_as1gBAKK5GIPhkI6g"}
-      }
-
+        "googleMaps": {
+          "apiKey": "AIzaSyAS9tWbUhSQZnx-2_as1gBAKK5GIPhkI6g"
+        }
+      },
+      "permissions": [],
+      "package": "com.udaeri.android"
     },
     "web": {
       "favicon": "./assets/favicon.png"
