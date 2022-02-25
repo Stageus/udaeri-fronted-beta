@@ -24,19 +24,27 @@ const NaverLogin = () => {
 
   const runFirst = `window.ReactNativeWebView.postMessage("this is message from web");`;
 
-  const client_id = "TtMZfjScaNLpNbVdlfRJ";
+  const client_id = "AAdPC0BBWgoUkyk4otS2";
   const [randomState, setRandomState] = useState();
-
 
   const getState = async () => {
     await axios.get("/state/").then((res) => {
       setRandomState(res.data.state);
-      console.log("state 가져옴 : ", randomState)
+      console.log("state 가져옴 : ", randomState);
     });
   };
 
   useEffect(() => {
-    
+    const getState = () => {
+      axios
+        .get("/state/")
+        .then((res) => {
+          setRandomState(res.data.state);
+        })
+        .catch((err) => {
+          console.log("state 받아오기 error");
+        });
+    };
     getState();
   }, []);
 

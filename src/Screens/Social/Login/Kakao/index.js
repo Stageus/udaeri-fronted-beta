@@ -14,6 +14,8 @@ const KakaoLogin = () => {
 
   const runFirst = `window.ReactNativeWebView.postMessage("this is message from web");`;
 
+  const restApiKey = "4b3275856f1b44d19fbb0efca13d5b69";
+
   // access code를 substring해서 server에 post요청하는 함수 실행
   const LoginProgress = (data) => {
     const startStr = "code=";
@@ -56,7 +58,7 @@ const KakaoLogin = () => {
         scalesPageToFit={false}
         style={{ marginTop: 30 }}
         source={{
-          uri: `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=02be3f8588228d4a03f6f2b0c0cf2d7f&redirect_uri=${url}/callback`,
+          uri: `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${restApiKey}&redirect_uri=${url}/kakao/callback`,
         }}
         injectedJavaScript={runFirst}
         javaScriptEnabled={true}

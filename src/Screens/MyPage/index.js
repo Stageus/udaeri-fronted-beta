@@ -5,17 +5,17 @@ import {
   Platform,
   SafeAreaView,
   StatusBar,
-  TextInput,
-  View,
+  Modal,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import { RFPercentage } from "react-native-responsive-fontsize";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styled, { css } from "styled-components/native";
-import axios from "axios";
+
 import HeaderBar from "../../Components/HeaderBar";
 import MyPageEle from "../../Components/MyPageEle";
+import NicknameModal from "../../Components/NicknameModal";
 import { restoreUserNickname, checkSponsor } from "../../../reducer/index";
 
 const StatusBarHeight = StatusBar.currentHeight;
@@ -24,11 +24,10 @@ const SC = {
   Container: styled.View`
     background-color: #fff;
 
-    ${Platform.OS === "android"
-      ? css`
-          padding-top: ${StatusBarHeight + 15}px;
-        `
-      : undefined}
+    ${Platform.OS === "android" &&
+    css`
+      padding-top: ${StatusBarHeight + 15}px;
+    `}
   `,
   Top: styled.View`
     flex-direction: row;
@@ -72,10 +71,19 @@ const SC = {
     color: black;
     font-size: 15px;
   `,
+
+  NicknameChangeInput: styled.KeyboardAvoidingView`
+    z-index: 5;
+    height: 80px;
+    background-color: red;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  `,
 };
 
 const MyPage = ({ navigation }) => {
-  const dispatch = useDispatch();
+
   const mainColor = useSelector((state) => state.mainColor);
   const grayColor = useSelector((state) => state.grayColor);
   const sponsorCheck = useSelector((state) => state.sponsorCheck);
@@ -93,48 +101,12 @@ const MyPage = ({ navigation }) => {
     { title: "로그아웃", page: null },
   ];
   const TOKEN_KEY = "@userKey";
+
   useEffect(async () => {
-    let tokentoken;
     await AsyncStorage.getItem(TOKEN_KEY, (err, result) => {
-      tokentoken = result;
       setToken(result);
     });
   }, []);
-
-  const saveToken = async (token) => {
-    await AsyncStorage.setItem(TOKEN_KEY, token);
-  };
-
-  const updateNickname = (name) => {
-    axios
-      .put(
-        "/users",
-        {
-          nickname: name,
-        },
-        {
-          headers: {
-            authorization: token,
-          },
-        }
-      )
-      .then((res) => {
-        if (res.data.success) {
-          saveToken(res.data.token); // 토큰 asyncstorage에 저장
-          dispatch(restoreUserNickname(name)); // 닉네임 리덕스에 저장
-        } else {
-          console.log("false: ", res.data);
-        }
-      })
-      .catch((err) => {
-        console.log("닉네임 수정 에러: ", err);
-      });
-  };
-
-  const onSubmit = () => {
-    setNickNameChange((v) => !v);
-    updateNickname(onChangeNickname);
-  };
 
   return (
     <SafeAreaView
@@ -143,36 +115,22 @@ const MyPage = ({ navigation }) => {
         flex: 1,
       }}
     >
-      <SC.Container>
+      <SC.Container nickNameChange={nickNameChange}>
         <HeaderBar title="마이페이지" center="true"></HeaderBar>
         <SC.Top>
-          {nickNameChange ? (
-            <SC.TextInputNickname
-              multiline={false}
-              returnKeyType={"done"}
-              value={onChangeNickname}
-              onChangeText={(val) => setOnchangeNickname(val)}
-              onSubmitEditing={() => onSubmit()}
-              maxLength={15}
-              placeholder="닉네임을 입력하세요"
-              color={mainColor}
-            ></SC.TextInputNickname>
-          ) : (
-            <SC.NickNameWrap>
-              <SC.NickName color={mainColor}>{onChangeNickname}</SC.NickName>
-              {sponsorCheck === "Y" ? (
-                <Text>
-                  <FontAwesome5
-                    name="crown"
-                    style={{ fontSize: RFPercentage(2.5), color: "#ffec00" }}
-                  />
-                </Text>
-              ) : (
-                <></>
-              )}
-            </SC.NickNameWrap>
-          )}
-
+          <SC.NickNameWrap>
+            <SC.NickName color={mainColor}>{onChangeNickname}</SC.NickName>
+            {sponsorCheck === "Y" ? (
+              <Text>
+                <FontAwesome5
+                  name="crown"
+                  style={{ fontSize: RFPercentage(2.5), color: "#ffec00" }}
+                />
+              </Text>
+            ) : (
+              <></>
+            )}
+          </SC.NickNameWrap>
           <TouchableOpacity
             onPress={() => {
               setNickNameChange((v) => !v);
@@ -187,10 +145,7 @@ const MyPage = ({ navigation }) => {
 
         <SC.MyPageList>
           {listElement.map((item, index) => {
-            
-            return (
-              sponsorCheck === "Y" && item.title === "후원하기" ?
-              null :
+            return sponsorCheck === "Y" && item.title === "후원하기" ? null : (
               <MyPageEle
                 key={index}
                 title={item.title}
@@ -201,6 +156,13 @@ const MyPage = ({ navigation }) => {
           })}
         </SC.MyPageList>
       </SC.Container>
+
+      <NicknameModal
+        modalVisible={nickNameChange}
+        setModalVisible={setNickNameChange}
+        setOnchangeNickname={setOnchangeNickname}
+        token = {token}
+      />
     </SafeAreaView>
   );
 };
