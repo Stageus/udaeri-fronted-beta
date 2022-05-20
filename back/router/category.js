@@ -165,8 +165,7 @@ exports.getStoreInformation = async(req,res) =>{      // 가게 정보(위치, �
             "store" : query.rows[0].store_name,
             "call_number" : query.rows[0].call_number,
             "opening_hours" : query.rows[0].opening_hours,
-            "day_off " : query.rows[0].day_off,
-            "prices" : query.rows[0].prices,
+            "prices" : query.rows[0].avg_price,
             "location" : query.rows[0].location,
             "latitude" : query.rows[0].latitude,
             "longitude" : query.rows[0].longitude
@@ -485,7 +484,6 @@ exports.insertStore = async(req,res) =>{
     const main_menu = req.body.main_menu;
     const call_number =req.body.call_number;
     const open = req.body.open;
-    const off = req.body.off;
     const price = req.body.price;
     const location =req.body.location;
     const image_url = 'url';
@@ -499,7 +497,7 @@ exports.insertStore = async(req,res) =>{
     const client = new Client(config);
     await client.connect();
     try{
-    await client.query('INSERT INTO service.store_information (m_category_index, store_name, main_menu, call_number, opening_hours, day_off, prices, location, image_url, created_at, latitude, longitude, favorited_count, inha_location) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14);',[m_category_index, name, main_menu, call_number, open,off, price, location,image_url, created_at, latitude, longitude, favorite, inha]);
+    await client.query('INSERT INTO service.store_information (m_category_index, store_name, main_menu, call_number, opening_hours, avg_prices, location, image_url, created_at, latitude, longitude, favorited_count, inha_location) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13);',[m_category_index, name, main_menu, call_number, open, price, location,image_url, created_at, latitude, longitude, favorite, inha]);
     await client.end();
     return res.send("성공!");
     }

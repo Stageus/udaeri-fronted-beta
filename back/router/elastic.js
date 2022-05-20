@@ -29,7 +29,7 @@ exports.getElasticsearchStatus = async(req,res)=>{
 exports.pushElasticsearchStore = async(req,res)=>{   
 
     const store_name = req.body.store_name;
-    const image_url = req.body.image_url;
+    //const image_url = req.body.image_url;
     const main_menu = req.body.main_menu;
     const inha_location = req.body.inha_location;
     const favorited_count = 0;
@@ -52,15 +52,12 @@ exports.pushElasticsearchStore = async(req,res)=>{
                 "inha_location" : inha_location,
                 "favorited_count" : favorited_count,
                 "menu" : menu,
-                "image_url" : image_url,
+                //"image_url" : image_url,
                 "latitude" : Number(latitude),
                 "longitude" : Number(longitude)
             },
         }
     )
-    .then(() => {
-        return res.send({success : true})
-    })
 }
 
 exports.setNoriTokenizer = async(req,res)=>{
@@ -160,7 +157,7 @@ exports.getElasticsearchStoreList = async(req,res)=>{
     const result = await elasticClient.search({
         index : 'stores',
         q : searchText,
-        _source : ["store_name", "main_menu", "inha_location", "favorited_count", "image_url", "latitude", "longitude"],
+        _source : ["store_name", "main_menu", "inha_location", "favorited_count", /*"image_url",*/ "latitude", "longitude"],
         from : (startOffset-1) * 15,
         size : 15
     })
@@ -300,7 +297,6 @@ exports.errLogging = async(req, status, err)=>{
             "time" : date
         }
     })
-    console.log(result);
 }
 
 

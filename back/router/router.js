@@ -4,8 +4,10 @@ const user = require("./user");
 const auth = require("./auth");
 const category = require("./category");
 const elastic = require("./elastic");
+const excelTest = require('./excelTest');
 
 
+Route.get('/test', excelTest.test);
 
 // user.js
 Route.post('/support', auth.tokenVerify, user.payment);

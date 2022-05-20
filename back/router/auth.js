@@ -21,11 +21,10 @@ const config = {
 };
 
 exports.OauthLogin = async(req,res) =>{
+    const id = req.body.id;
     const platform = req.body.platform;
-    const code = req.body.code;
-    const state = req.body.state;
 
-    if(platform == undefined || code == undefined || (platform == "naver" && state == undefined)){
+    if(id == undefined || platform == undefined){
         try{
         await elastic.apiLogging(req,400);
         return res.status(400).send({
@@ -39,9 +38,8 @@ exports.OauthLogin = async(req,res) =>{
         }
     }
     try{
-        const accessToken = await getAccessToken(code, platform, state);
-        const userInfo = await getUserInfo(accessToken, platform);
-        const jwtToken = await getJwtToken(userInfo, platform);
+        //const userInfo = await getUserInfo(accessToken, platform);
+        const jwtToken = await getJwtToken(id, platform);
         const refreshToken = await getRefreshToken();
         let refreshKey = await ((jwt.decode(jwtToken, secretKey)).id);
 
@@ -63,6 +61,7 @@ exports.OauthLogin = async(req,res) =>{
         }); 
     }
     catch(err){
+        console.log(err);
         await elastic.errLogging(req,500,err);
         return res.status(500).send({
             success : false
@@ -71,7 +70,7 @@ exports.OauthLogin = async(req,res) =>{
     
 }
 
-const getAccessToken = async(code, platform, state) =>{    
+const getAccessToken = async(code, platform, state) =>{   
     switch(platform){
         case "kakao":
             return await fetch('https://kauth.kakao.com/oauth/token', {
@@ -84,6 +83,7 @@ const getAccessToken = async(code, platform, state) =>{
                     client_id: process.env.KAKAO_CLIENT_ID,
                     redirectUri: process.env.KAKAO_REDIRECT_URI,
                     code: code,
+                    client_secret : process.env.KAKAO_CLIENT_SECRET
                 }),
             }).then(res => res.json())
 
@@ -102,6 +102,7 @@ const getAccessToken = async(code, platform, state) =>{
 }
 
 const getUserInfo = async(accessToken, platform) =>{
+    try{
     switch(platform){
         case "kakao" :
             return await fetch('https://kapi.kakao.com/v2/user/me',{
@@ -119,33 +120,39 @@ const getUserInfo = async(accessToken, platform) =>{
                     "Authorization" : `Bearer ${accessToken.access_token}`
                 }
             }).then(res => res.json());
+        }
             
+    }
+
+    catch(e){
+        console.log(e);
     }
 
 
 }
 
-const getJwtToken = async(userInfo,platform) =>{
+const getJwtToken = async(platformId,platform) =>{
     let id, nickname, sponsor;
 
-    switch(platform){
+    /*switch(platform){
         case "kakao":
             id = userInfo.id;
             break;
         case "naver":
             id = userInfo.response.id;
             break;
-    }
+    }*/
     const client = new Client(config);
     client.connect();
 
-    const query = await client.query('SELECT id, nickname, sponsor, platform FROM service.user_information WHERE id =$1 AND platform = $2;',[id, platform]);
+    const query = await client.query('SELECT id, nickname, sponsor, platform FROM service.user_information WHERE id =$1 AND platform = $2;',[platformId, platform]);
     if(query.rowCount !=0){
         id = query.rows[0].id;
         nickname = query.rows[0].nickname;
         sponsor = query.rows[0].sponsor;
     }
     else{
+        id = platformId;
         const date = new Date();
         date.setHours(date.getHours()+9);
         nickname = await getUserNickname();
